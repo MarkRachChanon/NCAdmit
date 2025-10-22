@@ -17,7 +17,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     เกี่ยวกับเรา
                 </h1>
                 <p class="lead mb-0">
-                    ทำความรู้จักกับวิทยาลัยอาชีวศึกษานครปฐมและระบบ NC-Admission
+                    ทำความรู้จักกับวิทยาลัยอาชีวศึกษานครปฐมและระบบ <?php echo $site_name; ?>
                 </p>
             </div>
         </div>

@@ -15,7 +15,7 @@ $news_result = $conn->query($sql_news);
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div data-aos="fade-right">
                     <h1 class="hero-title text-white mb-3">
-                        NC-Admission
+                        <?php echo $site_name; ?>
                     </h1>
                     <h2 class="hero-subtitle text-white mb-4">
                         ระบบรับสมัครนักเรียนออนไลน์<br class="d-none d-md-inline"> 

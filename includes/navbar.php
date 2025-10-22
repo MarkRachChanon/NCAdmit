@@ -6,7 +6,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
         <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
             <img src="assets/images/logo.png" alt="Logo" height="40" class="me-2">
             <div class="d-flex flex-column lh-sm">
-                <span style="font-size: 1.2rem;">NC-Admission</span>
+                <span style="font-size: 1.2rem;"><?php echo $site_name; ?></span>
                 <small style="font-size: 0.7rem; font-weight: 300;">ระบบรับสมัครนักเรียนออนไลน์</small>
             </div>
         </a>
