@@ -16,7 +16,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
     <div class="container">
         <div class="row">
             <div class="col-12 text-center" data-aos="fade-down">
-                <h1 class="display-5 fw-bold mb-3">
+                <h1 class="display-6 fw-bold mb-3">
                     <i class="bi bi-info-circle-fill me-3"></i>
                     ข้อมูลการรับสมัคร
                 </h1>

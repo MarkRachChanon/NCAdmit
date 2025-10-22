@@ -15,7 +15,7 @@ $news_result = $conn->query($sql_news);
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div data-aos="fade-right">
                     <h1 class="hero-title text-white mb-3">
-                        NCAdmit
+                        NC-Admission
                     </h1>
                     <h2 class="hero-subtitle text-white mb-4">
                         ระบบรับสมัครนักเรียนออนไลน์<br class="d-none d-md-inline"> 
@@ -64,7 +64,7 @@ $news_result = $conn->query($sql_news);
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-primary text-white mb-4">
-                            <i class="bi bi-file-earmark-text display-4"></i>
+                            <i class="bi bi-file-earmark-text display-6"></i>
                         </div>
                         <h5 class="card-title fw-bold mb-3">รับสมัครออนไลน์</h5>
                         <p class="card-text text-muted mb-4">
@@ -83,7 +83,7 @@ $news_result = $conn->query($sql_news);
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-secondary text-white mb-4">
-                            <i class="bi bi-search display-4"></i>
+                            <i class="bi bi-search display-6"></i>
                         </div>
                         <h5 class="card-title fw-bold mb-3">ตรวจสอบสถานะ</h5>
                         <p class="card-text text-muted mb-4">
@@ -102,7 +102,7 @@ $news_result = $conn->query($sql_news);
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <div class="icon-circle bg-gradient-blue text-white mb-4">
-                            <i class="bi bi-telephone display-4"></i>
+                            <i class="bi bi-telephone display-6"></i>
                         </div>
                         <h5 class="card-title fw-bold mb-3">ติดต่อสอบถาม</h5>
                         <p class="card-text text-muted mb-4">

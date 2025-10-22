@@ -1,7 +1,7 @@
 <?php
 /**
  * Common Functions
- * NCAdmit - Nakhon Pathom College Admission System
+ * NC-Admission - Nakhon Pathom College Admission System
  */
 
 /**
@@ -32,7 +32,7 @@ function get_page_title($page) {
         'check_status' => 'ตรวจสอบสถานะการสมัคร'
     ];
     
-    return isset($titles[$page]) ? $titles[$page] : 'NCAdmit';
+    return isset($titles[$page]) ? $titles[$page] : 'NC-Admission';
 }
 
 /**

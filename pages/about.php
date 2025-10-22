@@ -3,7 +3,7 @@
  * About Page - เกี่ยวกับเรา
  */
 
-$site_name = get_setting('site_name', 'NCAdmit');
+$site_name = get_setting('site_name', 'NC-Admission');
 $site_description = get_setting('site_description', 'ระบบรับสมัครนักเรียนออนไลน์ วิทยาลัยอาชีวศึกษานครปฐม');
 ?>
 
@@ -17,21 +17,21 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     เกี่ยวกับเรา
                 </h1>
                 <p class="lead mb-0">
-                    ทำความรู้จักกับวิทยาลัยอาชีวศึกษานครปฐมและระบบ NCAdmit
+                    ทำความรู้จักกับวิทยาลัยอาชีวศึกษานครปฐมและระบบ NC-Admission
                 </p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- About NCAdmit -->
+<!-- About NC-Admission -->
 <section class="py-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="position-relative">
                     <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80" 
-                         alt="NCAdmit System" 
+                         alt="NC-Admission System" 
                          class="img-fluid rounded-4 shadow-lg">
                     <div class="position-absolute bottom-0 start-0 m-4 p-3 bg-white rounded-3 shadow">
                         <h5 class="mb-0 fw-bold text-primary">
@@ -162,7 +162,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-people-fill display-4"></i>
+                            <i class="bi bi-people-fill display-6"></i>
                         </div>
                         <h3 class="fw-bold mb-2 counter" data-target="<?php echo get_setting('stat_students', '2000'); ?>">0</h3>
                         <p class="text-muted mb-0">นักเรียน นักศึกษา</p>
@@ -176,7 +176,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-success bg-opacity-10 text-success mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-book-fill display-4"></i>
+                            <i class="bi bi-book-fill display-6"></i>
                         </div>
                         <h3 class="fw-bold mb-2 counter" data-target="<?php echo get_setting('stat_departments', '23'); ?>">0</h3>
                         <p class="text-muted mb-0">สาขาวิชา</p>
@@ -190,7 +190,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-info bg-opacity-10 text-info mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-person-badge-fill display-4"></i>
+                            <i class="bi bi-person-badge-fill display-6"></i>
                         </div>
                         <h3 class="fw-bold mb-2 counter" data-target="<?php echo get_setting('stat_teachers', '150'); ?>">0</h3>
                         <p class="text-muted mb-0">คณาจารย์</p>
@@ -204,7 +204,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-warning bg-opacity-10 text-warning mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-trophy-fill display-4"></i>
+                            <i class="bi bi-trophy-fill display-6"></i>
                         </div>
                         <h3 class="fw-bold mb-2 counter" data-target="<?php echo get_setting('stat_employment', '95'); ?>">0</h3>
                         <p class="text-muted mb-0">% มีงานทำ</p>
@@ -233,7 +233,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                         <div class="d-flex align-items-center mb-4">
                             <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3" 
                                  style="width: 60px; height: 60px;">
-                                <i class="bi bi-eye-fill display-5"></i>
+                                <i class="bi bi-eye-fill display-6"></i>
                             </div>
                             <h3 class="mb-0 fw-bold">วิสัยทัศน์</h3>
                         </div>
@@ -253,7 +253,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                         <div class="d-flex align-items-center mb-4">
                             <div class="icon-circle bg-success bg-opacity-10 text-success me-3" 
                                  style="width: 60px; height: 60px;">
-                                <i class="bi bi-bullseye display-5"></i>
+                                <i class="bi bi-bullseye display-6"></i>
                             </div>
                             <h3 class="mb-0 fw-bold">พันธกิจ</h3>
                         </div>
@@ -299,7 +299,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-gradient-primary text-white mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-lightbulb-fill display-4"></i>
+                            <i class="bi bi-lightbulb-fill display-6"></i>
                         </div>
                         <h5 class="fw-bold mb-3">นวัตกรรม</h5>
                         <p class="text-muted mb-0">
@@ -316,7 +316,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-gradient-secondary text-white mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-heart-fill display-4"></i>
+                            <i class="bi bi-heart-fill display-6"></i>
                         </div>
                         <h5 class="fw-bold mb-3">คุณธรรม</h5>
                         <p class="text-muted mb-0">
@@ -333,7 +333,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     <div class="card-body p-4">
                         <div class="icon-circle bg-gradient-blue text-white mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-star-fill display-4"></i>
+                            <i class="bi bi-star-fill display-6"></i>
                         </div>
                         <h5 class="fw-bold mb-3">ความเป็นเลิศ</h5>
                         <p class="text-muted mb-0">

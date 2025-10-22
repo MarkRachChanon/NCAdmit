@@ -1,5 +1,5 @@
 <?php
-$site_name = get_setting('site_name', 'NCAdmit');
+$site_name = get_setting('site_name', 'NC-Admission');
 $site_description = get_setting('site_description', 'ระบบรับสมัครนักเรียนออนไลน์ วิทยาลัยอาชีวศึกษานครปฐม');
 $contact_phone = get_setting('contact_phone', '034-251-081');
 $contact_email = get_setting('contact_email', 'info@nc.ac.th');

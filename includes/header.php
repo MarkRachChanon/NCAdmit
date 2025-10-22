@@ -1,5 +1,5 @@
 <?php
-$site_name = get_setting('site_name', 'NCAdmit');
+$site_name = get_setting('site_name', 'NC-Admission');
 $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
 $page_title = get_page_title($current_page);
 ?>

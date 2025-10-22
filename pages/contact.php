@@ -62,7 +62,7 @@ $google_map = get_setting('google_map_url', 'https://www.google.com/maps/embed?p
     <div class="container">
         <div class="row">
             <div class="col-12 text-center" data-aos="fade-down">
-                <h1 class="display-5 fw-bold mb-3">
+                <h1 class="display-6 fw-bold mb-3">
                     <i class="bi bi-envelope-fill me-3"></i>
                     ติดต่อเรา
                 </h1>
@@ -84,7 +84,7 @@ $google_map = get_setting('google_map_url', 'https://www.google.com/maps/embed?p
                     <div class="card-body p-4">
                         <div class="icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-telephone-fill display-4"></i>
+                            <i class="bi bi-telephone-fill display-6"></i>
                         </div>
                         <h5 class="fw-bold mb-3">โทรศัพท์</h5>
                         <p class="text-muted mb-2">ติดต่อสอบถามข้อมูล</p>
@@ -105,7 +105,7 @@ $google_map = get_setting('google_map_url', 'https://www.google.com/maps/embed?p
                     <div class="card-body p-4">
                         <div class="icon-circle bg-success bg-opacity-10 text-success mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-envelope-fill display-4"></i>
+                            <i class="bi bi-envelope-fill display-6"></i>
                         </div>
                         <h5 class="fw-bold mb-3">อีเมล</h5>
                         <p class="text-muted mb-2">ส่งข้อความถึงเรา</p>
@@ -126,7 +126,7 @@ $google_map = get_setting('google_map_url', 'https://www.google.com/maps/embed?p
                     <div class="card-body p-4">
                         <div class="icon-circle bg-info bg-opacity-10 text-info mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-geo-alt-fill display-4"></i>
+                            <i class="bi bi-geo-alt-fill display-6"></i>
                         </div>
                         <h5 class="fw-bold mb-3">ที่อยู่</h5>
                         <p class="text-muted mb-2">มาเยี่ยมชมเรา</p>
