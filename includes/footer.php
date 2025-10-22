@@ -1,6 +1,12 @@
 <?php
+$site_name = get_setting('site_name', 'NCAdmit');
+$site_description = get_setting('site_description', 'ระบบรับสมัครนักเรียนออนไลน์ วิทยาลัยอาชีวศึกษานครปฐม');
 $contact_phone = get_setting('contact_phone', '034-251-081');
 $contact_email = get_setting('contact_email', 'info@nc.ac.th');
+$contact_address = get_setting('contact_address', 'วิทยาลัยอาชีวศึกษานครปฐม จังหวัดนครปฐม');
+$facebook_url = get_setting('facebook_url', '#');
+$youtube_url = get_setting('youtube_url', '#');
+$line_url = get_setting('line_url', '#');
 $current_year = date('Y') + 543;
 ?>
 
@@ -12,22 +18,24 @@ $current_year = date('Y') + 543;
                 <div class="d-flex align-items-center mb-3">
                     <img src="assets/images/logo.png" alt="Logo" height="50" class="me-3">
                     <div>
-                        <h5 class="mb-0 fw-bold">NCAdmit</h5>
-                        <small class="text-white-50">ระบบรับสมัครนักเรียนออนไลน์</small>
+                        <h5 class="mb-0 fw-bold"><?php echo $site_name; ?></h5>
+                        <small class="text-white-50">ระบบรับสมัครออนไลน์</small>
                     </div>
                 </div>
                 <p class="text-white-50">
-                    <strong>วิทยาลัยอาชีวศึกษานครปฐม</strong><br>
-                    สะดวก รวดเร็ว ปลอดภัย ตลอด 24 ชั่วโมง
+                    <?php echo nl2br($site_description); ?>
                 </p>
                 <div class="social-links mt-3">
-                    <a href="#" class="text-white me-3" title="Facebook">
+                    <a href="<?php echo $facebook_url; ?>" class="text-white me-3" title="Facebook" 
+                       <?php echo ($facebook_url != '#') ? 'target="_blank"' : ''; ?>>
                         <i class="bi bi-facebook fs-4"></i>
                     </a>
-                    <a href="#" class="text-white me-3" title="YouTube">
+                    <a href="<?php echo $youtube_url; ?>" class="text-white me-3" title="YouTube"
+                       <?php echo ($youtube_url != '#') ? 'target="_blank"' : ''; ?>>
                         <i class="bi bi-youtube fs-4"></i>
                     </a>
-                    <a href="#" class="text-white me-3" title="Line">
+                    <a href="<?php echo $line_url; ?>" class="text-white me-3" title="Line"
+                       <?php echo ($line_url != '#') ? 'target="_blank"' : ''; ?>>
                         <i class="bi bi-line fs-4"></i>
                     </a>
                 </div>
@@ -71,15 +79,21 @@ $current_year = date('Y') + 543;
                 <ul class="list-unstyled text-white-50">
                     <li class="mb-2">
                         <i class="bi bi-telephone-fill me-2"></i>
-                        <?php echo $contact_phone; ?>
+                        <a href="tel:<?php echo str_replace('-', '', $contact_phone); ?>" 
+                           class="text-white-50 text-decoration-none">
+                            <?php echo $contact_phone; ?>
+                        </a>
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-envelope-fill me-2"></i>
-                        <?php echo $contact_email; ?>
+                        <a href="mailto:<?php echo $contact_email; ?>" 
+                           class="text-white-50 text-decoration-none">
+                            <?php echo $contact_email; ?>
+                        </a>
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-geo-alt-fill me-2"></i>
-                        จังหวัดนครปฐม
+                        <?php echo $contact_address; ?>
                     </li>
                     <li class="mb-2">
                         <i class="bi bi-clock-fill me-2"></i>
@@ -96,7 +110,7 @@ $current_year = date('Y') + 543;
                 <p class="mb-0 text-white-50">
                     &copy; <?php echo $current_year; ?> วิทยาลัยอาชีวศึกษานครปฐม. All rights reserved.
                     <br>
-                    <small>Powered by <strong>NCAdmit</strong> ||  Dev by <strong>Mark Chanon</strong></small>
+                    <small>Powered by <strong><?php echo $site_name; ?></strong> - Dev by <strong>Mark Chanon</strong></small>
                 </p>
             </div>
         </div>

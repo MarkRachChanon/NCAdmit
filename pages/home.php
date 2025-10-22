@@ -18,16 +18,18 @@ $news_result = $conn->query($sql_news);
                         NCAdmit
                     </h1>
                     <h2 class="hero-subtitle text-white mb-4">
-                        ระบบรับสมัครนักเรียนออนไลน์ วิทยาลัยอาชีวศึกษานครปฐม
+                        ระบบรับสมัครนักเรียนออนไลน์<br class="d-none d-md-inline"> 
+                        วิทยาลัยอาชีวศึกษานครปฐม
                     </h2>
                     <p class="hero-text text-white mb-5">
-                        สะดวก รวดเร็ว ปลอดภัย ตลอด 24 ชั่วโมง
+                        สะดวก รวดเร็ว ปลอดภัย<br class="d-none d-md-inline"> 
+                        ตลอด 24 ชั่วโมง
                     </p>
-                    <div class="hero-buttons d-flex flex-wrap gap-3">
-                        <a href="index.php?page=quota_form" class="btn btn-light btn-lg px-5 shadow">
+                    <div class="hero-buttons d-flex flex-column flex-md-row gap-3">
+                        <a href="index.php?page=quota_form" class="btn btn-light btn-lg px-4 px-md-5 shadow">
                             <i class="bi bi-pencil-square me-2"></i> สมัครรอบโควต้า
                         </a>
-                        <a href="index.php?page=regular_form" class="btn btn-outline-light btn-lg px-5">
+                        <a href="index.php?page=regular_form" class="btn btn-outline-light btn-lg px-4 px-md-5">
                             <i class="bi bi-pencil-square me-2"></i> สมัครรอบปกติ
                         </a>
                     </div>
@@ -39,7 +41,7 @@ $news_result = $conn->query($sql_news);
                     <img src="https://cdn-icons-png.flaticon.com/512/3976/3976625.png" 
                          alt="Education" 
                          class="img-fluid" 
-                         style="max-width: 500px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
+                         style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
                 </div>
             </div>
         </div>

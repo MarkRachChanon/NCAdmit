@@ -1,9 +1,4 @@
 <?php
-/**
- * NCAdmit - Main Router
- * Nakhon Pathom College Admission System
- */
-
 // Start Session
 session_start();
 

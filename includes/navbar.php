@@ -7,7 +7,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
             <img src="assets/images/logo.png" alt="Logo" height="40" class="me-2">
             <div class="d-flex flex-column lh-sm">
                 <span style="font-size: 1.2rem;">NCAdmit</span>
-                <small style="font-size: 0.7rem; font-weight: 300;">วิทยาลัยอาชีวศึกษานครปฐม</small>
+                <small style="font-size: 0.7rem; font-weight: 300;">ระบบรับสมัครนักเรียนออนไลน์</small>
             </div>
         </a>
         
