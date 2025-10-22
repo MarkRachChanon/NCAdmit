@@ -11,14 +11,14 @@ $news_result = $conn->query($sql_news);
 <!-- Hero Section - Full Screen -->
 <section class="hero-section">
     <div class="container hero-content">
-        <div class="row align-items-center min-vh-100">
+        <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div data-aos="fade-right">
                     <h1 class="hero-title text-white mb-3">
                         NCAdmit
                     </h1>
                     <h2 class="hero-subtitle text-white mb-4">
-                        ระบบรับสมัครนักเรียนออนไลน์ <br>วิทยาลัยอาชีวศึกษานครปฐม
+                        ระบบรับสมัครนักเรียนออนไลน์ วิทยาลัยอาชีวศึกษานครปฐม
                     </h2>
                     <p class="hero-text text-white mb-5">
                         สะดวก รวดเร็ว ปลอดภัย ตลอด 24 ชั่วโมง
@@ -42,18 +42,6 @@ $news_result = $conn->query($sql_news);
                          style="max-width: 500px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
                 </div>
             </div>
-        </div>
-        
-        <!-- Scroll Down Indicator -->
-        <div class="text-center position-absolute bottom-0 start-50 translate-middle-x mb-4" 
-             data-aos="fade-up" 
-             data-aos-delay="1000">
-            <a href="#quick-info" class="text-white text-decoration-none">
-                <div class="pulse-animation">
-                    <i class="bi bi-chevron-down fs-1"></i>
-                </div>
-                <small class="d-block mt-2">เลื่อนลง</small>
-            </a>
         </div>
     </div>
 </section>
