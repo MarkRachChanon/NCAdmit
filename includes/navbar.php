@@ -85,7 +85,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
                 
                 <li class="nav-item">
                     <a class="nav-link" href="admin/login.php">
-                        <i class="bi bi-lock me-1"></i> Admin
+                        <i class="bi bi-lock me-1"></i> E-Pers
                     </a>
                 </li>
             </ul>

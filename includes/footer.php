@@ -10,7 +10,7 @@ $line_url = get_setting('line_url', '#');
 $current_year = date('Y') + 543;
 ?>
 
-<footer class="bg-dark text-white mt-5 pt-5 pb-3">
+<footer class="bg-dark text-white pt-5 pb-3">
     <div class="container">
         <div class="row">
             <!-- Column 1: About -->
