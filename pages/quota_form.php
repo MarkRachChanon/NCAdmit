@@ -7,7 +7,7 @@
 
 // ตรวจสอบว่าเปิดรับสมัครรอบโควต้าหรือไม่
 if (!is_admission_open('quota')) {
-        echo '<section class="py-5">
+    echo '<section class="py-5">
                 <div class="container">
                     <div class="row mb-5 text-center">
                         <div class="col-12" data-aos="fade-up">
@@ -575,7 +575,283 @@ while ($dept = $departments_result->fetch_assoc()) {
                 </div>
             </div>
 
-            <!-- Steps 5-6 ต่อ... -->
+            <!-- Step 5: อัปโหลดเอกสาร -->
+            <div class="form-step" data-step="5">
+                <h4 class="fw-bold mb-4 text-gradient">
+                    <i class="bi bi-cloud-upload-fill me-2"></i> อัปโหลดเอกสารประกอบการสมัคร
+                </h4>
+
+                <!-- คำอธิบาย -->
+                <div class="alert alert-warning shadow-sm mb-4" data-aos="fade-up">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>หมายเหตุ:</strong> กรุณาเตรียมเอกสารให้พร้อมก่อนอัปโหลด ไฟล์รูปภาพต้องเป็น JPG/PNG และ PDF ขนาดไม่เกินที่กำหนด
+                </div>
+
+                <!-- 1. รูปถ่าย -->
+                <div class="card bg-light mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-person-square me-2 text-primary"></i>
+                            1. รูปถ่าย 1 นิ้ว
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">เลือกไฟล์รูปถ่าย <span class="text-danger">*</span></label>
+                                <input type="file" name="photo" id="photo" class="form-control"
+                                    accept="image/jpeg,image/png,image/jpg" required>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    รองรับ: JPG, PNG | ขนาดไม่เกิน 2 MB
+                                </small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ตัวอย่าง</label>
+                                <div class="border rounded p-2 text-center bg-white shadow-sm">
+                                    <img id="photo_preview" src="https://via.placeholder.com/150x200/4facfe/ffffff?text=Photo"
+                                        class="img-fluid rounded" style="max-height: 150px; object-fit: cover;" alt="Preview">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. บัตรประชาชน -->
+                <div class="card bg-light mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-credit-card me-2 text-success"></i>
+                            2. สำเนาบัตรประชาชน
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">เลือกไฟล์บัตรประชาชน <span class="text-danger">*</span></label>
+                                <input type="file" name="id_card_file" id="id_card_file" class="form-control"
+                                    accept="image/jpeg,image/png,image/jpg,application/pdf" required>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    รองรับ: JPG, PNG, PDF | ขนาดไม่เกิน 2 MB
+                                </small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ตัวอย่าง</label>
+                                <div class="border rounded p-3 text-center bg-white shadow-sm">
+                                    <div id="id_card_preview">
+                                        <i class="bi bi-file-earmark-pdf text-muted" style="font-size: 3rem;"></i>
+                                        <p class="small text-muted mb-0 mt-2">ยังไม่ได้เลือกไฟล์</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. ทะเบียนบ้าน -->
+                <div class="card bg-light mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-house-fill me-2 text-info"></i>
+                            3. สำเนาทะเบียนบ้าน
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">เลือกไฟล์ทะเบียนบ้าน <span class="text-danger">*</span></label>
+                                <input type="file" name="house_registration" id="house_registration" class="form-control"
+                                    accept="image/jpeg,image/png,image/jpg,application/pdf" required>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    รองรับ: JPG, PNG, PDF | ขนาดไม่เกิน 2 MB
+                                </small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ตัวอย่าง</label>
+                                <div class="border rounded p-3 text-center bg-white shadow-sm">
+                                    <div id="house_registration_preview">
+                                        <i class="bi bi-file-earmark-pdf text-muted" style="font-size: 3rem;"></i>
+                                        <p class="small text-muted mb-0 mt-2">ยังไม่ได้เลือกไฟล์</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Transcript -->
+                <div class="card bg-light" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-file-earmark-text me-2 text-warning"></i>
+                            4. ผลการเรียน (Transcript)
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">เลือกไฟล์ผลการเรียน <span class="text-danger">*</span></label>
+                                <input type="file" name="transcript" id="transcript" class="form-control"
+                                    accept="application/pdf" required>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    รองรับ: PDF เท่านั้น | ขนาดไม่เกิน 5 MB
+                                </small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ตัวอย่าง</label>
+                                <div class="border rounded p-3 text-center bg-white shadow-sm">
+                                    <div id="transcript_preview">
+                                        <i class="bi bi-file-earmark-pdf text-muted" style="font-size: 3rem;"></i>
+                                        <p class="small text-muted mb-0 mt-2">ยังไม่ได้เลือกไฟล์</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between mt-4 gap-2">
+                    <button type="button" class="btn btn-gradient btn-next order-md-last px-5">
+                        ถัดไป <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-prev px-5">
+                        <i class="bi bi-arrow-left me-2"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 6: ยืนยันข้อมูล -->
+            <div class="form-step" data-step="6">
+                <h4 class="fw-bold mb-4 text-gradient">
+                    <i class="bi bi-check-circle-fill me-2"></i> ยืนยันข้อมูลการสมัคร
+                </h4>
+
+                <!-- สรุปข้อมูล -->
+                <div class="card bg-light mb-4" data-aos="fade-up">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-4">
+                            <i class="bi bi-clipboard-check me-2 text-primary"></i>
+                            สรุปข้อมูลการสมัคร
+                        </h5>
+
+                        <!-- ข้อมูลส่วนตัว -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-person-fill me-2"></i>ข้อมูลส่วนตัว
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">ชื่อ-นามสกุล:</small>
+                                    <p class="mb-0 fw-medium" id="summary_name">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">เลขบัตรประชาชน:</small>
+                                    <p class="mb-0 fw-medium" id="summary_id_card">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">วันเกิด:</small>
+                                    <p class="mb-0 fw-medium" id="summary_birth_date">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">เบอร์โทรศัพท์:</small>
+                                    <p class="mb-0 fw-medium" id="summary_phone">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ที่อยู่ -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-house-fill me-2"></i>ที่อยู่
+                            </h6>
+                            <small class="text-muted d-block">ที่อยู่ปัจจุบัน:</small>
+                            <p class="mb-0 fw-medium" id="summary_current_address">-</p>
+                        </div>
+
+                        <!-- การศึกษา -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-book-fill me-2"></i>ข้อมูลการศึกษา
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">โรงเรียน/สถาบัน:</small>
+                                    <p class="mb-0 fw-medium" id="summary_school">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">เกรดเฉลี่ย (GPAX):</small>
+                                    <p class="mb-0 fw-medium" id="summary_gpax">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- สาขาที่สมัคร -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-list-ul me-2"></i>สาขาที่สมัคร
+                            </h6>
+                            <div class="alert alert-info mb-0 shadow-sm">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <strong id="summary_department">-</strong>
+                            </div>
+                        </div>
+
+                        <!-- เอกสาร -->
+                        <div>
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-cloud-upload-fill me-2"></i>เอกสารที่อัปโหลด
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-6 col-md-3">
+                                    <div class="text-center p-3 border rounded bg-white shadow-sm">
+                                        <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                                        <p class="small mb-0 mt-2">รูปถ่าย</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="text-center p-3 border rounded bg-white shadow-sm">
+                                        <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                                        <p class="small mb-0 mt-2">บัตรประชาชน</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="text-center p-3 border rounded bg-white shadow-sm">
+                                        <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                                        <p class="small mb-0 mt-2">ทะเบียนบ้าน</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="text-center p-3 border rounded bg-white shadow-sm">
+                                        <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                                        <p class="small mb-0 mt-2">Transcript</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- เงื่อนไข -->
+                <div class="card bg-light mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="accept_terms" required>
+                            <label class="form-check-label fw-bold" for="accept_terms">
+                                ข้าพเจ้ายอมรับเงื่อนไขและข้อตกลง <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <ul class="small text-muted mb-0 ps-4">
+                            <li class="mb-2">ข้าพเจ้ารับรองว่าข้อมูลที่กรอกทั้งหมดเป็นความจริง</li>
+                            <li class="mb-2">หากตรวจสอบพบว่าข้อมูลไม่ตรงความจริง ข้าพเจ้ายินยอมให้ยกเลิกการสมัคร</li>
+                            <li class="mb-0">ข้าพเจ้ายินยอมให้ประมวลผลข้อมูลส่วนบุคคลตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between mt-4 gap-2">
+                    <button type="submit" class="btn btn-success btn-lg order-md-last px-5 shadow" id="submit_btn">
+                        <i class="bi bi-send-fill me-2"></i> ส่งใบสมัคร
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-prev px-5">
+                        <i class="bi bi-arrow-left me-2"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
 
         </div>
     </form>

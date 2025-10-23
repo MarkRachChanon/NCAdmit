@@ -29,5 +29,6 @@ $page_title = get_page_title($current_page);
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/custom.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
