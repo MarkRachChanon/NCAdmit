@@ -1,20 +1,25 @@
 /**
  * Quota Form - Multi-Step Navigation
  * ฟอร์มรับสมัครรอบโควต้า
+ * * Updated to match new form structure (aligned with students_quota table)
  */
 
 window.addEventListener('load', function() {
-  document.getElementById('education_level_apply').selectedIndex = 0;
+  // รีเซ็ต dropdown เมื่อโหลดหน้า
+  if (document.getElementById('education_level_apply')) {
+    document.getElementById('education_level_apply').selectedIndex = 0;
+  }
 });
 
 let currentStep = 1;
 const totalSteps = 6;
+const form = document.getElementById('quotaForm');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     setupNavigation();
     setupFormInputs();
-    setupAddressCheckbox();
+    // setupAddressCheckbox(); // REMOVED
     loadSavedData();
     
     Toast.fire({
@@ -111,15 +116,18 @@ function validateCurrentStep() {
     let firstInvalidField = null;
     
     requiredInputs.forEach(input => {
-        if (!input.value.trim()) {
-            isValid = false;
-            input.classList.add('is-invalid');
-            
-            if (!firstInvalidField) {
-                firstInvalidField = input;
+        // ตรวจสอบเฉพาะ input ที่แสดงผล (ไม่นับรวมที่ซ่อนโดย 'display: none')
+        if (input.offsetParent !== null) {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.classList.add('is-invalid');
+                
+                if (!firstInvalidField) {
+                    firstInvalidField = input;
+                }
+            } else {
+                input.classList.remove('is-invalid');
             }
-        } else {
-            input.classList.remove('is-invalid');
         }
     });
     
@@ -148,6 +156,8 @@ function validateCurrentStep() {
             return validateEducation();
         case 4:
             return validateDepartment();
+        // case 5: 
+        //     return validateFiles(); // (Optional) Add file validation if needed
         default:
             return true;
     }
@@ -196,15 +206,29 @@ function validatePersonalInfo() {
 }
 
 function validateAddress() {
+    // (REMOVED logic for 'same_address')
+    // Add zipcode validation
+    const postcode = document.getElementById('postcode').value;
+    if (postcode.length !== 5 || !/^\d+$/.test(postcode)) {
+         Swal.fire({
+            icon: 'error',
+            title: 'รหัสไปรษณีย์ไม่ถูกต้อง',
+            text: 'กรุณากรอกรหัสไปรษณีย์ 5 หลัก',
+            confirmButtonColor: '#4facfe'
+        });
+        return false;
+    }
     return true;
 }
 
 function validateEducation() {
-    const gpax = parseFloat(document.getElementById('gpax').value);
-    const parentPhone = document.getElementById('parent_phone').value.replace(/-/g, '');
+    // *** FIELD ID UPDATED ***
+    const gpa = parseFloat(document.getElementById('gpa').value);
+    
+    // *** REMOVED parent_phone validation ***
     
     // Validate GPAX
-    if (isNaN(gpax) || gpax < 0 || gpax > 4) {
+    if (isNaN(gpa) || gpa < 0 || gpa > 4) {
         Swal.fire({
             icon: 'error',
             title: 'เกรดเฉลี่ยไม่ถูกต้อง',
@@ -214,22 +238,12 @@ function validateEducation() {
         return false;
     }
     
-    // Validate Parent Phone
-    if (parentPhone.length !== 10 || !/^0\d{9}$/.test(parentPhone)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'เบอร์โทรศัพท์ผู้ปกครองไม่ถูกต้อง',
-            text: 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก เริ่มต้นด้วย 0',
-            confirmButtonColor: '#4facfe'
-        });
-        return false;
-    }
-    
     return true;
 }
 
 function validateDepartment() {
-    const department = document.getElementById('department_1').value;
+    // *** FIELD ID UPDATED ***
+    const department = document.getElementById('department_id').value;
     
     if (!department) {
         Swal.fire({
@@ -256,15 +270,13 @@ function setupFormInputs() {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 13) value = value.slice(0, 13);
             
-            if (value.length > 0) {
-                let formatted = '';
-                if (value.length > 0) formatted += value.substr(0, 1);
-                if (value.length > 1) formatted += '-' + value.substr(1, 4);
-                if (value.length > 5) formatted += '-' + value.substr(5, 5);
-                if (value.length > 10) formatted += '-' + value.substr(10, 2);
-                if (value.length > 12) formatted += '-' + value.substr(12, 1);
-                e.target.value = formatted;
-            }
+            let formatted = '';
+            if (value.length > 0) formatted += value.substr(0, 1);
+            if (value.length > 1) formatted += '-' + value.substr(1, 4);
+            if (value.length > 5) formatted += '-' + value.substr(5, 5);
+            if (value.length > 10) formatted += '-' + value.substr(10, 2);
+            if (value.length > 12) formatted += '-' + value.substr(12, 1);
+            e.target.value = formatted;
         });
     }
     
@@ -275,37 +287,21 @@ function setupFormInputs() {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 10) value = value.slice(0, 10);
             
-            if (value.length > 0) {
-                let formatted = '';
-                if (value.length > 0) formatted += value.substr(0, 3);
-                if (value.length > 3) formatted += '-' + value.substr(3, 3);
-                if (value.length > 6) formatted += '-' + value.substr(6, 4);
-                e.target.value = formatted;
-            }
+            let formatted = '';
+            if (value.length > 0) formatted += value.substr(0, 3);
+            if (value.length > 3) formatted += '-' + value.substr(3, 3);
+            if (value.length > 6) formatted += '-' + value.substr(6, 4);
+            e.target.value = formatted;
         });
     }
     
-    // Phone Format (0XX-XXX-XXXX) - Parent
-    const parentPhoneInput = document.getElementById('parent_phone');
-    if (parentPhoneInput) {
-        parentPhoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.slice(0, 10);
-            
-            if (value.length > 0) {
-                let formatted = '';
-                if (value.length > 0) formatted += value.substr(0, 3);
-                if (value.length > 3) formatted += '-' + value.substr(3, 3);
-                if (value.length > 6) formatted += '-' + value.substr(6, 4);
-                e.target.value = formatted;
-            }
-        });
-    }
+    // *** REMOVED Parent Phone Formatting ***
     
     // GPAX Format (0.00 - 4.00)
-    const gpaxInput = document.getElementById('gpax');
-    if (gpaxInput) {
-        gpaxInput.addEventListener('input', function(e) {
+    // *** FIELD ID UPDATED ***
+    const gpaInput = document.getElementById('gpa');
+    if (gpaInput) {
+        gpaInput.addEventListener('input', function(e) {
             let value = parseFloat(e.target.value);
             if (value > 4) {
                 e.target.value = '4.00';
@@ -314,7 +310,7 @@ function setupFormInputs() {
             }
         });
         
-        gpaxInput.addEventListener('blur', function(e) {
+        gpaInput.addEventListener('blur', function(e) {
             let value = parseFloat(e.target.value);
             if (!isNaN(value)) {
                 e.target.value = value.toFixed(2);
@@ -323,7 +319,8 @@ function setupFormInputs() {
     }
     
     // Zipcode Format (เฉพาะตัวเลข 5 หลัก)
-    const zipcodeInputs = document.querySelectorAll('[name$="_zipcode"]');
+    // *** FIELD NAME UPDATED ***
+    const zipcodeInputs = document.querySelectorAll('[name="postcode"]');
     zipcodeInputs.forEach(input => {
         input.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
@@ -344,63 +341,74 @@ function setupFormInputs() {
     
     // Setup Department Selection
     setupDepartmentSelection();
+
+    // Setup File Previews
+    setupFilePreview('photo', 'photo_preview', 'image', 2);
+    // setupFilePreview('id_card_file', 'id_card_preview'); // REMOVED
+    // setupFilePreview('house_registration', 'house_registration_preview'); // REMOVED
+    setupFilePreview('transcript', 'transcript_preview', 'pdf', 5);
+}
+
+// ใน assets/js/quota-form.js
+
+function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
+    const input = document.getElementById(inputId);
+    const previewContainer = document.getElementById(previewId);
+    const maxBytes = maxMB * 1024 * 1024; // คำนวณขนาดเป็น Bytes
+
+    if (input && previewContainer) {
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // --- START: ส่วนที่เพิ่มเข้ามา ---
+                // ตรวจสอบขนาดไฟล์
+                if (file.size > maxBytes) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'ไฟล์มีขนาดใหญ่เกินไป',
+                        text: `กรุณาเลือกไฟล์ขนาดไม่เกิน ${maxMB} MB`
+                    });
+                    
+                    // ล้างค่าไฟล์ที่เลือก
+                    this.value = ''; 
+                    
+                    // รีเซ็ต Preview
+                    if (type === 'image') {
+                        previewContainer.src = 'https://placehold.co/150x200/4facfe/ffffff?text=Photo'; // URL Placeholder
+                    } else {
+                        previewContainer.innerHTML = `
+                            <i class="bi bi-file-earmark-pdf text-muted" style="font-size: 3rem;"></i>
+                            <p class="small text-muted mb-0 mt-2">ยังไม่ได้เลือกไฟล์</p>
+                        `;
+                    }
+                    return; // หยุดการทำงาน
+                }
+                // --- END: ส่วนที่เพิ่มเข้ามา ---
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (type === 'image') {
+                        previewContainer.src = e.target.result;
+                    } else {
+                        previewContainer.innerHTML = `
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                            <p class="small text-dark mb-0 mt-2" style="overflow-wrap: break-word;">${file.name}</p>
+                        `;
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 }
 
 // ========================================
 // Address Functions
 // ========================================
 
-function setupAddressCheckbox() {
-    const checkbox = document.getElementById('same_address');
-    const registerSection = document.getElementById('register_address_section');
-    
-    if (checkbox) {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                copyCurrentToRegister();
-                registerSection.style.display = 'none';
-                
-                // ปิด required ของ register address
-                registerSection.querySelectorAll('[required]').forEach(input => {
-                    input.removeAttribute('required');
-                });
-                
-                Toast.fire({
-                    icon: 'success',
-                    title: 'คัดลอกที่อยู่สำเร็จ'
-                });
-            } else {
-                registerSection.style.display = 'block';
-                
-                // เปิด required กลับ
-                registerSection.querySelectorAll('input, select').forEach(input => {
-                    if (input.name && input.name.startsWith('register_')) {
-                        input.setAttribute('required', 'required');
-                    }
-                });
-            }
-        });
-    }
-}
+// *** REMOVED setupAddressCheckbox() ***
+// *** REMOVED copyCurrentToRegister() ***
 
-function copyCurrentToRegister() {
-    const fields = [
-        'address',
-        'province',
-        'district',
-        'subdistrict',
-        'zipcode'
-    ];
-    
-    fields.forEach(field => {
-        const currentField = document.getElementById(`current_${field}`);
-        const registerField = document.getElementById(`register_${field}`);
-        
-        if (currentField && registerField) {
-            registerField.value = currentField.value;
-        }
-    });
-}
 
 // ========================================
 // Session Storage
@@ -408,20 +416,24 @@ function copyCurrentToRegister() {
 
 function saveStepData() {
     const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    if (!currentStepElement) return;
+
     const inputs = currentStepElement.querySelectorAll('input, select, textarea');
     
     const formData = {};
     inputs.forEach(input => {
-        if (input.type === 'checkbox') {
-            formData[input.name] = input.checked;
-        } else if (input.type === 'file') {
-            // ไม่เก็บ file ใน session
-        } else {
-            formData[input.name] = input.value;
+        if (input.name) { // Ensure the input has a name
+            if (input.type === 'checkbox') {
+                formData[input.name] = input.checked;
+            } else if (input.type === 'file') {
+                // ไม่เก็บ file ใน session
+            } else {
+                formData[input.name] = input.value;
+            }
         }
     });
     
-    // Save to session
+    // Save to session (Assuming you have these backend files)
     fetch('includes/save_session.php', {
         method: 'POST',
         headers: {
@@ -435,7 +447,7 @@ function saveStepData() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log('Session saved');
+            console.log('Session saved for step ' + currentStep);
         }
     })
     .catch(error => {
@@ -444,6 +456,7 @@ function saveStepData() {
 }
 
 function loadSavedData() {
+    // (Assuming you have these backend files)
     fetch('includes/load_session.php')
     .then(response => response.json())
     .then(data => {
@@ -455,6 +468,11 @@ function loadSavedData() {
                         input.checked = data.quota_form_data[key];
                     } else {
                         input.value = data.quota_form_data[key];
+                    }
+
+                    // Trigger change event for dependent logic
+                    if (key === 'birth_date') {
+                         input.dispatchEvent(new Event('change'));
                     }
                 }
             });
@@ -481,7 +499,8 @@ function setupDepartmentSelection() {
                 loadDepartmentsByLevel(level);
             } else {
                 document.getElementById('department_selection_card').style.display = 'none';
-                document.getElementById('department_1').value = '';
+                // *** FIELD ID UPDATED ***
+                document.getElementById('department_id').value = '';
             }
         });
     }
@@ -500,7 +519,8 @@ function loadDepartmentsByLevel(level) {
     
     // Clear previous selections
     departmentList.innerHTML = '';
-    document.getElementById('department_1').value = '';
+    // *** FIELD ID UPDATED ***
+    document.getElementById('department_id').value = '';
     document.getElementById('selected_department').style.display = 'none';
     if (searchInput) searchInput.value = '';
     
@@ -615,7 +635,8 @@ function selectDepartment(cardElement) {
     const deptName = cardElement.dataset.deptName;
     const deptCategory = cardElement.dataset.deptCategory;
     
-    document.getElementById('department_1').value = deptId;
+    // *** FIELD ID UPDATED ***
+    document.getElementById('department_id').value = deptId;
     
     // Show selected department
     document.getElementById('selected_dept_name').textContent = deptName;
@@ -642,7 +663,8 @@ function clearDepartmentSelection() {
         card.querySelector('.bi-check-circle-fill').style.display = 'none';
     });
     
-    document.getElementById('department_1').value = '';
+    // *** FIELD ID UPDATED ***
+    document.getElementById('department_id').value = '';
     document.getElementById('selected_department').style.display = 'none';
     
     Toast.fire({
@@ -704,4 +726,4 @@ function hideLoading() {
     Swal.close();
 }
 
-console.log('Quota Form Loaded ✓');
+console.log('Quota Form (v2) Loaded ✓');
