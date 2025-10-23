@@ -361,7 +361,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="icon-circle bg-primary bg-opacity-10 text-primary" 
-                                             style="width: 50px; height: 50px;">
+                                             style="width: 65px; height: 65px;">
                                             <i class="bi bi-file-earmark-person display-6"></i>
                                         </div>
                                     </div>
@@ -379,7 +379,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="icon-circle bg-success bg-opacity-10 text-success" 
-                                             style="width: 50px; height: 50px;">
+                                             style="width: 65px; height: 65px;">
                                             <i class="bi bi-file-earmark-text display-6"></i>
                                         </div>
                                     </div>
@@ -397,7 +397,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="icon-circle bg-info bg-opacity-10 text-info" 
-                                             style="width: 50px; height: 50px;">
+                                             style="width: 65px; height: 65px;">
                                             <i class="bi bi-person-badge display-6"></i>
                                         </div>
                                     </div>
@@ -414,7 +414,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="icon-circle bg-warning bg-opacity-10 text-warning" 
-                                             style="width: 50px; height: 50px;">
+                                             style="width: 65px; height: 65px;">
                                             <i class="bi bi-file-earmark-medical display-6"></i>
                                         </div>
                                     </div>

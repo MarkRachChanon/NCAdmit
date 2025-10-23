@@ -561,3 +561,52 @@ footer a:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.department-card {
+    transition: all 0.3s ease;
+}
+
+.department-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.department-card.border-primary {
+    animation: selectPulse 0.5s ease;
+}
+
+@keyframes selectPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+#department_search {
+    border-left: none;
+}
+
+#department_search:focus {
+    box-shadow: none;
+    border-color: #4facfe;
+}
+
+.input-group-text {
+    border-right: none;
+}
+
+/* Category Headers */
+#department_list h6 {
+    position: relative;
+    padding-left: 15px;
+}
+
+#department_list h6::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: var(--blue-gradient);
+    border-radius: 2px;
+}
