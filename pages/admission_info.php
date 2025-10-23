@@ -45,7 +45,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 <?php if ($quota_open): ?>
                                     <span class="badge bg-success">เปิดรับสมัคร</span>
                                 <?php else: ?>
-                                    <span class="badge bg-danger">ปิดรับสมัคร</span>
+                                    <span class="badge bg-danger">ยังไม่เปิดรับสมัคร</span>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -60,7 +60,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 </a>
                             <?php else: ?>
                                 <button class="btn btn-secondary btn-lg" disabled>
-                                    <i class="bi bi-x-circle me-2"></i> ปิดรับสมัคร
+                                    <i class="bi bi-x-circle me-2"></i> ยังไม่เปิดรับสมัคร
                                 </button>
                             <?php endif; ?>
                         </div>

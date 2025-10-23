@@ -7,13 +7,90 @@
 
 // ตรวจสอบว่าเปิดรับสมัครรอบโควต้าหรือไม่
 if (!is_admission_open('quota')) {
-    echo '<div class="container py-5">
-            <div class="alert alert-warning text-center shadow">
-                <i class="bi bi-exclamation-triangle-fill fs-1 mb-3 d-block"></i>
-                <h4 class="mb-3">ปิดรับสมัครรอบโควต้า</h4>
-                <p class="mb-0">ขณะนี้ยังไม่เปิดรับสมัครรอบโควต้า กรุณาติดตามข่าวสารเพิ่มเติม</p>
-            </div>
-          </div>';
+        echo '<section class="py-5">
+                <div class="container">
+                    <div class="row mb-5 text-center">
+                        <div class="col-12" data-aos="fade-up">
+                            <h2 class="section-title text-gradient">ตอนยังไม่เปิดรับสมัคร</h2>
+                            <p class="section-subtitle">ขณะนี้ยังไม่เปิดรับสมัครรอบโควต้า</p>
+                        </div>
+                    </div>
+                    <div class="alert text-center shadow text-black" data-aos="fade-up">
+                        <i class="bi bi-exclamation-triangle-fill fs-1 mb-3 d-block text-primary"></i>
+                        <h4 class="mb-3">ยังไม่เปิดรับสมัครรอบโควต้า</h4>
+                        <p class="mb-4 text-muted">ขณะนี้ยังไม่เปิดรับสมัครรอบโควต้า กรุณาติดตามข่าวสารเพิ่มเติม</p>
+                        <a href="index.php?page=home" class="btn btn-gradient">
+                            กลับหน้าหลัก <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <section id="quick-info" class="py-5 bg-light">
+                <div class="container">
+                    <div class="row mb-5 text-center">
+                        <div class="col-12" data-aos="fade-up">
+                            <h2 class="section-title text-gradient">บริการของเรา</h2>
+                            <p class="section-subtitle">เลือกบริการที่คุณต้องการ</p>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <!-- Card 1: รับสมัคร -->
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="card h-100">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-circle bg-gradient-primary text-white mb-4">
+                                        <i class="bi bi-file-earmark-text display-6"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold mb-3">รับสมัครออนไลน์</h5>
+                                    <p class="card-text text-muted mb-4">
+                                        สมัครเรียนออนไลน์ได้ตลอด 24 ชั่วโมง<br>
+                                        สะดวก รวดเร็ว ปลอดภัย
+                                    </p>
+                                    <a href="index.php?page=admission_info" class="btn btn-gradient">
+                                        ดูรายละเอียด <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2: ตรวจสอบสถานะ -->
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                            <div class="card h-100">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-circle bg-gradient-secondary text-white mb-4">
+                                        <i class="bi bi-search display-6"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold mb-3">ตรวจสอบสถานะ</h5>
+                                    <p class="card-text text-muted mb-4">
+                                        ตรวจสอบผลการสมัครได้ทันที<br>
+                                        พร้อมข้อมูลรายละเอียด
+                                    </p>
+                                    <a href="index.php?page=check_status" class="btn btn-gradient">
+                                        ตรวจสอบเลย <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3: ติดต่อสอบถาม -->
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                            <div class="card h-100">
+                                <div class="card-body text-center p-4">
+                                    <div class="icon-circle bg-gradient-blue text-white mb-4">
+                                        <i class="bi bi-telephone display-6"></i>
+                                    </div>
+                                    <h5 class="card-title fw-bold mb-3">ติดต่อสอบถาม</h5>
+                                    <p class="card-text text-muted mb-4">
+                                        สอบถามข้อมูลเพิ่มเติมได้ที่นี่<br>
+                                        ทีมงานพร้อมให้บริการ
+                                    </p>
+                                    <a href="index.php?page=contact" class="btn btn-gradient">
+                                        ติดต่อเรา <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>';
     return;
 }
 

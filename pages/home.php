@@ -38,10 +38,7 @@ $news_result = $conn->query($sql_news);
             
             <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-delay="200">
                 <div class="hero-image">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3976/3976625.png" 
-                         alt="Education" 
-                         class="img-fluid" 
-                         style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3976/3976625.png" alt="Education" class="img-fluid" style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
                 </div>
             </div>
         </div>
@@ -57,7 +54,7 @@ $news_result = $conn->query($sql_news);
                 <p class="section-subtitle">เลือกบริการที่คุณต้องการ</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <!-- Card 1: รับสมัคร -->
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
@@ -116,6 +113,7 @@ $news_result = $conn->query($sql_news);
                 </div>
             </div>
         </div>
+        
     </div>
 </section>
 
