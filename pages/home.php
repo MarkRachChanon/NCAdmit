@@ -18,7 +18,7 @@ $news_result = $conn->query($sql_news);
                         <?php echo $site_name; ?>
                     </h1>
                     <h2 class="hero-subtitle text-white mb-4">
-                        ระบบรับสมัครนักเรียนออนไลน์<br class="d-none d-md-inline"> 
+                        ระบบรับสมัครนักเรียนออนไลน์ ปีการศึกษา <?php echo (date('Y') + 543 + 1); ?><br class="d-none d-md-inline"> 
                         วิทยาลัยอาชีวศึกษานครปฐม
                     </h2>
                     <p class="hero-text text-white mb-5">
