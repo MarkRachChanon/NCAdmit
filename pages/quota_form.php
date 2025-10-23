@@ -99,6 +99,9 @@ while ($dept = $departments_result->fetch_assoc()) {
 <div class="container mb-4">
     <div class="card shadow-sm">
         <div class="card-body p-3">
+            <h4 class="fw-bold mb-4 text-gradient">
+                <i class="bi bi-check-circle-fill me-2"></i> กระบวนการสมัคร
+            </h4>
             <div class="row g-2 align-items-center text-center small">
                 <div class="col step-item" data-step="1">
                     <div class="step-indicator active d-inline-flex align-items-center justify-content-center rounded-circle text-white fw-bold mb-2">
@@ -213,7 +216,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                     </div>
                 </div>
 
-                <div class="d-flex flex-column flex-md-row justify-content-between mt-4 gap-2">
+                <div class="d-flex flex-column flex-md-row justify-content-end mt-4 gap-2">
                     <button type="button" class="btn btn-gradient btn-next order-md-last px-5">
                         ถัดไป <i class="bi bi-arrow-right ms-2"></i>
                     </button>
