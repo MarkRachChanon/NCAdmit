@@ -20,8 +20,8 @@ if (!is_admission_open('quota')) {
                         <i class="bi bi-exclamation-triangle-fill fs-1 mb-3 d-block text-primary"></i>
                         <h4 class="mb-3">ยังไม่เปิดรับสมัครรอบโควต้า</h4>
                         <p class="mb-4 text-muted">ขณะนี้ยังไม่เปิดรับสมัครรอบโควต้า กรุณาติดตามข่าวสารเพิ่มเติม</p>
-                        <a href="index.php?page=home" class="btn btn-gradient">
-                            กลับหน้าหลัก <i class="bi bi-arrow-right ms-2"></i>
+                        <a href="index.php?page=admission_info" class="btn btn-gradient">
+                            กลับหน้ารับสมัคร <i class="bi bi-arrow-right ms-2"></i>
                         </a>
                     </div>
                 </div>
