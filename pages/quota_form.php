@@ -154,7 +154,7 @@ while ($dept = $departments_result->fetch_assoc()) {
             <div class="col-md-8">
                 <h2 class="mb-1">
                     <i class="bi bi-file-earmark-text me-2"></i>
-                    ใบสมัครเข้าศึกษาต่อ รอบโควต้า
+                    สมัครเข้าศึกษาต่อ รอบโควต้า (วิทยาลัยอาชีวศึกษานครปฐม)
                 </h2>
                 <p class="mb-0 opacity-75">ปีการศึกษา <?php echo (date('Y') + 543 + 1); ?></p>
             </div>
