@@ -769,9 +769,9 @@ while ($dept = $departments_result->fetch_assoc()) {
                 <div class="card bg-light mb-4">
                     <div class="card-body">
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="accept_terms" required>
+                            <input class="form-check-input" type="checkbox" value="" id="accept_terms">
                             <label class="form-check-label fw-bold" for="accept_terms">
-                                ข้าพเจ้ายอมรับเงื่อนไขและข้อตกลง <span class="text-danger">*</span>
+                                ข้าพเจ้ายอมรับเงื่อนไขและข้อตกลงในการสมัคร
                             </label>
                         </div>
                         <ul class="small text-muted mb-0 ps-4">
@@ -818,8 +818,8 @@ while ($dept = $departments_result->fetch_assoc()) {
         const val = (value) => (value && value.trim() !== '') ? value.trim() : '-';
         // ฟังก์ชันช่วยสำหรับ GPA
         const gpaVal = (value) => {
-             const num = parseFloat(value);
-             return (!isNaN(num) && num > 0) ? num.toFixed(2) : '-';
+            const num = parseFloat(value);
+            return (!isNaN(num) && num > 0) ? num.toFixed(2) : '-';
         }
 
         // Step 1: Personal Info
@@ -827,7 +827,11 @@ while ($dept = $departments_result->fetch_assoc()) {
         document.getElementById('summary_nickname').textContent = val(form.nickname.value);
         document.getElementById('summary_id_card').textContent = val(form.id_card.value);
         const birthDate = form.birth_date.value;
-        document.getElementById('summary_birth_date').textContent = birthDate ? new Date(birthDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
+        document.getElementById('summary_birth_date').textContent = birthDate ? new Date(birthDate).toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) : '-';
         document.getElementById('summary_age').textContent = val(form.age.value ? `${form.age.value} ปี` : '');
         document.getElementById('summary_blood_group').textContent = val(form.blood_group.value);
         document.getElementById('summary_ethnicity').textContent = val(form.ethnicity.value);
@@ -863,19 +867,26 @@ while ($dept = $departments_result->fetch_assoc()) {
         const selectedDeptCategory = document.getElementById('selected_dept_category').textContent;
         document.getElementById('summary_department_name').textContent = val(selectedDeptName);
         document.getElementById('summary_department_category').textContent = val(selectedDeptCategory);
-        
+
         // Step 5: Files Status
-        document.getElementById('summary_photo_status').className = 
-            form.photo.files.length > 0 ? 'bi bi-check-circle-fill text-success fs-3' : 'bi bi-x-circle-fill text-danger fs-3';
-        document.getElementById('summary_transcript_status').className = 
-            form.transcript.files.length > 0 ? 'bi bi-check-circle-fill text-success fs-3' : 'bi bi-x-circle-fill text-danger fs-3';
+        const uploads = JSON.parse(sessionStorage.getItem('quotaFormUploads')) || {};
+        document.getElementById('summary_photo_status').className =
+            (uploads.photo && uploads.photo.path) 
+            ? 'bi bi-check-circle-fill text-success fs-3' 
+            : 'bi bi-x-circle-fill text-danger fs-3';
+            
+        document.getElementById('summary_transcript_status').className =
+            (uploads.transcript && uploads.transcript.path)
+            ? 'bi bi-check-circle-fill text-success fs-3'
+            : 'bi bi-x-circle-fill text-danger fs-3';
     }
+
 
 
     document.addEventListener('DOMContentLoaded', () => {
         const birthDateInput = document.getElementById('birth_date');
         const ageInput = document.getElementById('age');
-        
+
         // Auto calculate age
         if (birthDateInput && ageInput) {
             birthDateInput.addEventListener('change', () => {
@@ -894,56 +905,62 @@ while ($dept = $departments_result->fetch_assoc()) {
             });
         }
 
-        // Form Submit Handler (ตัวอย่าง)
+        // Form Submit Handler - *** แก้ไขใหม่: เพิ่ม Modal ยืนยันก่อนส่ง ***
         const form = document.getElementById('quotaForm');
         form.addEventListener('submit', function(e) {
-             e.preventDefault();
+             e.preventDefault(); // 1. หยุดการส่งฟอร์มตามปกติ
              
-             // ตรวจสอบ Checkbox ยอมรับเงื่อนไข
+             // 2. ตรวจสอบ Checkbox ยอมรับเงื่อนไข
              if (!document.getElementById('accept_terms').checked) {
                 Swal.fire({
-                    icon: 'error',
+                    icon: 'warning',
                     title: 'ยังไม่ยอมรับเงื่อนไข',
-                    text: 'กรุณากดยอมรับเงื่อนไขและข้อตกลงก่อนส่งใบสมัคร',
-                    confirmButtonColor: '#4facfe'
+                    text: 'กรุณากดยอมรับเงื่อนไขและข้อตกลงก่อนส่งใบสมัคร'
                 });
-                return;
+                return; // หยุดการทำงานถ้ายังไม่ติ๊ก
              }
 
-             // ที่นี่คือส่วนที่จะส่งข้อมูลไปประมวลผล (AJAX/Fetch)
-             // ...
-             
-             console.log('Form submitted!');
-             showLoading('กำลังส่งใบสมัคร...'); // แสดง Loading
-             
-             // ตัวอย่าง: จำลองการส่งข้อมูล
-             setTimeout(() => {
-                hideLoading(); // ซ่อน Loading
-                Swal.fire({
-                    title: 'ส่งใบสมัครสำเร็จ!',
-                    text: 'กำลังนำคุณไปยังหน้าตรวจสอบสถานะ',
-                    icon: 'success',
-                    timer: 3000,
-                    showConfirmButton: false
-                }).then(() => {
-                    // window.location.href = 'index.php?page=check_status';
-                });
-             }, 2000);
+             // 3. 🚀 แสดง Modal ยืนยันการส่ง
+             Swal.fire({
+                title: 'ยืนยันการส่งใบสมัคร',
+                text: "กรุณาตรวจสอบข้อมูลให้ถูกต้องครบถ้วนก่อนส่งใบสมัคร",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745', // สีเขียว
+                cancelButtonColor: '#6c757d',  // สีเทา
+                confirmButtonText: '<i class="bi bi-send-fill me-2"></i> ยืนยันการส่ง',
+                cancelButtonText: 'ยกเลิก'
+             }).then((result) => {
+                
+                // 4. ถ้าผู้ใช้กด "ยืนยันการส่ง"
+                if (result.isConfirmed) {
+                    
+                    // 5. เรียกฟังก์ชัน submitForm() จาก quota-form.js
+                    if (typeof submitForm === 'function') {
+                        submitForm(); // <--- เรียกใช้ฟังก์ชันส่งข้อมูลจริง
+                    } else {
+                        console.error('❌ ฟังก์ชัน submitForm() ไม่พบ');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'ไม่พบฟังก์ชันส่งข้อมูล กรุณาโหลดหน้าใหม่'
+                        });
+                    }
+                }
+             });
         });
 
         // Update Summary Step
         document.querySelectorAll('.btn-next').forEach(btn => {
             btn.addEventListener('click', () => {
-                // ตรวจสอบตัวแปร currentStep (จาก quota-form.js)
-                if(typeof currentStep !== 'undefined' && currentStep === 5) { // เมื่อกำลังจะไป Step 6
-                    if (validateCurrentStep()) { // ตรวจสอบไฟล์ก่อน
+                if (typeof currentStep !== 'undefined' && currentStep === 5) {
+                    if (validateCurrentStep()) {
                         updateSummary();
                     }
                 }
             });
         });
     });
-
 </script>
 
 <script src="assets/js/quota-form.js"></script>
