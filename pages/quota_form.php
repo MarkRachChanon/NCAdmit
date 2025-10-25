@@ -225,7 +225,7 @@ while ($dept = $departments_result->fetch_assoc()) {
         </div>
     </div>
 
-    <form id="quotaForm">
+    <form id="quotaForm" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="form_type" value="quota">
 
         <!-- Step 1: Personal Information -->
@@ -264,6 +264,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <label class="form-label">เลขบัตรประชาชน <span class="text-danger">*</span></label>
                             <input type="text" name="id_card" id="id_card" class="form-control"
                                 placeholder="X-XXXX-XXXXX-XX-X" maxlength="17" required>
+                            <small class="text-muted">รูปแบบ: X-XXXX-XXXXX-XX-X</small>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">วันเกิด <span class="text-danger">*</span></label>
@@ -301,6 +302,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <label class="form-label">เบอร์โทรศัพท์ <span class="text-danger">*</span></label>
                             <input type="tel" name="phone" id="phone" class="form-control"
                                 placeholder="0XX-XXX-XXXX" maxlength="12" required>
+                            <small class="text-muted">รูปแบบ: 0XX-XXX-XXXX</small>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">อีเมล <span class="text-danger">*</span></label>
