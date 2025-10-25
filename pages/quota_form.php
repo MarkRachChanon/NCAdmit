@@ -416,8 +416,8 @@ while ($dept = $departments_result->fetch_assoc()) {
                                 <option value="">เลือกปีที่จบ</option>
                                 <?php
                                 $currentYearBE = date('Y') + 543;
-                                $startYear = $currentYearBE + 1; // ปีปัจจุบัน + 1 (สำหรับคนที่กำลังจะจบ)
-                                $endYear = $currentYearBE - 5;   // ย้อนหลัง 5 ปี
+                                $startYear = $currentYearBE + 1;
+                                $endYear = $currentYearBE - 5;
                                 for ($year = $startYear; $year >= $endYear; $year--) {
                                     echo "<option value='$year'>$year</option>";
                                 }
