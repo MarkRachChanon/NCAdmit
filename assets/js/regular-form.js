@@ -12,7 +12,7 @@ window.addEventListener('load', function () {
 });
 
 let currentStep = 1;
-const totalSteps = 6;
+const totalSteps = 7;
 const form = document.getElementById('regularForm');
 
 // Initialize
@@ -44,38 +44,23 @@ function setupNavigation() {
                 return;
             }
 
-            // 2. 🚀 ตรรกะพิเศษสำหรับ Step 5 (อัปโหลดไฟล์)
-            if (currentStep === 5) {
-                // ดึงปีการศึกษาปัจจุบัน (ตามตรรกะใน getFormData)
-                const academicYear = (new Date().getFullYear() + 543 + 1).toString();
-
-                showLoading('กำลังอัปโหลดเอกสาร...');
-
-                // 3. เรียกฟังก์ชันอัปโหลดใหม่
-                const uploadSuccess = await handleFileUploads(academicYear);
-
-                hideLoading();
-
-                if (uploadSuccess) {
-                    // ถ้าสำเร็จ ค่อยไปหน้าถัดไป (Step 6)
-                    saveStepData(); // (บันทึกข้อมูล step 5 อื่นๆ ถ้ามี)
-                    updateSummary(); // 🚀 อัปเดตหน้าสรุป (สำคัญ)
-                    nextStep();
-                } else {
-                    // ถ้าล้มเหลว แจ้งเตือนและหยุดอยู่หน้าเดิม
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'อัปโหลดไม่สำเร็จ',
-                        text: 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์ กรุณาตรวจสอบไฟล์และลองอีกครั้ง'
-                    });
+            // 2. 🚀 ตรรกะพิเศษสำหรับ Step 6 (อัปโหลดไฟล์)
+            if (currentStep === 6) {
+                // *** NEW LOGIC: VALIDATE FILES ONLY, DO NOT UPLOAD ***
+                if (!validateFileInputs()) { // ตรวจสอบว่าเลือกไฟล์ครบหรือไม่
+                    return;
                 }
+                
+                // ไม่ต้องเรียก handleFileUploads() ที่นี่แล้ว
+                saveStepData();
+                updateSummary();
+                nextStep();
 
             } else {
-                // 4. ตรรกะปกติสำหรับ Step 1, 2, 3, 4
+                // 3. ตรรกะปกติสำหรับ Step อื่นๆ
                 saveStepData();
 
-                // 🚀 อัปเดตหน้าสรุป ถ้ากำลังจะไป Step 6
-                if (currentStep === 5) {
+                if (currentStep === 5) { // Step 6 คือ Step ก่อน Step สรุป (7)
                     updateSummary();
                 }
 
@@ -196,11 +181,15 @@ function validateCurrentStep() {
         case 3:
             return validateEducation();
         case 4:
+            return validateFamily();
+        case 5:
             return validateDepartment();
-        // case 5: 
-        //     return validateFiles(); // (Optional) Add file validation if needed
         default:
             return true;
+    }
+
+    function validateFamily() {
+        return true;
     }
 }
 
@@ -282,6 +271,34 @@ function validateDepartment() {
     return true;
 }
 
+function validateFileInputs() {
+    // ตรวจสอบว่าไฟล์ถูกเลือกแล้วหรือไม่
+    const photoFile = document.getElementById('photo').files[0];
+    const transcriptFile = document.getElementById('transcript').files[0];
+
+    // 🚨 หากมีไฟล์อื่น ๆ ที่จำเป็น ต้องเพิ่มการตรวจสอบที่นี่
+
+    if (!photoFile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ขาดไฟล์ที่จำเป็น',
+            text: 'กรุณาอัปโหลดรูปถ่ายหน้าตรง'
+        });
+        return false;
+    }
+    
+    if (!transcriptFile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ขาดไฟล์ที่จำเป็น',
+            text: 'กรุณาอัปโหลดใบรับรองผลการเรียน'
+        });
+        return false;
+    }
+
+    return true;
+}
+
 // ========================================
 // Form Input Setup
 // ========================================
@@ -290,10 +307,10 @@ function setupFormInputs() {
     // ID Card Format (X-XXXX-XXXXX-XX-X)
     const idCardInput = document.getElementById('id_card');
     if (idCardInput) {
-        idCardInput.addEventListener('input', function(e) {
+        idCardInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 13) value = value.slice(0, 13);
-            
+
             let formatted = '';
             if (value.length > 0) formatted += value.substr(0, 1);
             if (value.length > 1) formatted += '-' + value.substr(1, 4);
@@ -303,14 +320,14 @@ function setupFormInputs() {
             e.target.value = formatted;
         });
     }
-    
+
     // Phone Format (0XX-XXX-XXXX)
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
+        phoneInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 10) value = value.slice(0, 10);
-            
+
             let formatted = '';
             if (value.length > 0) formatted += value.substr(0, 3);
             if (value.length > 3) formatted += '-' + value.substr(3, 3);
@@ -318,11 +335,11 @@ function setupFormInputs() {
             e.target.value = formatted;
         });
     }
-    
+
     // GPAX Format (0.00 - 4.00)
     const gpaInput = document.getElementById('gpa');
     if (gpaInput) {
-        gpaInput.addEventListener('input', function(e) {
+        gpaInput.addEventListener('input', function (e) {
             let value = parseFloat(e.target.value);
             if (value > 4) {
                 e.target.value = '4.00';
@@ -330,35 +347,35 @@ function setupFormInputs() {
                 e.target.value = '0.00';
             }
         });
-        
-        gpaInput.addEventListener('blur', function(e) {
+
+        gpaInput.addEventListener('blur', function (e) {
             let value = parseFloat(e.target.value);
             if (!isNaN(value)) {
                 e.target.value = value.toFixed(2);
             }
         });
     }
-    
+
     // Zipcode Format (เฉพาะตัวเลข 5 หลัก)
     const zipcodeInputs = document.querySelectorAll('[name="postcode"]');
     zipcodeInputs.forEach(input => {
-        input.addEventListener('input', function(e) {
+        input.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 5) value = value.slice(0, 5);
             e.target.value = value;
         });
     });
-    
+
     // Auto-save on input
     document.querySelectorAll('input, select, textarea').forEach(input => {
-        input.addEventListener('change', function() {
+        input.addEventListener('change', function () {
             clearTimeout(window.saveTimeout);
             window.saveTimeout = setTimeout(() => {
                 saveStepData();
             }, 1000);
         });
     });
-    
+
     // Setup Department Selection
     setupDepartmentSelection();
 
@@ -373,7 +390,7 @@ function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
     const maxBytes = maxMB * 1024 * 1024;
 
     if (input && previewContainer) {
-        input.addEventListener('change', function() {
+        input.addEventListener('change', function () {
             const file = this.files[0];
             if (file) {
                 if (file.size > maxBytes) {
@@ -383,7 +400,7 @@ function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
                         text: `กรุณาเลือกไฟล์ขนาดไม่เกิน ${maxMB} MB`
                     });
                     this.value = '';
-                    
+
                     if (type === 'image') {
                         previewContainer.src = 'https://placehold.co/150x200/4facfe/ffffff?text=Photo';
                     } else {
@@ -396,7 +413,7 @@ function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
                 }
 
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     if (type === 'image') {
                         previewContainer.src = e.target.result;
                     } else {
@@ -443,7 +460,9 @@ function loadSavedData() {
                             input.checked = true;
                         }
                     } else {
-                        input.value = value;
+                        if (input.type !== 'file') {
+                            input.value = value;
+                        }
                     }
                 }
             }
@@ -458,11 +477,11 @@ function loadSavedData() {
 function setupDepartmentSelection() {
     const levelSelect = document.getElementById('education_level_apply');
     const searchInput = document.getElementById('department_search');
-    
+
     if (levelSelect) {
-        levelSelect.addEventListener('change', function() {
+        levelSelect.addEventListener('change', function () {
             const level = this.value;
-            
+
             if (level) {
                 loadDepartmentsByLevel(level);
             } else {
@@ -472,9 +491,9 @@ function setupDepartmentSelection() {
             }
         });
     }
-    
+
     if (searchInput) {
-        searchInput.addEventListener('input', function() {
+        searchInput.addEventListener('input', function () {
             filterDepartments(this.value);
         });
     }
@@ -484,14 +503,14 @@ function loadDepartmentsByLevel(level) {
     const departmentList = document.getElementById('department_list');
     const selectionCard = document.getElementById('department_selection_card');
     const searchInput = document.getElementById('department_search');
-    
+
     // Clear previous selections
     departmentList.innerHTML = '';
     // *** FIELD ID UPDATED ***
     document.getElementById('department_id').value = '';
     document.getElementById('selected_department').style.display = 'none';
     if (searchInput) searchInput.value = '';
-    
+
     // Collect all departments with matching level
     let allDepartments = [];
     Object.keys(departmentsByCategory).forEach(catId => {
@@ -502,7 +521,7 @@ function loadDepartmentsByLevel(level) {
             }
         });
     });
-    
+
     if (allDepartments.length === 0) {
         departmentList.innerHTML = `
             <div class="col-12 text-center py-5">
@@ -513,7 +532,7 @@ function loadDepartmentsByLevel(level) {
         selectionCard.style.display = 'block';
         return;
     }
-    
+
     // Group by category for display
     const groupedDepts = {};
     allDepartments.forEach(dept => {
@@ -523,7 +542,7 @@ function loadDepartmentsByLevel(level) {
         }
         groupedDepts[catName].push(dept);
     });
-    
+
     // Display departments grouped by category
     let html = '';
     Object.keys(groupedDepts).sort().forEach(catName => {
@@ -534,24 +553,24 @@ function loadDepartmentsByLevel(level) {
                 </h6>
             </div>
         `;
-        
+
         groupedDepts[catName].forEach(dept => {
             html += createDepartmentCard(dept);
         });
     });
-    
+
     departmentList.innerHTML = html;
     selectionCard.style.display = 'block';
-    
+
     // Add click listeners
     setTimeout(() => {
         document.querySelectorAll('.department-card').forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function () {
                 selectDepartment(this);
             });
         });
     }, 100);
-    
+
     Toast.fire({
         icon: 'info',
         title: `พบ ${allDepartments.length} สาขาวิชา`
@@ -592,31 +611,31 @@ function selectDepartment(cardElement) {
         card.style.borderWidth = '1px';
         card.querySelector('.bi-check-circle-fill').style.display = 'none';
     });
-    
+
     // Add selection to clicked card
     cardElement.classList.add('border-primary', 'bg-light');
     cardElement.style.borderWidth = '3px';
     cardElement.querySelector('.bi-check-circle-fill').style.display = 'block';
-    
+
     // Set hidden input value
     const deptId = cardElement.dataset.deptId;
     const deptName = cardElement.dataset.deptName;
     const deptCategory = cardElement.dataset.deptCategory;
-    
+
     // *** FIELD ID UPDATED ***
     document.getElementById('department_id').value = deptId;
-    
+
     // Show selected department
     document.getElementById('selected_dept_name').textContent = deptName;
     document.getElementById('selected_dept_category').textContent = deptCategory;
     document.getElementById('selected_department').style.display = 'block';
-    
+
     // Scroll to selection
-    document.getElementById('selected_department').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'nearest' 
+    document.getElementById('selected_department').scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
     });
-    
+
     Toast.fire({
         icon: 'success',
         title: 'เลือกสาขา: ' + deptName
@@ -630,11 +649,11 @@ function clearDepartmentSelection() {
         card.style.borderWidth = '1px';
         card.querySelector('.bi-check-circle-fill').style.display = 'none';
     });
-    
+
     // *** FIELD ID UPDATED ***
     document.getElementById('department_id').value = '';
     document.getElementById('selected_department').style.display = 'none';
-    
+
     Toast.fire({
         icon: 'info',
         title: 'ยกเลิกการเลือกสาขา'
@@ -644,13 +663,13 @@ function clearDepartmentSelection() {
 function filterDepartments(searchTerm) {
     const cards = document.querySelectorAll('.department-card');
     const term = searchTerm.toLowerCase().trim();
-    
+
     let visibleCount = 0;
-    
+
     cards.forEach(card => {
         const deptName = card.dataset.deptName.toLowerCase();
         const deptCategory = card.dataset.deptCategory.toLowerCase();
-        
+
         if (term === '' || deptName.includes(term) || deptCategory.includes(term)) {
             card.parentElement.style.display = 'block';
             visibleCount++;
@@ -658,19 +677,19 @@ function filterDepartments(searchTerm) {
             card.parentElement.style.display = 'none';
         }
     });
-    
+
     // Show/hide category headers
     document.querySelectorAll('#department_list > .col-12').forEach(header => {
         const nextCards = [];
         let sibling = header.nextElementSibling;
-        
+
         while (sibling && !sibling.classList.contains('col-12')) {
             if (sibling.style.display !== 'none') {
                 nextCards.push(sibling);
             }
             sibling = sibling.nextElementSibling;
         }
-        
+
         header.style.display = nextCards.length > 0 ? 'block' : 'none';
     });
 }
@@ -681,75 +700,65 @@ function filterDepartments(searchTerm) {
 
 /**
  * จัดการอัปโหลดไฟล์ทั้งหมด (photo, transcript)
+ * ถูกเรียกใช้ใน submitForm() เท่านั้น
  * @param {string} academicYear - ปีการศึกษา
- * @returns {Promise<boolean>} - true ถ้าสำเร็จ, false ถ้าล้มเหลว
+ * @returns {Promise<{success: boolean, data: object|null, error: string|null}>} 
  */
 async function handleFileUploads(academicYear) {
-    try {
-        // 1. ตรวจสอบว่ามีไฟล์ที่ต้องอัปโหลดหรือไม่
-        const photoFile = document.getElementById('photo').files[0];
-        const transcriptFile = document.getElementById('transcript').files[0];
+    const uploadPromises = [];
+    const uploadedFilesData = {}; // เก็บ path ของไฟล์ที่อัปโหลดสำเร็จแล้ว
 
-        if (!photoFile || !transcriptFile) {
-            Toast.fire({
-                icon: 'error',
-                title: 'กรุณาอัปโหลดไฟล์ให้ครบถ้วน'
-            });
-            return false;
+    const filesToProcess = [
+        { input: document.getElementById('photo'), type: 'photo' },
+        { input: document.getElementById('transcript'), type: 'transcript' }
+        // 🚨 เพิ่ม Input File อื่น ๆ ที่มี
+    ];
+
+    let allRequiredFilesPresent = true;
+
+    for (const item of filesToProcess) {
+        const { input, type } = item;
+        const file = input.files.length > 0 ? input.files[0] : null;
+
+        if (file) {
+            uploadPromises.push(uploadFile(file, type, academicYear));
+        } else {
+            allRequiredFilesPresent = false; 
         }
-
-        // 2. สร้าง Array ของ Promise สำหรับอัปโหลดแต่ละไฟล์
-        const uploadPromises = [];
-
-        if (photoFile) {
-            uploadPromises.push(uploadFile(photoFile, 'photo', academicYear));
-        }
-
-        if (transcriptFile) {
-            uploadPromises.push(uploadFile(transcriptFile, 'transcript', academicYear));
-        }
-
-        // 3. รออัปโหลดทั้งหมดเสร็จพร้อมกัน
-        const results = await Promise.all(uploadPromises);
-
-        const uploadedFilesData = {};
-        let allSuccess = true;
-
-        // 4. ประมวลผลผลลัพธ์
-        results.forEach(res => {
-            if (res.success) {
-                // เก็บข้อมูลไฟล์ที่อัปโหลดสำเร็จ
-                uploadedFilesData[res.type] = {
-                    path: res.path,
-                    filename: res.filename,
-                    original_name: res.original_name
-                };
-            } else {
-                allSuccess = false;
-                console.error('Upload failed for', res.type, res.message);
-                Toast.fire({
-                    icon: 'error',
-                    title: 'อัปโหลดล้มเหลว',
-                    text: `ไฟล์ (${res.type}): ${res.message}`
-                });
-            }
-        });
-
-        if (!allSuccess) {
-            return false; // มีบางไฟล์อัปโหลดไม่สำเร็จ
-        }
-
-        // 5. 🚀 บันทึกข้อมูลไฟล์ลง Session Storage (สำคัญมาก)
-        // เราจะใช้ key 'regularFormUploads' เพื่อให้ getFormData() ดึงไปใช้ต่อ
-        sessionStorage.setItem('regularFormUploads', JSON.stringify(uploadedFilesData));
-        console.log('Uploads saved to sessionStorage:', uploadedFilesData);
-
-        return true;
-
-    } catch (error) {
-        console.error('Upload process error:', error);
-        return false;
     }
+    
+    if (!allRequiredFilesPresent) {
+        return { success: false, data: null, error: 'File inputs are empty. (Validation failed or inputs were cleared incorrectly)' };
+    }
+
+    const results = await Promise.all(uploadPromises);
+    let allSuccess = true;
+
+    results.forEach(res => {
+        if (res.success) {
+            uploadedFilesData[res.type] = {
+                path: res.path,
+                filename: res.filename,
+                original_name: res.original_name
+            };
+        } else {
+            allSuccess = false;
+            console.error('Upload failed for', res.type, res.message);
+        }
+    });
+
+    if (!allSuccess) {
+        return { success: false, data: null, error: 'One or more files failed to upload.' };
+    }
+
+    // บันทึก path ที่อัปโหลดสำเร็จลง Session Storage เพื่อให้ getFormData() นำไปใช้
+    sessionStorage.setItem('regularFormUploads', JSON.stringify(uploadedFilesData));
+    
+    // 🚀 ส่วนสำคัญ: เคลียร์ Input File Field ทันทีหลังอัปโหลดสำเร็จ
+    document.getElementById('photo').value = ''; 
+    document.getElementById('transcript').value = '';
+    
+    return { success: true, data: uploadedFilesData };
 }
 
 /**
@@ -815,78 +824,67 @@ console.log('Regular Form (v2) Loaded ✓');
  * ส่งข้อมูลทั้งหมดไปยัง Server
  */
 async function submitForm() {
-    showLoading('กำลังส่งใบสมัคร...');
+    showLoading('กำลังอัปโหลดเอกสารและส่งใบสมัคร...'); // อัปเดตข้อความโหลด
 
-    // ❌ ReferenceError ถูกแก้ตรงนี้ เพราะ getFormData ต้องถูกประกาศไว้แล้ว
-    const formData = getFormData();
+    const academicYear = (new Date().getFullYear() + 543 + 1).toString();
+    
+    // 1. UPLOAD FILES FIRST
+    const uploadResult = await handleFileUploads(academicYear);
 
+    if (!uploadResult.success) {
+        hideLoading();
+        Swal.fire({
+            icon: 'error',
+            title: 'อัปโหลดเอกสารไม่สำเร็จ',
+            text: uploadResult.error || 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์ กรุณาลองใหม่อีกครั้ง'
+        });
+        return;
+    }
+
+    // 2. GET FORM DATA (ซึ่งตอนนี้รวม path ไฟล์ที่อัปโหลดสำเร็จแล้วจาก Session Storage)
+    const formData = getFormData(); // getFormData() อ่านข้อมูลไฟล์จาก sessionStorage.getItem('regularFormUploads')
+
+    // 3. SUBMIT MAIN FORM DATA
     try {
-        const response = await fetch('pages/regular_form_submit.php', {
+        // ใช้ regular_form_submit.php สำหรับรอบปกติ
+        const response = await fetch('pages/regular_form_submit.php', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        
         const result = await response.json();
 
         hideLoading();
-
         if (result.success) {
-            // SUCCESS
             Swal.fire({
                 icon: 'success',
                 title: 'ส่งใบสมัครสำเร็จ!',
-                html: `เลขที่ใบสมัคร: <b>${result.application_no}</b><br>กรุณาติดตามสถานะการสมัครต่อไป`,
-                confirmButtonText: 'ตกลง',
-                allowOutsideClick: false,
-                allowEscapeKey: false
+                html: `หมายเลขใบสมัคร: <b>${result.application_no}</b><br>
+                       ผู้สมัคร: <b>${result.name}</b>`,
+                showCancelButton: false,
+                confirmButtonText: 'ตกลง'
             }).then(() => {
-                // ต้องมีฟังก์ชัน clearAllData()
-                if (typeof clearAllData === 'function') {
-                    clearAllData();
-                }
-                window.location.href = 'index.php?page=check_status';
+                clearAllData();
+                window.location.reload(); // หรือเปลี่ยนเส้นทางไปหน้าสำเร็จ
             });
         } else {
-            // ERROR: จัดการข้อผิดพลาดที่ส่งมาจาก Server
-            if (result.message === 'DUPLICATE_ID_CARD') {
-                // Modal แจ้งเลขบัตรประชาชนซ้ำ
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'สมัครซ้ำ',
-                    text: result.user_message || 'เลขบัตรประชาชนนี้เคยสมัครแล้ว กรุณาตรวจสอบสถานะการสมัคร',
-                    confirmButtonText: 'ตรวจสอบสถานะ',
-                    showCancelButton: true,
-                    cancelButtonText: 'ตกลง'
-                }).then((res) => {
-                    if (res.isConfirmed) {
-                        window.location.href = 'index.php?page=check_status';
-                    }
-                });
-            } else {
-                // ข้อผิดพลาดทั่วไป
-                Swal.fire({
-                    icon: 'error',
-                    title: 'ส่งใบสมัครไม่สำเร็จ',
-                    text: result.user_message || result.error_details || result.message || 'เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง'
-                });
-                console.error('Server Error:', result);
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'ส่งใบสมัครล้มเหลว',
+                text: result.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง'
+            });
         }
     } catch (error) {
         hideLoading();
+        console.error('Submission Error:', error);
         Swal.fire({
             icon: 'error',
-            title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ',
-            text: 'ไม่สามารถส่งข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองอีกครั้ง'
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่อ'
         });
-        console.error('Fetch Error:', error);
     }
 }
 
@@ -896,8 +894,9 @@ console.log('✅ Form submission functions loaded');
 // ในไฟล์ regular-form.js (ฟังก์ชัน getFormData)
 function getFormData() {
     const form = document.getElementById('regularForm');
-
+    
     const formData = {
+        // ข้อมูลเดิม
         id_card: form.id_card?.value || '',
         prefix: form.prefix?.value || '',
         firstname_th: form.firstname_th?.value || '',
@@ -911,37 +910,83 @@ function getFormData() {
         blood_group: form.blood_group?.value || '',
         phone: form.phone?.value || '',
         email: form.email?.value || '',
+        
+        // ฟิลด์ใหม่ - Step 1
+        birth_province: form.birth_province?.value || '',
+        height: form.height?.value || '',
+        weight: form.weight?.value || '',
+        disability: form.disability?.value || 'ไม่มี',
+        disability_type: form.disability_type?.value || '',
+        line_id: form.line_id?.value || '',
+        
+        // ที่อยู่ + ฟิลด์ใหม่
         address_no: form.address_no?.value || '',
         village_no: form.village_no?.value || '',
+        village_name: form.village_name?.value || '',
+        soi: form.soi?.value || '',
         road: form.road?.value || '',
         subdistrict: form.subdistrict?.value || '',
         district: form.district?.value || '',
         province: form.province?.value || '',
         postcode: form.postcode?.value || '',
+        phone_home: form.phone_home?.value || '',
+        
+        // การศึกษา
         current_school: form.current_school?.value || '',
         school_address: form.school_address?.value || '',
         current_class: form.current_class?.value || '',
         current_level: form.current_level?.value || '',
-        current_major: form.current_major?.value || '',
         graduation_year: form.graduation_year?.value || '',
         gpa: form.gpa?.value || '',
-        awards: form.awards?.value || '',
         talents: form.talents?.value || '',
+        
+        // ข้อมูลครอบครัว - Step 4
+        father_prefix: form.father_prefix?.value || '',
+        father_firstname: form.father_firstname?.value || '',
+        father_lastname: form.father_lastname?.value || '',
+        father_status: form.father_status?.value || 'มีชีวิต',
+        father_occupation: form.father_occupation?.value || '',
+        father_income: form.father_income?.value || '',
+        father_phone: form.father_phone?.value || '',
+        father_disability: form.father_disability?.value || 'ไม่มี',
+        father_disability_type: form.father_disability_type?.value || '',
+        
+        mother_prefix: form.mother_prefix?.value || '',
+        mother_firstname: form.mother_firstname?.value || '',
+        mother_lastname: form.mother_lastname?.value || '',
+        mother_status: form.mother_status?.value || 'มีชีวิต',
+        mother_occupation: form.mother_occupation?.value || '',
+        mother_income: form.mother_income?.value || '',
+        mother_phone: form.mother_phone?.value || '',
+        mother_disability: form.mother_disability?.value || 'ไม่มี',
+        mother_disability_type: form.mother_disability_type?.value || '',
+        
+        parents_status: form.parents_status?.value || '',
+        
+        guardian_prefix: form.guardian_prefix?.value || '',
+        guardian_firstname: form.guardian_firstname?.value || '',
+        guardian_lastname: form.guardian_lastname?.value || '',
+        guardian_relation: form.guardian_relation?.value || '',
+        guardian_occupation: form.guardian_occupation?.value || '',
+        guardian_income: form.guardian_income?.value || '',
+        guardian_phone: form.guardian_phone?.value || '',
+        
+        // สาขา - Step 5
         department_id: document.getElementById('department_id')?.value || '',
         department_name: document.getElementById('selected_dept_name')?.textContent || '',
+        
+        // ไฟล์
         uploaded_files: JSON.parse(sessionStorage.getItem('regularFormUploads')) || {},
         form_type: 'regular',
         academic_year: (new Date().getFullYear() + 543 + 1).toString()
     };
-
-    console.log('📤 Form Data:', formData);
-    console.log('📋 graduation_year:', formData.graduation_year);
-
+    
     return formData;
 }
 
 function clearAllData() {
-    ['regularFormStep1', 'regularFormStep2', 'regularFormStep3', 'regularFormUploads', 'regularFormProgress', 'regularFormUploads'] // 🚀 เพิ่ม 'regularFormUploads'
+    // 🚀 FIX: เคลียร์ข้อมูลทั้งหมดตั้งแต่ Step 1 ถึง Step 7 รวมถึงข้อมูลอัปโหลดและ Progress
+    ['regularFormStep1', 'regularFormStep2', 'regularFormStep3', 'regularFormStep4', 'regularFormStep5', 'regularFormStep6', 'regularFormStep7', 'regularFormUploads', 'regularFormProgress']
         .forEach(key => sessionStorage.removeItem(key));
 }
 

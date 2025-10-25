@@ -197,20 +197,27 @@ while ($dept = $departments_result->fetch_assoc()) {
                 </div>
                 <div class="col-auto"><i class="bi bi-chevron-right text-muted"></i></div>
                 <div class="col step-item" data-step="4">
+                    <div class="step-indicator bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center text-white fw-bold mb-2">
+                        <i class="bi bi-people-fill fs-5"></i>
+                    </div>
+                    <p class="small mb-0">ครอบครัว</p>
+                </div>
+                <div class="col-auto"><i class="bi bi-chevron-right text-muted"></i></div>
+                <div class="col step-item" data-step="5">
                     <div class="step-indicator d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary text-white fw-bold mb-2">
                         <i class="bi bi-list-ul fs-5"></i>
                     </div>
                     <p class="mb-0 fw-medium">เลือกสาขา</p>
                 </div>
                 <div class="col-auto"><i class="bi bi-chevron-right text-muted"></i></div>
-                <div class="col step-item" data-step="5">
+                <div class="col step-item" data-step="6">
                     <div class="step-indicator d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary text-white fw-bold mb-2">
                         <i class="bi bi-cloud-upload-fill fs-5"></i>
                     </div>
                     <p class="mb-0 fw-medium">อัปโหลด</p>
                 </div>
                 <div class="col-auto"><i class="bi bi-chevron-right text-muted"></i></div>
-                <div class="col step-item" data-step="6">
+                <div class="col step-item" data-step="7">
                     <div class="step-indicator d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary text-white fw-bold mb-2">
                         <i class="bi bi-check-circle-fill fs-5"></i>
                     </div>
@@ -289,7 +296,29 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <label class="form-label">ศาสนา</label>
                             <input type="text" name="religion" class="form-control" placeholder="ศาสนา" value="พุทธ">
                         </div>
-
+                        <div class="col-md-6">
+                            <label class="form-label">จังหวัดที่เกิด</label>
+                            <input type="text" class="form-control" name="birth_province">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">ส่วนสูง (ซม.)</label>
+                            <input type="number" class="form-control" name="height" min="100" max="250">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">น้ำหนัก (กก.)</label>
+                            <input type="number" class="form-control" name="weight" min="30" max="200">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">ความพิการ</label>
+                            <select class="form-select" name="disability" id="disability">
+                                <option value="ไม่มี" selected>ไม่มี</option>
+                                <option value="มี">มี</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6" id="disability_type_wrapper" style="display: none;">
+                            <label class="form-label">พิการทาง</label>
+                            <input type="text" class="form-control" name="disability_type">
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label">เบอร์โทรศัพท์ <span class="text-danger">*</span></label>
                             <input type="tel" name="phone" id="phone" class="form-control"
@@ -300,6 +329,10 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <label class="form-label">อีเมล <span class="text-danger">*</span></label>
                             <input type="email" name="email" class="form-control"
                                 placeholder="example@email.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Line ID</label>
+                            <input type="text" class="form-control" name="line_id">
                         </div>
                     </div>
                 </div>
@@ -330,30 +363,42 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <input type="text" name="village_no" id="village_no"
                                 class="form-control" placeholder="เช่น 1">
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-3">
+                            <label class="form-label">ชื่อหมู่บ้าน</label>
+                            <input type="text" class="form-control" name="village_name">
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label">ถนน</label>
                             <input type="text" name="road" id="road"
                                 class="form-control" placeholder="ถนน...">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label class="form-label">ซอย</label>
+                            <input type="text" class="form-control" name="soi">
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label">จังหวัด <span class="text-danger">*</span></label>
                             <input type="text" name="province" id="province"
                                 class="form-control" placeholder="นครปฐม" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label">อำเภอ/เขต <span class="text-danger">*</span></label>
                             <input type="text" name="district" id="district"
                                 class="form-control" placeholder="เมืองนครปฐม" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label">ตำบล/แขวง <span class="text-danger">*</span></label>
                             <input type="text" name="subdistrict" id="subdistrict"
                                 class="form-control" placeholder="พระปฐมเจดีย์" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label">รหัสไปรษณีย์ <span class="text-danger">*</span></label>
                             <input type="text" name="postcode" id="postcode"
                                 class="form-control" placeholder="73000" maxlength="5" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">เบอร์โทรบ้าน</label>
+                            <input type="tel" class="form-control" name="phone_home">
                         </div>
                     </div>
                 </div>
@@ -458,6 +503,192 @@ while ($dept = $departments_result->fetch_assoc()) {
         <div class="form-step" data-step="4">
             <div class="card shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-people-fill me-2"></i>
+                        ขั้นตอนที่ 4: ข้อมูลครอบครัว
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- ข้อมูลบิดา -->
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-person me-2"></i>ข้อมูลบิดา
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-2">
+                            <label class="form-label">คำนำหน้า</label>
+                            <select class="form-select" name="father_prefix">
+                                <option value="">เลือก</option>
+                                <option value="นาย">นาย</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">ชื่อบิดา</label>
+                            <input type="text" class="form-control" name="father_firstname">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">นามสกุลบิดา</label>
+                            <input type="text" class="form-control" name="father_lastname">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">สถานะ</label>
+                            <select class="form-select" name="father_status">
+                                <option value="มีชีวิต" selected>มีชีวิต</option>
+                                <option value="เสียชีวิต">เสียชีวิต</option>
+                                <option value="ไม่ทราบ">ไม่ทราบ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">อาชีพ</label>
+                            <input type="text" class="form-control" name="father_occupation">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">รายได้ (บาท/ปี)</label>
+                            <input type="number" class="form-control" name="father_income" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">เบอร์โทรบิดา</label>
+                            <input type="tel" class="form-control" name="father_phone">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">ความพิการ</label>
+                            <select class="form-select" name="father_disability">
+                                <option value="ไม่มี" selected>ไม่มี</option>
+                                <option value="มี">มี</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">พิการทาง (ถ้ามี)</label>
+                            <input type="text" class="form-control" name="father_disability_type">
+                        </div>
+                    </div>
+
+                    <!-- ข้อมูลมารดา -->
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-person me-2"></i>ข้อมูลมารดา
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-2">
+                            <label class="form-label">คำนำหน้า</label>
+                            <select class="form-select" name="mother_prefix">
+                                <option value="">เลือก</option>
+                                <option value="นาง">นาง</option>
+                                <option value="นางสาว">นางสาว</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">ชื่อมารดา</label>
+                            <input type="text" class="form-control" name="mother_firstname">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">นามสกุลมารดา</label>
+                            <input type="text" class="form-control" name="mother_lastname">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">สถานะ</label>
+                            <select class="form-select" name="mother_status">
+                                <option value="มีชีวิต" selected>มีชีวิต</option>
+                                <option value="เสียชีวิต">เสียชีวิต</option>
+                                <option value="ไม่ทราบ">ไม่ทราบ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">อาชีพ</label>
+                            <input type="text" class="form-control" name="mother_occupation">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">รายได้ (บาท/ปี)</label>
+                            <input type="number" class="form-control" name="mother_income" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">เบอร์โทรมารดา</label>
+                            <input type="tel" class="form-control" name="mother_phone">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">ความพิการ</label>
+                            <select class="form-select" name="mother_disability">
+                                <option value="ไม่มี" selected>ไม่มี</option>
+                                <option value="มี">มี</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">พิการทาง (ถ้ามี)</label>
+                            <input type="text" class="form-control" name="mother_disability_type">
+                        </div>
+                    </div>
+
+                    <!-- สถานะบิดา-มารดา -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-12">
+                            <label class="form-label">สถานะบิดา-มารดา</label>
+                            <select class="form-select" name="parents_status">
+                                <option value="">เลือก</option>
+                                <option value="อยู่ด้วยกัน" selected>อยู่ด้วยกัน</option>
+                                <option value="แยกกันอยู่">แยกกันอยู่</option>
+                                <option value="หย่าร้าง">หย่าร้าง</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ข้อมูลผู้ปกครอง -->
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-person-check me-2"></i>ข้อมูลผู้ปกครอง (ถ้าไม่ใช่บิดา-มารดา)
+                    </h6>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        กรอกเฉพาะกรณีที่ผู้ปกครองไม่ใช่บิดาหรือมารดา
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label">คำนำหน้า</label>
+                            <select class="form-select" name="guardian_prefix">
+                                <option value="">เลือก</option>
+                                <option value="นาย">นาย</option>
+                                <option value="นาง">นาง</option>
+                                <option value="นางสาว">นางสาว</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">ชื่อผู้ปกครอง</label>
+                            <input type="text" class="form-control" name="guardian_firstname">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">นามสกุลผู้ปกครอง</label>
+                            <input type="text" class="form-control" name="guardian_lastname">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">ความสัมพันธ์</label>
+                            <input type="text" class="form-control" name="guardian_relation" placeholder="เช่น ปู่, ย่า, ลุง, ป้า">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">อาชีพ</label>
+                            <input type="text" class="form-control" name="guardian_occupation">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">รายได้ (บาท/ปี)</label>
+                            <input type="number" class="form-control" name="guardian_income" min="0">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">เบอร์โทรผู้ปกครอง</label>
+                            <input type="tel" class="form-control" name="guardian_phone">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+                        <button type="button" class="btn btn-gradient btn-next order-md-last">
+                            ถัดไป <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-prev">
+                            <i class="bi bi-arrow-left me-2"></i> ย้อนกลับ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-step" data-step="5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-gradient-primary text-white">
                     <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>เลือกสาขาวิชาที่ต้องการสมัคร</h5>
                 </div>
                 <div class="alert alert-info shadow-sm m-3">
@@ -533,7 +764,7 @@ while ($dept = $departments_result->fetch_assoc()) {
             </div>
         </div>
 
-        <div class="form-step" data-step="5">
+        <div class="form-step" data-step="6">
             <div class="card shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
                     <h5 class="mb-0"><i class="bi bi-cloud-upload-fill me-2"></i>อัปโหลดเอกสารประกอบการสมัคร</h5>
@@ -609,7 +840,7 @@ while ($dept = $departments_result->fetch_assoc()) {
             </div>
         </div>
 
-        <div class="form-step" data-step="6">
+        <div class="form-step" data-step="7">
             <div class="card shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
                     <h5 class="mb-0"><i class="bi bi-check-circle-fill me-2"></i>ยืนยันข้อมูลการสมัคร</h5>
@@ -711,12 +942,28 @@ while ($dept = $departments_result->fetch_assoc()) {
                                 <p class="mb-0 fw-medium" id="summary_current_major">-</p>
                             </div>
                             <div class="col-12">
-                                <small class="text-muted d-block">ผลงาน/รางวัล:</small>
-                                <p class="mb-0 fw-medium" id="summary_awards">-</p>
-                            </div>
-                            <div class="col-12">
                                 <small class="text-muted d-block">ความสามารถพิเศษ:</small>
                                 <p class="mb-0 fw-medium" id="summary_talents">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h6 class="fw-bold text-primary mb-3">
+                            <i class="bi bi-people-fill me-2"></i>ข้อมูลครอบครัว
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <small class="text-muted d-block">บิดา:</small>
+                                <p class="mb-0 fw-medium" id="summary_father">-</p>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block">มารดา:</small>
+                                <p class="mb-0 fw-medium" id="summary_mother">-</p>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block">ผู้ปกครอง:</small>
+                                <p class="mb-0 fw-medium" id="summary_guardian">-</p>
                             </div>
                         </div>
                     </div>
@@ -797,7 +1044,7 @@ while ($dept = $departments_result->fetch_assoc()) {
     });
 
     /**
-     * อัปเดตหน้าสรุปข้อมูล (Step 6)
+     * อัปเดตหน้าสรุปข้อมูล (Step 7)
      */
     function updateSummary() {
         const form = document.getElementById('regularForm');
@@ -846,29 +1093,60 @@ while ($dept = $departments_result->fetch_assoc()) {
         document.getElementById('summary_graduation_year').textContent = val(form.graduation_year.value);
         document.getElementById('summary_gpa').textContent = gpaVal(form.gpa.value);
         document.getElementById('summary_current_major').textContent = val(form.current_major.value);
-        document.getElementById('summary_awards').textContent = val(form.awards.value);
         document.getElementById('summary_talents').textContent = val(form.talents.value);
 
-        // Step 4: Department
+        // Step 4: Family
+        const fatherName = [
+            form.father_prefix?.value,
+            form.father_firstname?.value,
+            form.father_lastname?.value
+        ].filter(Boolean).join(' ');
+        document.getElementById('summary_father').textContent = val(fatherName);
+
+        const motherName = [
+            form.mother_prefix?.value,
+            form.mother_firstname?.value,
+            form.mother_lastname?.value
+        ].filter(Boolean).join(' ');
+        document.getElementById('summary_mother').textContent = val(motherName);
+
+        const guardianName = [
+            form.guardian_prefix?.value,
+            form.guardian_firstname?.value,
+            form.guardian_lastname?.value,
+            form.guardian_relation?.value ? `(${form.guardian_relation.value})` : ''
+        ].filter(Boolean).join(' ');
+        document.getElementById('summary_guardian').textContent = val(guardianName);
+
+        // Step 5: Department
         const selectedDeptName = document.getElementById('selected_dept_name').textContent;
         const selectedDeptCategory = document.getElementById('selected_dept_category').textContent;
         document.getElementById('summary_department_name').textContent = val(selectedDeptName);
         document.getElementById('summary_department_category').textContent = val(selectedDeptCategory);
 
-        // Step 5: Files Status
+        // Step 6: Files Status
         const uploads = JSON.parse(sessionStorage.getItem('regularFormUploads')) || {};
+
+        // 🚀 โค้ดที่ต้องเพิ่ม: ตรวจสอบสถานะไฟล์จาก Input Field โดยตรง (Client-side)
+        const photoInput = document.getElementById('photo'); // ตรวจสอบ ID ของ Input File
+        const transcriptInput = document.getElementById('transcript'); // ตรวจสอบ ID ของ Input File
+        const isPhotoSelected = photoInput?.files?.[0];
+        const isTranscriptSelected = transcriptInput?.files?.[0];
+
+        // 🚀 โค้ดที่ต้องแก้ไข: เปลี่ยนตรรกะการตรวจสอบ
+        const isPhotoReady = (uploads.photo && uploads.photo.path) || isPhotoSelected;
+        const isTranscriptReady = (uploads.transcript && uploads.transcript.path) || isTranscriptSelected;
+
         document.getElementById('summary_photo_status').className =
-            (uploads.photo && uploads.photo.path) ?
+            isPhotoReady ?
             'bi bi-check-circle-fill text-success fs-3' :
             'bi bi-x-circle-fill text-danger fs-3';
 
         document.getElementById('summary_transcript_status').className =
-            (uploads.transcript && uploads.transcript.path) ?
+            isTranscriptReady ?
             'bi bi-check-circle-fill text-success fs-3' :
             'bi bi-x-circle-fill text-danger fs-3';
     }
-
-
 
     document.addEventListener('DOMContentLoaded', () => {
         const birthDateInput = document.getElementById('birth_date');
@@ -940,7 +1218,7 @@ while ($dept = $departments_result->fetch_assoc()) {
         // Update Summary Step
         document.querySelectorAll('.btn-next').forEach(btn => {
             btn.addEventListener('click', () => {
-                if (typeof currentStep !== 'undefined' && currentStep === 5) {
+                if (typeof currentStep !== 'undefined' && currentStep === 6) {
                     if (validateCurrentStep()) {
                         updateSummary();
                     }
