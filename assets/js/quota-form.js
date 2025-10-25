@@ -46,44 +46,29 @@ function setupNavigation() {
 
             // 2. 🚀 ตรรกะพิเศษสำหรับ Step 5 (อัปโหลดไฟล์)
             if (currentStep === 5) {
-                // ดึงปีการศึกษาปัจจุบัน (ตามตรรกะใน getFormData)
-                const academicYear = (new Date().getFullYear() + 543 + 1).toString();
-
-                showLoading('กำลังอัปโหลดเอกสาร...');
-                
-                // 3. เรียกฟังก์ชันอัปโหลดใหม่
-                const uploadSuccess = await handleFileUploads(academicYear);
-                
-                hideLoading();
-                
-                if (uploadSuccess) {
-                    // ถ้าสำเร็จ ค่อยไปหน้าถัดไป (Step 6)
-                    saveStepData(); // (บันทึกข้อมูล step 5 อื่นๆ ถ้ามี)
-                    updateSummary(); // 🚀 อัปเดตหน้าสรุป (สำคัญ)
-                    nextStep();     
-                } else {
-                    // ถ้าล้มเหลว แจ้งเตือนและหยุดอยู่หน้าเดิม
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'อัปโหลดไม่สำเร็จ',
-                        text: 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์ กรุณาตรวจสอบไฟล์และลองอีกครั้ง'
-                    });
+                // *** NEW LOGIC: VALIDATE FILES ONLY, DO NOT UPLOAD ***
+                if (!validateFileInputs()) { // ตรวจสอบว่าเลือกไฟล์ครบหรือไม่
+                    return;
                 }
-
-            } else { 
-                // 4. ตรรกะปกติสำหรับ Step 1, 2, 3, 4
-                saveStepData();
                 
-                // 🚀 อัปเดตหน้าสรุป ถ้ากำลังจะไป Step 6
-                if (currentStep === 5) {
+                // ไม่ต้องเรียก handleFileUploads() ที่นี่แล้ว
+                saveStepData();
+                updateSummary();
+                nextStep();
+
+            } else {
+                // 3. ตรรกะปกติสำหรับ Step อื่นๆ
+                saveStepData();
+
+                if (currentStep === totalSteps - 1) { // Step 5 คือ Step ก่อน Step สรุป (6)
                     updateSummary();
                 }
-                
+
                 nextStep();
             }
         });
     });
-    
+
     // Previous buttons
     document.querySelectorAll('.btn-prev').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -97,20 +82,20 @@ function nextStep() {
     if (currentStep < totalSteps) {
         // Hide current step
         document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.remove('active');
-        
+
         // Update indicator
         updateStepIndicator(currentStep, 'completed');
-        
+
         // Show next step
         currentStep++;
         document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
-        
+
         // Update indicator
         updateStepIndicator(currentStep, 'active');
-        
+
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        
+
         Toast.fire({
             icon: 'success',
             title: 'บันทึกข้อมูลสำเร็จ'
@@ -122,20 +107,20 @@ function previousStep() {
     if (currentStep > 1) {
         document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.remove('active');
         updateStepIndicator(currentStep, '');
-        
+
         currentStep--;
         document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
         updateStepIndicator(currentStep, 'active');
-        
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
 function updateStepIndicator(step, status) {
     const indicator = document.querySelector(`.step-item[data-step="${step}"] .step-indicator`);
-    
+
     indicator.classList.remove('active', 'completed', 'bg-secondary');
-    
+
     if (status === 'active') {
         indicator.classList.add('active');
     } else if (status === 'completed') {
@@ -299,6 +284,34 @@ function validateDepartment() {
     return true;
 }
 
+function validateFileInputs() {
+    // ตรวจสอบว่าไฟล์ถูกเลือกแล้วหรือไม่
+    const photoFile = document.getElementById('photo').files[0];
+    const transcriptFile = document.getElementById('transcript').files[0];
+    
+    // 🚨 หากมีไฟล์อื่น ๆ ที่จำเป็น ต้องเพิ่มการตรวจสอบที่นี่
+    
+    if (!photoFile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ขาดไฟล์ที่จำเป็น',
+            text: 'กรุณาอัปโหลดรูปถ่ายหน้าตรง'
+        });
+        return false;
+    }
+    
+    if (!transcriptFile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ขาดไฟล์ที่จำเป็น',
+            text: 'กรุณาอัปโหลดใบรับรองผลการเรียน'
+        });
+        return false;
+    }
+
+    return true;
+}
+
 // ========================================
 // Form Input Helpers
 // ========================================
@@ -456,72 +469,40 @@ function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
 // ========================================
 
 function saveStepData() {
-    const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-    if (!currentStepElement) return;
+    const form = document.getElementById('quotaForm');
+    const formData = new FormData(form);
+    const data = {};
 
-    const inputs = currentStepElement.querySelectorAll('input, select, textarea');
-    
-    const formData = {};
-    inputs.forEach(input => {
-        if (input.name) { // Ensure the input has a name
-            if (input.type === 'checkbox') {
-                formData[input.name] = input.checked;
-            } else if (input.type === 'file') {
-                // ไม่เก็บ file ใน session
-            } else {
-                formData[input.name] = input.value;
-            }
-        }
-    });
-    
-    // Save to session (Assuming you have these backend files)
-    fetch('includes/save_session.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            step: currentStep,
-            data: formData
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Session saved for step ' + currentStep);
-        }
-    })
-    .catch(error => {
-        console.error('Error saving session:', error);
-    });
+    for (let [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+
+    sessionStorage.setItem(`quotaFormStep${currentStep}`, JSON.stringify(data));
 }
 
 function loadSavedData() {
-    // (Assuming you have these backend files)
-    fetch('includes/load_session.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data && data.quota_form_data) {
-            Object.keys(data.quota_form_data).forEach(key => {
-                const input = document.querySelector(`[name="${key}"]`);
-                if (input) {
-                    if (input.type === 'checkbox') {
-                        input.checked = data.quota_form_data[key];
-                    } else {
-                        input.value = data.quota_form_data[key];
-                    }
+    for (let step = 1; step <= totalSteps; step++) {
+        const savedData = sessionStorage.getItem(`quotaFormStep${step}`);
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            const form = document.getElementById('quotaForm');
 
-                    // Trigger change event for dependent logic
-                    if (key === 'birth_date') {
-                         input.dispatchEvent(new Event('change'));
+            for (let [key, value] of Object.entries(data)) {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'radio' || input.type === 'checkbox') {
+                        if (input.value === value) {
+                            input.checked = true;
+                        }
+                    } else {
+                        if (input.type !== 'file') {
+                            input.value = value;
+                        }
                     }
                 }
-            });
+            }
         }
-    })
-    .catch(error => {
-        console.error('Error loading session:', error);
-    });
+    }
 }
 
 // ========================================
@@ -753,68 +734,70 @@ function filterDepartments(searchTerm) {
 // ========================================
 
 /**
- * สั่งอัปโหลดไฟล์ที่เลือก (photo และ transcript)
- * @param {string} academicYear - ปีการศึกษา (เช่น "2569")
- * @returns {boolean} - true ถ้าสำเร็จทั้งหมด, false ถ้าล้มเหลว
+ * จัดการอัปโหลดไฟล์ทั้งหมด (photo, transcript)
+ * ถูกเรียกใช้ใน submitForm() เท่านั้น
+ * @param {string} academicYear - ปีการศึกษา
+ * @returns {Promise<{success: boolean, data: object|null, error: string|null}>} 
  */
 async function handleFileUploads(academicYear) {
-    const photoInput = document.getElementById('photo');
-    const transcriptInput = document.getElementById('transcript');
-    
     const uploadPromises = [];
-    
-    // 1. สร้าง Promise สำหรับอัปโหลด 'photo'
-    if (photoInput.files[0]) {
-        uploadPromises.push(uploadFile(photoInput.files[0], 'photo', academicYear));
-    }
-    
-    // 2. สร้าง Promise สำหรับอัปโหลด 'transcript'
-    if (transcriptInput.files[0]) {
-        uploadPromises.push(uploadFile(transcriptInput.files[0], 'transcript', academicYear));
-    }
+    const uploadedFilesData = {}; // เก็บ path ของไฟล์ที่อัปโหลดสำเร็จแล้ว
 
-    try {
-        // 3. รออัปโหลดทุกไฟล์พร้อมกัน
-        const results = await Promise.all(uploadPromises);
-        
-        const uploadedFilesData = {};
-        let allSuccess = true;
+    const filesToProcess = [
+        { input: document.getElementById('photo'), type: 'photo' },
+        { input: document.getElementById('transcript'), type: 'transcript' }
+        // 🚨 เพิ่ม Input File อื่น ๆ ที่มี
+    ];
 
-        // 4. ประมวลผลผลลัพธ์
-        results.forEach(res => {
-            if (res.success) {
-                // เก็บข้อมูลไฟล์ที่อัปโหลดสำเร็จ
-                uploadedFilesData[res.type] = {
-                    path: res.path,
-                    filename: res.filename,
-                    original_name: res.original_name
-                };
-            } else {
-                allSuccess = false;
-                console.error('Upload failed for', res.type, res.message);
-                Toast.fire({
-                    icon: 'error',
-                    title: 'อัปโหลดล้มเหลว',
-                    text: `ไฟล์ (${res.type}): ${res.message}`
-                });
-            }
-        });
+    let allRequiredFilesPresent = true;
 
-        if (!allSuccess) {
-             return false; // มีบางไฟล์อัปโหลดไม่สำเร็จ
+    for (const item of filesToProcess) {
+        const { input, type } = item;
+        const file = input.files.length > 0 ? input.files[0] : null;
+
+        if (file) {
+            // New logic: ถ้ามีไฟล์ใน Input Field ให้อัปโหลด
+            uploadPromises.push(uploadFile(file, type, academicYear));
+        } else {
+            // หากไม่มีไฟล์ใน Input Field ถือว่าขาดไฟล์ (validateFileInputs ควรจะดักจับไปแล้ว)
+            allRequiredFilesPresent = false; 
         }
-
-        // 5. 🚀 บันทึกข้อมูลไฟล์ลง Session Storage (สำคัญมาก)
-        // เราจะใช้ key 'quotaFormUploads' เพื่อให้ getFormData() ดึงไปใช้ต่อ
-        sessionStorage.setItem('quotaFormUploads', JSON.stringify(uploadedFilesData));
-        console.log('Uploads saved to sessionStorage:', uploadedFilesData);
-
-        return true;
-
-    } catch (error) {
-        console.error('Upload process error:', error);
-        return false;
     }
+    
+    if (!allRequiredFilesPresent) {
+        return { success: false, data: null, error: 'File inputs are empty. (Validation failed or inputs were cleared incorrectly)' };
+    }
+
+    // 7. รออัปโหลดทั้งหมดเสร็จพร้อมกัน
+    const results = await Promise.all(uploadPromises);
+    let allSuccess = true;
+
+    // 8. ประมวลผลผลลัพธ์การอัปโหลด
+    results.forEach(res => {
+        if (res.success) {
+            uploadedFilesData[res.type] = {
+                path: res.path,
+                filename: res.filename,
+                original_name: res.original_name
+            };
+        } else {
+            allSuccess = false;
+            console.error('Upload failed for', res.type, res.message);
+        }
+    });
+
+    if (!allSuccess) {
+        return { success: false, data: null, error: 'One or more files failed to upload.' };
+    }
+
+    // 9. บันทึก path ที่อัปโหลดสำเร็จลง Session Storage เพื่อให้ getFormData() นำไปใช้
+    sessionStorage.setItem('quotaFormUploads', JSON.stringify(uploadedFilesData));
+    
+    // 🚀 ส่วนสำคัญ: เคลียร์ Input File Field ทันทีหลังอัปโหลดสำเร็จ เพื่อป้องกันการอัปโหลดซ้ำหากผู้ใช้ย้อนกลับมา
+    document.getElementById('photo').value = ''; 
+    document.getElementById('transcript').value = '';
+    
+    return { success: true, data: uploadedFilesData };
 }
 
 /**
@@ -880,78 +863,66 @@ console.log('Quota Form (v2) Loaded ✓');
  * ส่งข้อมูลทั้งหมดไปยัง Server
  */
 async function submitForm() {
-    showLoading('กำลังส่งใบสมัคร...');
+    showLoading('กำลังอัปโหลดเอกสารและส่งใบสมัคร...'); // อัปเดตข้อความโหลด
 
-    // ❌ ReferenceError ถูกแก้ตรงนี้ เพราะ getFormData ต้องถูกประกาศไว้แล้ว
-    const formData = getFormData(); 
+    const academicYear = (new Date().getFullYear() + 543 + 1).toString();
+    
+    // 1. UPLOAD FILES FIRST
+    const uploadResult = await handleFileUploads(academicYear);
 
+    if (!uploadResult.success) {
+        hideLoading();
+        Swal.fire({
+            icon: 'error',
+            title: 'อัปโหลดเอกสารไม่สำเร็จ',
+            text: uploadResult.error || 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์ กรุณาลองใหม่อีกครั้ง'
+        });
+        return;
+    }
+
+    // 2. GET FORM DATA (ซึ่งตอนนี้รวม path ไฟล์ที่อัปโหลดสำเร็จแล้วจาก Session Storage)
+    const formData = getFormData(); // getFormData() อ่านข้อมูลไฟล์จาก sessionStorage.getItem('quotaFormUploads')
+
+    // 3. SUBMIT MAIN FORM DATA
     try {
-        const response = await fetch('pages/form_submit.php', {
+        const response = await fetch('pages/form_submit.php', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
         
-        hideLoading();
+        const result = await response.json();
 
+        hideLoading();
         if (result.success) {
-            // SUCCESS
             Swal.fire({
                 icon: 'success',
                 title: 'ส่งใบสมัครสำเร็จ!',
-                html: `เลขที่ใบสมัคร: <b>${result.application_no}</b><br>กรุณาติดตามสถานะการสมัครต่อไป`,
-                confirmButtonText: 'ตกลง',
-                allowOutsideClick: false,
-                allowEscapeKey: false
+                html: `หมายเลขใบสมัคร: <b>${result.application_no}</b><br>
+                       ผู้สมัคร: <b>${result.name}</b>`,
+                showCancelButton: false,
+                confirmButtonText: 'ตกลง'
             }).then(() => {
-                // ต้องมีฟังก์ชัน clearAllData()
-                if (typeof clearAllData === 'function') {
-                    clearAllData(); 
-                }
-                window.location.href = 'index.php?page=check_status'; 
+                clearAllData();
+                window.location.reload(); // หรือเปลี่ยนเส้นทางไปหน้าสำเร็จ
             });
         } else {
-            // ERROR: จัดการข้อผิดพลาดที่ส่งมาจาก Server
-            if (result.message === 'DUPLICATE_ID_CARD') {
-                // Modal แจ้งเลขบัตรประชาชนซ้ำ
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'สมัครซ้ำ',
-                    text: result.user_message || 'เลขบัตรประชาชนนี้เคยสมัครแล้ว กรุณาตรวจสอบสถานะการสมัคร',
-                    confirmButtonText: 'ตรวจสอบสถานะ',
-                    showCancelButton: true,
-                    cancelButtonText: 'ตกลง'
-                }).then((res) => {
-                    if (res.isConfirmed) {
-                        window.location.href = 'index.php?page=check_status';
-                    }
-                });
-            } else {
-                // ข้อผิดพลาดทั่วไป
-                Swal.fire({
-                    icon: 'error',
-                    title: 'ส่งใบสมัครไม่สำเร็จ',
-                    text: result.user_message || result.error_details || result.message || 'เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง'
-                });
-                console.error('Server Error:', result);
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'ส่งใบสมัครล้มเหลว',
+                text: result.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง'
+            });
         }
     } catch (error) {
         hideLoading();
+        console.error('Submission Error:', error);
         Swal.fire({
             icon: 'error',
-            title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ',
-            text: 'ไม่สามารถส่งข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองอีกครั้ง'
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่อ'
         });
-        console.error('Fetch Error:', error);
     }
 }
 
@@ -1006,8 +977,9 @@ function getFormData() {
 }
 
 function clearAllData() {
-    ['quotaFormStep1','quotaFormStep2','quotaFormStep3','quotaFormUploads','quotaFormProgress', 'quotaFormUploads'] // 🚀 เพิ่ม 'quotaFormUploads'
+    ['quotaFormStep1', 'quotaFormStep2', 'quotaFormStep3', 'quotaFormStep4', 'quotaFormStep5', 'quotaFormStep6', 'quotaFormUploads', 'quotaFormProgress']
         .forEach(key => sessionStorage.removeItem(key));
+    console.log('✅ Quota Form sessionStorage cleared.');
 }
 
 console.log('✅ Form submission functions loaded');

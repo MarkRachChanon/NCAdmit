@@ -866,13 +866,24 @@ while ($dept = $departments_result->fetch_assoc()) {
 
         // Step 5: Files Status
         const uploads = JSON.parse(sessionStorage.getItem('quotaFormUploads')) || {};
+        
+        // 🚀 โค้ดที่ต้องเพิ่ม: ตรวจสอบสถานะไฟล์จาก Input Field โดยตรง (Client-side)
+        const photoInput = document.getElementById('photo'); // ตรวจสอบ ID ของ Input File
+        const transcriptInput = document.getElementById('transcript'); // ตรวจสอบ ID ของ Input File
+        const isPhotoSelected = photoInput?.files?.[0];
+        const isTranscriptSelected = transcriptInput?.files?.[0];
+
+        // 🚀 โค้ดที่ต้องแก้ไข: เปลี่ยนตรรกะการตรวจสอบ
+        const isPhotoReady = (uploads.photo && uploads.photo.path) || isPhotoSelected;
+        const isTranscriptReady = (uploads.transcript && uploads.transcript.path) || isTranscriptSelected;
+
         document.getElementById('summary_photo_status').className =
-            (uploads.photo && uploads.photo.path) ?
+            isPhotoReady ?
             'bi bi-check-circle-fill text-success fs-3' :
             'bi bi-x-circle-fill text-danger fs-3';
 
         document.getElementById('summary_transcript_status').className =
-            (uploads.transcript && uploads.transcript.path) ?
+            isTranscriptReady ?
             'bi bi-check-circle-fill text-success fs-3' :
             'bi bi-x-circle-fill text-danger fs-3';
     }
