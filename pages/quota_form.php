@@ -226,9 +226,6 @@ while ($dept = $departments_result->fetch_assoc()) {
     </div>
 
     <form id="quotaForm" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="form_type" value="quota">
-
-        <!-- Step 1: Personal Information -->
         <div class="form-step active" data-step="1">
             <div class="card shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
