@@ -398,7 +398,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">เบอร์โทรบ้าน</label>
-                            <input type="tel" class="form-control" name="phone_home">
+                            <input type="tel" class="form-control" name="phone_home" maxlength="10">
                         </div>
                     </div>
                 </div>
@@ -547,7 +547,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">เบอร์โทรบิดา <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" name="father_phone" required>
+                            <input type="tel" class="form-control" name="father_phone" id="father_phone" placeholder="0XX-XXX-XXXX" maxlength="12" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">ความพิการ</label>
@@ -601,7 +601,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">เบอร์โทรมารดา <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" name="mother_phone" required>
+                            <input type="tel" class="form-control" name="mother_phone" id="mother_phone" placeholder="0XX-XXX-XXXX" maxlength="12" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">ความพิการ</label>
@@ -669,7 +669,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">เบอร์โทรผู้ปกครอง</label>
-                            <input type="tel" class="form-control" name="guardian_phone">
+                            <input type="tel" class="form-control" name="guardian_phone" id="guardian_phone" placeholder="0XX-XXX-XXXX" maxlength="12">
                         </div>
                     </div>
                 </div>

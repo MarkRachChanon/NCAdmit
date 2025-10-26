@@ -307,6 +307,11 @@ function validateFileInputs() {
 // ========================================
 
 function setupFormInputs() {
+    setupPhoneInputFormat('phone');
+    setupPhoneInputFormat('father_phone'); // ✅ เพิ่มสำหรับเบอร์บิดา
+    setupPhoneInputFormat('mother_phone'); // ✅ เพิ่มสำหรับเบอร์มารดา
+    setupPhoneInputFormat('guardian_phone'); // 💡 แนะนำให้เพิ่มเบอร์ผู้ปกครองด้วย (ถ้ามี)
+
     // ID Card Format (X-XXXX-XXXXX-XX-X)
     const idCardInput = document.getElementById('id_card');
     if (idCardInput) {
@@ -329,22 +334,22 @@ function setupFormInputs() {
     }
 
     // Auto-format Phone
-    const phoneInput = document.getElementById('phone');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.substring(0, 10);
+    // const phoneInput = document.getElementById('phone');
+    // if (phoneInput) {
+    //     phoneInput.addEventListener('input', function (e) {
+    //         let value = e.target.value.replace(/\D/g, '');
+    //         if (value.length > 10) value = value.substring(0, 10);
 
-            if (value.length > 3) {
-                value = value.substring(0, 3) + '-' + value.substring(3);
-            }
-            if (value.length > 7) {
-                value = value.substring(0, 7) + '-' + value.substring(7);
-            }
+    //         if (value.length > 3) {
+    //             value = value.substring(0, 3) + '-' + value.substring(3);
+    //         }
+    //         if (value.length > 7) {
+    //             value = value.substring(0, 7) + '-' + value.substring(7);
+    //         }
 
-            e.target.value = value;
-        });
-    }
+    //         e.target.value = value;
+    //     });
+    // }
 
     // Auto-calculate Age
     const birthDateInput = document.querySelector('[name="birth_date"]');
@@ -448,6 +453,27 @@ function setupFormInputs() {
     // Setup File Previews
     setupFilePreview('photo', 'photo_preview', 'image', 2);
     setupFilePreview('transcript', 'transcript_preview', 'pdf', 5);
+}
+
+function setupPhoneInputFormat(inputId) {
+    const phoneInput = document.getElementById(inputId);
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            // จำกัดความยาว
+            if (value.length > 10) value = value.substring(0, 10);
+
+            // จัดรูปแบบ XXX-XXX-XXXX
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            }
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
+            }
+
+            e.target.value = value;
+        });
+    }
 }
 
 function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
@@ -940,7 +966,7 @@ async function submitForm() {
                 showCancelButton: true,
                 confirmButtonText: 'ตรวจสอบสถานะ',
                 cancelButtonText: 'ปิด'
-            }).then(() => {
+            }).then((result) => {
                 clearAllData();
                 if (result.isConfirmed) {
                     window.location.href = 'index.php?page=check_status';

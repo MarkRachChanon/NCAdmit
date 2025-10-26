@@ -912,7 +912,7 @@ async function submitForm() {
                 showCancelButton: true,
                 confirmButtonText: 'ตรวจสอบสถานะ',
                 cancelButtonText: 'ปิด'
-            }).then(() => {
+            }).then((result) => {
                 clearAllData();
                 if (result.isConfirmed) {
                     window.location.href = 'index.php?page=check_status';
