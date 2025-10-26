@@ -364,13 +364,22 @@ function setupFormInputs() {
         });
     }
 
-    // Zipcode Auto-format
-    const zipcodeInput = document.querySelector('[name="postcode"]');
-    if (zipcodeInput) {
-        zipcodeInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 5) value = value.substring(0, 5);
-            e.target.value = value;
+    const gpaInput = document.getElementById('gpa');
+    if (gpaInput) {
+        gpaInput.addEventListener('input', function (e) {
+            let value = parseFloat(e.target.value);
+            if (value > 4) {
+                e.target.value = '4.00';
+            } else if (value < 0) {
+                e.target.value = '0.00';
+            }
+        });
+
+        gpaInput.addEventListener('blur', function (e) {
+            let value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                e.target.value = value.toFixed(2);
+            }
         });
     }
 
@@ -398,6 +407,16 @@ function setupFormInputs() {
                 loadDepartmentsByLevel(savedLevel);
             }
         }
+    }
+
+    // Zipcode Auto-format
+    const zipcodeInput = document.querySelector('[name="postcode"]');
+    if (zipcodeInput) {
+        zipcodeInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) value = value.substring(0, 5);
+            e.target.value = value;
+        });
     }
 
     // Disability Toggle

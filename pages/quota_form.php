@@ -732,12 +732,24 @@ while ($dept = $departments_result->fetch_assoc()) {
 
                     <div class="mb-4 pb-4 border-bottom">
                         <h6 class="fw-bold text-primary mb-3">
-                            <i class="bi bi-list-ul me-2"></i>สาขาที่สมัคร
+                            <i class="bi bi-list-ul me-2"></i>ระดับชั้น/สาขาที่สมัคร
                         </h6>
                         <div class="alert alert-info mb-0 shadow-sm">
-                            <i class="bi bi-star-fill me-2"></i>
-                            <strong id="summary_department_name">-</strong>
-                            <span class="badge bg-secondary ms-2" id="summary_department_category"></span>
+                            <div class="mb-2">
+                                <i class="bi bi-mortarboard-fill me-2"></i>
+                                <strong>ระดับที่สมัคร:</strong>
+                                <span id="summary_apply_level" class="text-primary">-</span>
+                            </div>
+                            <div class="mb-2">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <strong>สาขาวิชา:</strong>
+                                <span id="summary_department_name" class="text-primary">-</span>
+                            </div>
+                            <div>
+                                <i class="bi bi-folder-fill me-2"></i>
+                                <strong>ประเภท:</strong>
+                                <span class="badge bg-secondary" id="summary_department_category">-</span>
+                            </div>
                         </div>
                     </div>
 
@@ -859,6 +871,14 @@ while ($dept = $departments_result->fetch_assoc()) {
         document.getElementById('summary_talents').textContent = val(form.talents.value);
 
         // Step 4: Department
+        const applyLevel = document.getElementById('education_level_apply')?.value;
+        const applyLevelText = applyLevel === 'ปวช.' ? 'ประกาศนียบัตรวิชาชีพ (ปวช.)' :
+            applyLevel === 'ปวส.' ? 'ประกาศนียบัตรวิชาชีพชั้นสูง (ปวส.)' :
+            applyLevel === 'ปริญญาตรี' ? 'ปริญญาตรี' : '-';
+        const summaryApplyLevelElement = document.getElementById('summary_apply_level');
+        if (summaryApplyLevelElement) {
+            summaryApplyLevelElement.textContent = applyLevelText; 
+        }
         const selectedDeptName = document.getElementById('selected_dept_name').textContent;
         const selectedDeptCategory = document.getElementById('selected_dept_category').textContent;
         document.getElementById('summary_department_name').textContent = val(selectedDeptName);
@@ -866,7 +886,7 @@ while ($dept = $departments_result->fetch_assoc()) {
 
         // Step 5: Files Status
         const uploads = JSON.parse(sessionStorage.getItem('quotaFormUploads')) || {};
-        
+
         // 🚀 โค้ดที่ต้องเพิ่ม: ตรวจสอบสถานะไฟล์จาก Input Field โดยตรง (Client-side)
         const photoInput = document.getElementById('photo'); // ตรวจสอบ ID ของ Input File
         const transcriptInput = document.getElementById('transcript'); // ตรวจสอบ ID ของ Input File

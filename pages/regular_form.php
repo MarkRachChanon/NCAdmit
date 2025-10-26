@@ -1198,11 +1198,14 @@ while ($dept = $departments_result->fetch_assoc()) {
         setText('summary_guardian', val(guardianName) || 'ไม่ระบุ');
 
         // 🎯 Step 5: Apply Level + Department
-        const applyLevel = form.education_level_apply?.value || '';
+        const applyLevel = document.getElementById('education_level_apply')?.value;
         const applyLevelText = applyLevel === 'ปวช.' ? 'ประกาศนียบัตรวิชาชีพ (ปวช.)' :
             applyLevel === 'ปวส.' ? 'ประกาศนียบัตรวิชาชีพชั้นสูง (ปวส.)' :
             applyLevel === 'ปริญญาตรี' ? 'ปริญญาตรี' : '-';
-        setText('summary_apply_level', applyLevelText);
+        const summaryApplyLevelElement = document.getElementById('summary_apply_level');
+        if (summaryApplyLevelElement) {
+            summaryApplyLevelElement.textContent = applyLevelText; 
+        }
         const selectedDeptName = document.getElementById('selected_dept_name')?.textContent || '-';
         const selectedDeptCategory = document.getElementById('selected_dept_category')?.textContent || '-';
         setText('summary_department_name', val(selectedDeptName));
