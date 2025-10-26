@@ -261,20 +261,20 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <label class="form-label">เลขบัตรประชาชน <span class="text-danger">*</span></label>
                             <input type="text" name="id_card" id="id_card" class="form-control"
                                 placeholder="X-XXXX-XXXXX-XX-X" maxlength="17" required>
-                            <small class="text-muted">รูปแบบ: X-XXXX-XXXXX-XX-X</small>
+                            <small class="text-muted">รูปแบบ: X-XXXX-XXXXX-XXX</small>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">วันเกิด <span class="text-danger">*</span></label>
                             <input type="date" name="birth_date" id="birth_date" class="form-control" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">อายุ</label>
-                            <input type="number" name="age" id="age" class="form-control" placeholder="ปี" min="0">
+                            <label class="form-label">อายุ <span class="text-danger">*</span></label>
+                            <input type="number" name="age" id="age" class="form-control" placeholder="ปี" min="0" required>
                         </div>
 
                         <div class="col-md-3">
-                            <label class="form-label">กรุ๊ปเลือด</label>
-                            <select name="blood_group" class="form-select">
+                            <label class="form-label">กรุ๊ปเลือด <span class="text-danger">*</span></label>
+                            <select name="blood_group" class="form-select" required>
                                 <option value="">ไม่ระบุ</option>
                                 <option value="A">A</option>
                                 <option value="B">B</option>
@@ -283,16 +283,16 @@ while ($dept = $departments_result->fetch_assoc()) {
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">เชื้อชาติ</label>
-                            <input type="text" name="ethnicity" class="form-control" placeholder="เชื้อชาติ" value="ไทย">
+                            <label class="form-label">เชื้อชาติ <span class="text-danger">*</span></label>
+                            <input type="text" name="ethnicity" class="form-control" placeholder="เชื้อชาติ" value="ไทย" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">สัญชาติ</label>
-                            <input type="text" name="nationality" class="form-control" placeholder="สัญชาติ" value="ไทย">
+                            <label class="form-label">สัญชาติ <span class="text-danger">*</span></label>
+                            <input type="text" name="nationality" class="form-control" placeholder="สัญชาติ" value="ไทย" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">ศาสนา</label>
-                            <input type="text" name="religion" class="form-control" placeholder="ศาสนา" value="พุทธ">
+                            <label class="form-label">ศาสนา <span class="text-danger">*</span></label>
+                            <input type="text" name="religion" class="form-control" placeholder="ศาสนา" value="พุทธ" required>
                         </div>
 
                         <div class="col-md-6">
@@ -887,8 +887,6 @@ while ($dept = $departments_result->fetch_assoc()) {
             'bi bi-check-circle-fill text-success fs-3' :
             'bi bi-x-circle-fill text-danger fs-3';
     }
-
-
 
     document.addEventListener('DOMContentLoaded', () => {
         const birthDateInput = document.getElementById('birth_date');

@@ -4,13 +4,6 @@
  * * Updated to match new form structure (aligned with students_regular table)
  */
 
-window.addEventListener('load', function () {
-    // รีเซ็ต dropdown เมื่อโหลดหน้า
-    if (document.getElementById('education_level_apply')) {
-        document.getElementById('education_level_apply').selectedIndex = 0;
-    }
-});
-
 let currentStep = 1;
 const totalSteps = 7;
 const form = document.getElementById('regularForm');
@@ -20,13 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
     setupNavigation();
     setupFormInputs();
     loadSavedData();
+    setupDepartmentSelection();
 
     Toast.fire({
         icon: 'info',
         title: 'กรุณากรอกข้อมูลให้ครบถ้วน'
     });
-
-    console.log('Regular Form (v2) Loaded ✓');
 });
 
 // ========================================
@@ -50,7 +42,7 @@ function setupNavigation() {
                 if (!validateFileInputs()) { // ตรวจสอบว่าเลือกไฟล์ครบหรือไม่
                     return;
                 }
-                
+
                 // ไม่ต้องเรียก handleFileUploads() ที่นี่แล้ว
                 saveStepData();
                 updateSummary();
@@ -256,9 +248,20 @@ function validateEducation() {
 }
 
 function validateDepartment() {
-    const deptId = document.getElementById('department_id').value;
+    const educationLevel = document.getElementById('education_level_apply').value;
+    const departmentId = document.getElementById('department_id').value;
 
-    if (!deptId) {
+    if (!educationLevel) {
+        Swal.fire({
+            icon: 'error',
+            title: 'กรุณาเลือกระดับชั้น',
+            text: 'กรุณาเลือกระดับชั้นที่ต้องการสมัคร',
+            confirmButtonColor: '#4facfe'
+        });
+        return false;
+    }
+
+    if (!departmentId) {
         Swal.fire({
             icon: 'error',
             title: 'กรุณาเลือกสาขาวิชา',
@@ -286,7 +289,7 @@ function validateFileInputs() {
         });
         return false;
     }
-    
+
     if (!transcriptFile) {
         Swal.fire({
             icon: 'error',
@@ -309,62 +312,106 @@ function setupFormInputs() {
     if (idCardInput) {
         idCardInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 13) value = value.slice(0, 13);
+            if (value.length > 13) value = value.substring(0, 13);
 
-            let formatted = '';
-            if (value.length > 0) formatted += value.substr(0, 1);
-            if (value.length > 1) formatted += '-' + value.substr(1, 4);
-            if (value.length > 5) formatted += '-' + value.substr(5, 5);
-            if (value.length > 10) formatted += '-' + value.substr(10, 2);
-            if (value.length > 12) formatted += '-' + value.substr(12, 1);
-            e.target.value = formatted;
+            if (value.length > 1) {
+                value = value.substring(0, 1) + '-' + value.substring(1);
+            }
+            if (value.length > 6) {
+                value = value.substring(0, 6) + '-' + value.substring(6);
+            }
+            if (value.length > 12) {
+                value = value.substring(0, 12) + '-' + value.substring(12);
+            }
+
+            e.target.value = value;
         });
     }
 
-    // Phone Format (0XX-XXX-XXXX)
+    // Auto-format Phone
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
         phoneInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.slice(0, 10);
+            if (value.length > 10) value = value.substring(0, 10);
 
-            let formatted = '';
-            if (value.length > 0) formatted += value.substr(0, 3);
-            if (value.length > 3) formatted += '-' + value.substr(3, 3);
-            if (value.length > 6) formatted += '-' + value.substr(6, 4);
-            e.target.value = formatted;
-        });
-    }
-
-    // GPAX Format (0.00 - 4.00)
-    const gpaInput = document.getElementById('gpa');
-    if (gpaInput) {
-        gpaInput.addEventListener('input', function (e) {
-            let value = parseFloat(e.target.value);
-            if (value > 4) {
-                e.target.value = '4.00';
-            } else if (value < 0) {
-                e.target.value = '0.00';
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
             }
-        });
-
-        gpaInput.addEventListener('blur', function (e) {
-            let value = parseFloat(e.target.value);
-            if (!isNaN(value)) {
-                e.target.value = value.toFixed(2);
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
             }
-        });
-    }
 
-    // Zipcode Format (เฉพาะตัวเลข 5 หลัก)
-    const zipcodeInputs = document.querySelectorAll('[name="postcode"]');
-    zipcodeInputs.forEach(input => {
-        input.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 5) value = value.slice(0, 5);
             e.target.value = value;
         });
-    });
+    }
+
+    // Auto-calculate Age
+    const birthDateInput = document.querySelector('[name="birth_date"]');
+    const ageInput = document.querySelector('[name="age"]');
+    if (birthDateInput && ageInput) {
+        birthDateInput.addEventListener('change', function () {
+            const birthDate = new Date(this.value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            ageInput.value = age > 0 ? age : '';
+        });
+    }
+
+    // Zipcode Auto-format
+    const zipcodeInput = document.querySelector('[name="postcode"]');
+    if (zipcodeInput) {
+        zipcodeInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) value = value.substring(0, 5);
+            e.target.value = value;
+        });
+    }
+
+    // 🎯 Education Level Apply - บันทึกค่า
+    const educationLevelApply = document.getElementById('education_level_apply');
+    if (educationLevelApply) {
+        educationLevelApply.addEventListener('change', function () {
+            const selectedLevel = this.value;
+
+            // บันทึกลง sessionStorage
+            sessionStorage.setItem('regular_apply_level', selectedLevel);
+
+            // โหลดสาขาตามระดับ
+            if (selectedLevel && typeof loadDepartmentsByLevel === 'function') {
+                loadDepartmentsByLevel(selectedLevel);
+            }
+        });
+
+        // โหลดค่าจาก sessionStorage
+        const savedLevel = sessionStorage.getItem('regular_apply_level');
+        if (savedLevel) {
+            educationLevelApply.value = savedLevel;
+
+            if (typeof loadDepartmentsByLevel === 'function') {
+                loadDepartmentsByLevel(savedLevel);
+            }
+        }
+    }
+
+    // Disability Toggle
+    const disabilitySelect = document.getElementById('disability');
+    const disabilityTypeWrapper = document.getElementById('disability_type_wrapper');
+    if (disabilitySelect && disabilityTypeWrapper) {
+        disabilitySelect.addEventListener('change', function () {
+            if (this.value === 'มี') {
+                disabilityTypeWrapper.style.display = 'block';
+            } else {
+                disabilityTypeWrapper.style.display = 'none';
+            }
+        });
+    }
 
     // Auto-save on input
     document.querySelectorAll('input, select, textarea').forEach(input => {
@@ -436,36 +483,48 @@ function setupFilePreview(inputId, previewId, type = 'pdf', maxMB = 2) {
 function saveStepData() {
     const form = document.getElementById('regularForm');
     const formData = new FormData(form);
-    const data = {};
+    const stepData = {};
 
-    for (let [key, value] of formData.entries()) {
-        data[key] = value;
+    formData.forEach((value, key) => {
+        stepData[key] = value;
+    });
+
+    // 🎯 บันทึก apply_level ถ้ามี
+    const applyLevel = document.getElementById('education_level_apply')?.value;
+    if (applyLevel) {
+        stepData.apply_level = applyLevel;
+        sessionStorage.setItem('regular_apply_level', applyLevel);
     }
 
-    sessionStorage.setItem(`regularFormStep${currentStep}`, JSON.stringify(data));
+    sessionStorage.setItem(`regularFormStep${currentStep}`, JSON.stringify(stepData));
 }
 
 function loadSavedData() {
     for (let step = 1; step <= totalSteps; step++) {
         const savedData = sessionStorage.getItem(`regularFormStep${step}`);
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            const form = document.getElementById('regularForm');
 
-            for (let [key, value] of Object.entries(data)) {
-                const input = form.querySelector(`[name="${key}"]`);
-                if (input) {
-                    if (input.type === 'radio' || input.type === 'checkbox') {
-                        if (input.value === value) {
-                            input.checked = true;
-                        }
-                    } else {
-                        if (input.type !== 'file') {
-                            input.value = value;
-                        }
+        if (savedData) {
+            try {
+                const stepData = JSON.parse(savedData);
+
+                Object.keys(stepData).forEach(key => {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.value = stepData[key];
                     }
-                }
+                });
+            } catch (e) {
+                console.error(`Error loading step ${step}:`, e);
             }
+        }
+    }
+
+    // 🎯 โหลด apply_level
+    const savedApplyLevel = sessionStorage.getItem('regular_apply_level');
+    if (savedApplyLevel) {
+        const applyLevelSelect = document.getElementById('education_level_apply');
+        if (applyLevelSelect) {
+            applyLevelSelect.value = savedApplyLevel;
         }
     }
 }
@@ -723,10 +782,10 @@ async function handleFileUploads(academicYear) {
         if (file) {
             uploadPromises.push(uploadFile(file, type, academicYear));
         } else {
-            allRequiredFilesPresent = false; 
+            allRequiredFilesPresent = false;
         }
     }
-    
+
     if (!allRequiredFilesPresent) {
         return { success: false, data: null, error: 'File inputs are empty. (Validation failed or inputs were cleared incorrectly)' };
     }
@@ -753,11 +812,11 @@ async function handleFileUploads(academicYear) {
 
     // บันทึก path ที่อัปโหลดสำเร็จลง Session Storage เพื่อให้ getFormData() นำไปใช้
     sessionStorage.setItem('regularFormUploads', JSON.stringify(uploadedFilesData));
-    
+
     // 🚀 ส่วนสำคัญ: เคลียร์ Input File Field ทันทีหลังอัปโหลดสำเร็จ
-    document.getElementById('photo').value = ''; 
+    document.getElementById('photo').value = '';
     document.getElementById('transcript').value = '';
-    
+
     return { success: true, data: uploadedFilesData };
 }
 
@@ -814,8 +873,6 @@ function hideLoading() {
     Swal.close();
 }
 
-console.log('Regular Form (v2) Loaded ✓');
-
 // ==========================================
 // ฟังก์ชันส่งฟอร์ม (เพิ่มใหม่)
 // ==========================================
@@ -824,10 +881,10 @@ console.log('Regular Form (v2) Loaded ✓');
  * ส่งข้อมูลทั้งหมดไปยัง Server
  */
 async function submitForm() {
-    showLoading('กำลังอัปโหลดเอกสารและส่งใบสมัคร...'); // อัปเดตข้อความโหลด
+    showLoading('กำลังอัปโหลดเอกสารและส่งใบสมัคร...');
 
     const academicYear = (new Date().getFullYear() + 543 + 1).toString();
-    
+
     // 1. UPLOAD FILES FIRST
     const uploadResult = await handleFileUploads(academicYear);
 
@@ -836,25 +893,22 @@ async function submitForm() {
         Swal.fire({
             icon: 'error',
             title: 'อัปโหลดเอกสารไม่สำเร็จ',
-            text: uploadResult.error || 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์ กรุณาลองใหม่อีกครั้ง'
+            text: uploadResult.error || 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์'
         });
         return;
     }
 
-    // 2. GET FORM DATA (ซึ่งตอนนี้รวม path ไฟล์ที่อัปโหลดสำเร็จแล้วจาก Session Storage)
-    const formData = getFormData(); // getFormData() อ่านข้อมูลไฟล์จาก sessionStorage.getItem('regularFormUploads')
-
-    // 3. SUBMIT MAIN FORM DATA
+    // 2. GET FORM DATA
+    const formData = getFormData();
     try {
-        // ใช้ regular_form_submit.php สำหรับรอบปกติ
-        const response = await fetch('pages/regular_form_submit.php', { 
+        const response = await fetch('pages/regular_form_submit.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
         });
-        
+
         const result = await response.json();
 
         hideLoading();
@@ -864,39 +918,41 @@ async function submitForm() {
                 title: 'ส่งใบสมัครสำเร็จ!',
                 html: `หมายเลขใบสมัคร: <b>${result.application_no}</b><br>
                        ผู้สมัคร: <b>${result.name}</b>`,
-                showCancelButton: false,
-                confirmButtonText: 'ตกลง'
+                showCancelButton: true,
+                confirmButtonText: 'ตรวจสอบสถานะ',
+                cancelButtonText: 'ปิด'
             }).then(() => {
                 clearAllData();
-                window.location.reload(); // หรือเปลี่ยนเส้นทางไปหน้าสำเร็จ
+                if (result.isConfirmed) {
+                    window.location.href = 'index.php?page=check_status';
+                } else {
+                    window.location.reload();
+                }
             });
         } else {
             Swal.fire({
                 icon: 'error',
                 title: 'ส่งใบสมัครล้มเหลว',
-                text: result.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง'
+                text: result.message
             });
         }
     } catch (error) {
         hideLoading();
-        console.error('Submission Error:', error);
+        console.error('❌ Submission Error:', error);
         Swal.fire({
             icon: 'error',
             title: 'เกิดข้อผิดพลาด',
-            text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่อ'
+            text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้'
         });
     }
 }
 
-// ตรวจสอบให้แน่ใจว่าได้เพิ่มบรรทัดนี้ใน regular-form.js ด้วย
-console.log('✅ Form submission functions loaded');
-
 // ในไฟล์ regular-form.js (ฟังก์ชัน getFormData)
 function getFormData() {
     const form = document.getElementById('regularForm');
-    
+    const educationLevelApply = document.getElementById('education_level_apply');
+
     const formData = {
-        // ข้อมูลเดิม
         id_card: form.id_card?.value || '',
         prefix: form.prefix?.value || '',
         firstname_th: form.firstname_th?.value || '',
@@ -910,7 +966,7 @@ function getFormData() {
         blood_group: form.blood_group?.value || '',
         phone: form.phone?.value || '',
         email: form.email?.value || '',
-        
+
         // ฟิลด์ใหม่ - Step 1
         birth_province: form.birth_province?.value || '',
         height: form.height?.value || '',
@@ -918,7 +974,7 @@ function getFormData() {
         disability: form.disability?.value || 'ไม่มี',
         disability_type: form.disability_type?.value || '',
         line_id: form.line_id?.value || '',
-        
+
         // ที่อยู่ + ฟิลด์ใหม่
         address_no: form.address_no?.value || '',
         village_no: form.village_no?.value || '',
@@ -930,7 +986,7 @@ function getFormData() {
         province: form.province?.value || '',
         postcode: form.postcode?.value || '',
         phone_home: form.phone_home?.value || '',
-        
+
         // การศึกษา
         current_school: form.current_school?.value || '',
         school_address: form.school_address?.value || '',
@@ -939,7 +995,7 @@ function getFormData() {
         graduation_year: form.graduation_year?.value || '',
         gpa: form.gpa?.value || '',
         talents: form.talents?.value || '',
-        
+
         // ข้อมูลครอบครัว - Step 4
         father_prefix: form.father_prefix?.value || '',
         father_firstname: form.father_firstname?.value || '',
@@ -950,7 +1006,7 @@ function getFormData() {
         father_phone: form.father_phone?.value || '',
         father_disability: form.father_disability?.value || 'ไม่มี',
         father_disability_type: form.father_disability_type?.value || '',
-        
+
         mother_prefix: form.mother_prefix?.value || '',
         mother_firstname: form.mother_firstname?.value || '',
         mother_lastname: form.mother_lastname?.value || '',
@@ -960,9 +1016,9 @@ function getFormData() {
         mother_phone: form.mother_phone?.value || '',
         mother_disability: form.mother_disability?.value || 'ไม่มี',
         mother_disability_type: form.mother_disability_type?.value || '',
-        
+
         parents_status: form.parents_status?.value || '',
-        
+
         guardian_prefix: form.guardian_prefix?.value || '',
         guardian_firstname: form.guardian_firstname?.value || '',
         guardian_lastname: form.guardian_lastname?.value || '',
@@ -970,17 +1026,19 @@ function getFormData() {
         guardian_occupation: form.guardian_occupation?.value || '',
         guardian_income: form.guardian_income?.value || '',
         guardian_phone: form.guardian_phone?.value || '',
-        
-        // สาขา - Step 5
+
+        // 🎯 สาขา - Step 5 (ใช้ sessionStorage เป็น fallback)
+        education_level_apply: educationLevelApply?.value ||
+            sessionStorage.getItem('regular_apply_level') || '',
         department_id: document.getElementById('department_id')?.value || '',
         department_name: document.getElementById('selected_dept_name')?.textContent || '',
-        
+
         // ไฟล์
         uploaded_files: JSON.parse(sessionStorage.getItem('regularFormUploads')) || {},
         form_type: 'regular',
         academic_year: (new Date().getFullYear() + 543 + 1).toString()
     };
-    
+
     return formData;
 }
 
@@ -989,5 +1047,3 @@ function clearAllData() {
     ['regularFormStep1', 'regularFormStep2', 'regularFormStep3', 'regularFormStep4', 'regularFormStep5', 'regularFormStep6', 'regularFormStep7', 'regularFormUploads', 'regularFormProgress']
         .forEach(key => sessionStorage.removeItem(key));
 }
-
-console.log('✅ Form submission functions loaded');

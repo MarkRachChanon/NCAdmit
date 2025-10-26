@@ -36,7 +36,7 @@ try {
     @require_once __DIR__ . '/../includes/functions.php'; 
 
     if (!isset($conn) || $conn->connect_error) {
-        throw new Exception('Database Error: เชื่อมต่อ Database ไม่ได้ กรุณาตรวจสอบไฟล์ config/database.php');
+        throw new Exception('Database Error: เชื่อมต่อ Database ไม่ได้');
     }
     
     $json = @file_get_contents('php://input');
@@ -49,21 +49,18 @@ try {
     }
     
     error_log("========== REGULAR FORM DATA ==========");
-    error_log("JSON: " . $json);
+    error_log(print_r($data, true));
     error_log("=======================================");
     
     $conn->begin_transaction();
     
     $id_card = isset($data['id_card']) ? trim($data['id_card']) : '';
-    if (empty($id_card) || !preg_match('/^\d{13}$/', str_replace('-', '', $id_card))) {
-        throw new Exception('กรุณากรอกเลขบัตรประชาชนให้ถูกต้อง');
+    if (empty($id_card)) {
+        throw new Exception('กรุณากรอกเลขบัตรประชาชน');
     }
     
-    // ตรวจสอบบัตรประชาชนซ้ำ
+    // ตรวจสอบซ้ำ
     $stmt = $conn->prepare("SELECT application_no FROM students_regular WHERE id_card = ? LIMIT 1");
-    if (!$stmt) {
-        throw new Exception('Prepare failed: ' . $conn->error);
-    }
     $stmt->bind_param("s", $id_card);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -72,8 +69,7 @@ try {
         $conn->rollback();
         sendJSON([
             'success' => false, 
-            'message' => 'DUPLICATE_ID_CARD',
-            'user_message' => 'เลขบัตรประชาชน ' . $id_card . ' นี้ เคยใช้สมัครในระบบแล้ว'
+            'message' => 'เลขบัตรประชาชนนี้เคยสมัครแล้ว'
         ]);
     }
     $stmt->close();
@@ -86,35 +82,26 @@ try {
     $application_no = 'R' . substr($year, -2) . $new_id_part;
 
     $uploads = isset($data['uploaded_files']) ? $data['uploaded_files'] : [];
-    $academic_year_val = (string)$year;
-    $status = 'pending'; 
-    $status_note = null;
     
     $photo_path = isset($uploads['photo']['path']) ? $uploads['photo']['path'] : null;
     $transcript_path = isset($uploads['transcript']['path']) ? $uploads['transcript']['path'] : null;
     
-    // Type Casting สำหรับตัวเลข
-    $age_value = is_numeric($data['age'] ?? null) && (int)$data['age'] > 0 ? (int)$data['age'] : null;
-    $height_value = is_numeric($data['height'] ?? null) && (int)$data['height'] > 0 ? (int)$data['height'] : null;
-    $weight_value = is_numeric($data['weight'] ?? null) && (int)$data['weight'] > 0 ? (int)$data['weight'] : null;
-    $father_income_value = is_numeric($data['father_income'] ?? null) && (float)$data['father_income'] >= 0 ? (float)$data['father_income'] : null;
-    $mother_income_value = is_numeric($data['mother_income'] ?? null) && (float)$data['mother_income'] >= 0 ? (float)$data['mother_income'] : null;
-    $guardian_income_value = is_numeric($data['guardian_income'] ?? null) && (float)$data['guardian_income'] >= 0 ? (float)$data['guardian_income'] : null;
-    $gpa_value = is_numeric($data['gpa'] ?? null) && (float)$data['gpa'] >= 0 ? (float)$data['gpa'] : null;
-    $department_id_value = is_numeric($data['department_id'] ?? null) && (int)$data['department_id'] > 0 ? (int)$data['department_id'] : null;
+    // 🔧 ปรับ Type Casting ให้ถูกต้อง
+    $age = (isset($data['age']) && is_numeric($data['age']) && (int)$data['age'] > 0) ? (int)$data['age'] : null;
+    $height = (isset($data['height']) && is_numeric($data['height']) && (int)$data['height'] > 0) ? (int)$data['height'] : null;
+    $weight = (isset($data['weight']) && is_numeric($data['weight']) && (int)$data['weight'] > 0) ? (int)$data['weight'] : null;
     
-    // ค่าอื่นๆ
-    $graduation_year_value = $data['graduation_year'] ?? '';
-    if ($graduation_year_value === '' || $graduation_year_value === null) {
-        $graduation_year_value = (string)((int)$year); 
-    }
+    $father_income = (isset($data['father_income']) && is_numeric($data['father_income']) && (float)$data['father_income'] >= 0) ? (float)$data['father_income'] : null;
+    $mother_income = (isset($data['mother_income']) && is_numeric($data['mother_income']) && (float)$data['mother_income'] >= 0) ? (float)$data['mother_income'] : null;
+    $guardian_income = (isset($data['guardian_income']) && is_numeric($data['guardian_income']) && (float)$data['guardian_income'] >= 0) ? (float)$data['guardian_income'] : null;
     
+    $gpa = (isset($data['gpa']) && is_numeric($data['gpa']) && (float)$data['gpa'] >= 0) ? (float)$data['gpa'] : null;
+    
+    $department_id = (isset($data['department_id']) && is_numeric($data['department_id']) && (int)$data['department_id'] > 0) ? (int)$data['department_id'] : null;
+    
+    $graduation_year = $data['graduation_year'] ?? (string)$year;
     $apply_level = $data['education_level_apply'] ?? null;
-
-    // 🚀 FIX: เพิ่ม 'ss' ด้านหลังสุดเพื่อให้ครบ 70 ตัว (เดิม 68)
-    // s=string, i=integer, d=double (decimal/float)
-    $bind_string = "sssiisssiidsisssississssssssssssssssiisisssisssisssissssisiidsssiissss"; 
-
+    
     $sql = "INSERT INTO students_regular (
         application_no, academic_year, prefix, firstname_th, lastname_th, nickname, 
         birth_date, birth_province, age, height, weight, nationality, ethnicity, 
@@ -132,38 +119,117 @@ try {
         gpa, graduation_year, apply_level, department_id, 
         photo_path, transcript_path, status, status_note
     ) VALUES (
-        " . rtrim(str_repeat('?,', 70), ',') . "
+        ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
     )";
     
-    $variables_to_bind = [
-        $application_no, $academic_year_val, $data['prefix'] ?? null, $data['firstname_th'] ?? null, 
-        $data['lastname_th'] ?? null, $data['nickname'] ?? null, $data['birth_date'] ?? null, 
-        $data['birth_province'] ?? null, $age_value, $height_value, 
-        $weight_value, $data['nationality'] ?? 'ไทย', $data['ethnicity'] ?? 'ไทย', 
-        $data['religion'] ?? 'พุทธ', $data['blood_group'] ?? null, $id_card, 
-        $data['disability'] ?? 'ไม่มี', $data['disability_type'] ?? null, $data['talents'] ?? null,
-        $data['address_no'] ?? null, $data['village_no'] ?? null, $data['village_name'] ?? null, 
-        $data['soi'] ?? null, $data['road'] ?? null, $data['subdistrict'] ?? null, $data['district'] ?? null, 
-        $data['province'] ?? null, $data['postcode'] ?? null, $data['phone_home'] ?? null, 
-        $data['phone'] ?? null, $data['line_id'] ?? null, $data['email'] ?? null, 
-        $data['father_prefix'] ?? null, $data['father_firstname'] ?? null, $data['father_lastname'] ?? null, 
-        $data['father_occupation'] ?? null, $father_income_value, $data['father_phone'] ?? null, 
-        $data['father_status'] ?? 'มีชีวิต', $data['father_disability'] ?? 'ไม่มี', 
-        $data['father_disability_type'] ?? null, $data['mother_prefix'] ?? null, $data['mother_firstname'] ?? null, 
-        $data['mother_lastname'] ?? null, $data['mother_occupation'] ?? null, $mother_income_value, 
-        $data['mother_phone'] ?? null, $data['mother_status'] ?? 'มีชีวิต', $data['mother_disability'] ?? 'ไม่มี', 
-        $data['mother_disability_type'] ?? null, $data['parents_status'] ?? null, 
-        $data['guardian_prefix'] ?? null, $data['guardian_firstname'] ?? null, $data['guardian_lastname'] ?? null, 
-        $data['guardian_relation'] ?? null, $data['guardian_occupation'] ?? null, $guardian_income_value, 
-        $data['guardian_phone'] ?? null, $data['current_class'] ?? null, $data['current_level'] ?? null, 
-        $data['current_school'] ?? null, $data['school_address'] ?? null, 
-        $gpa_value, $graduation_year_value, $apply_level, $department_id_value, 
-        $photo_path, $transcript_path, $status, $status_note // 🚨 สองตัวสุดท้าย: $status, $status_note
+    // 🎯 FIX: Bind string ที่ถูกต้อง 100%
+    // s=string, i=integer, d=double(decimal)
+    $bind_string = 
+        "ss"      . // 1-2: application_no, academic_year
+        "ssss"    . // 3-6: prefix, firstname_th, lastname_th, nickname
+        "ss"      . // 7-8: birth_date, birth_province
+        "iii"     . // 9-11: age, height, weight (integer)
+        "sss"     . // 12-14: nationality, ethnicity, religion
+        "sss"     . // 15-17: blood_group, id_card, disability
+        "ss"      . // 18-19: disability_type, talents
+        "sssssss" . // 20-26: address_no, village_no, village_name, soi, road, subdistrict, district
+        "sss"     . // 27-29: province, postcode, phone_home
+        "sss"     . // 30-32: phone, line_id, email
+        "sss"     . // 33-35: father_prefix, father_firstname, father_lastname
+        "s"       . // 36: father_occupation
+        "d"       . // 37: father_income (decimal)
+        "sss"     . // 38-40: father_phone, father_status, father_disability
+        "s"       . // 41: father_disability_type
+        "sss"     . // 42-44: mother_prefix, mother_firstname, mother_lastname
+        "s"       . // 45: mother_occupation
+        "d"       . // 46: mother_income (decimal)
+        "sss"     . // 47-49: mother_phone, mother_status, mother_disability
+        "ss"      . // 50-51: mother_disability_type, parents_status
+        "ssss"    . // 52-55: guardian_prefix, guardian_firstname, guardian_lastname, guardian_relation
+        "s"       . // 56: guardian_occupation
+        "d"       . // 57: guardian_income (decimal)
+        "s"       . // 58: guardian_phone
+        "ssss"    . // 59-62: current_class, current_level, current_school, school_address
+        "d"       . // 63: gpa (decimal)
+        "ss"      . // 64-65: graduation_year, apply_level
+        "i"       . // 66: department_id (integer)
+        "ssss";     // 67-70: photo_path, transcript_path, status, status_note
+    
+    $variables = [
+        $application_no,                        // 1
+        (string)$year,                          // 2
+        $data['prefix'] ?? null,                // 3
+        $data['firstname_th'] ?? null,          // 4
+        $data['lastname_th'] ?? null,           // 5
+        $data['nickname'] ?? null,              // 6
+        $data['birth_date'] ?? null,            // 7
+        $data['birth_province'] ?? null,        // 8
+        $age,                                   // 9 - integer
+        $height,                                // 10 - integer
+        $weight,                                // 11 - integer
+        $data['nationality'] ?? 'ไทย',          // 12
+        $data['ethnicity'] ?? 'ไทย',            // 13
+        $data['religion'] ?? 'พุทธ',            // 14
+        $data['blood_group'] ?? null,           // 15
+        $id_card,                               // 16
+        $data['disability'] ?? 'ไม่มี',         // 17
+        $data['disability_type'] ?? null,       // 18
+        $data['talents'] ?? null,               // 19
+        $data['address_no'] ?? null,            // 20
+        $data['village_no'] ?? null,            // 21
+        $data['village_name'] ?? null,          // 22
+        $data['soi'] ?? null,                   // 23
+        $data['road'] ?? null,                  // 24
+        $data['subdistrict'] ?? null,           // 25
+        $data['district'] ?? null,              // 26
+        $data['province'] ?? null,              // 27
+        $data['postcode'] ?? null,              // 28
+        $data['phone_home'] ?? null,            // 29
+        $data['phone'] ?? null,                 // 30
+        $data['line_id'] ?? null,               // 31
+        $data['email'] ?? null,                 // 32
+        $data['father_prefix'] ?? null,         // 33
+        $data['father_firstname'] ?? null,      // 34
+        $data['father_lastname'] ?? null,       // 35
+        $data['father_occupation'] ?? null,     // 36
+        $father_income,                         // 37 - decimal
+        $data['father_phone'] ?? null,          // 38
+        $data['father_status'] ?? 'มีชีวิต',    // 39
+        $data['father_disability'] ?? 'ไม่มี',  // 40
+        $data['father_disability_type'] ?? null,// 41
+        $data['mother_prefix'] ?? null,         // 42
+        $data['mother_firstname'] ?? null,      // 43
+        $data['mother_lastname'] ?? null,       // 44
+        $data['mother_occupation'] ?? null,     // 45
+        $mother_income,                         // 46 - decimal
+        $data['mother_phone'] ?? null,          // 47
+        $data['mother_status'] ?? 'มีชีวิต',    // 48
+        $data['mother_disability'] ?? 'ไม่มี',  // 49
+        $data['mother_disability_type'] ?? null,// 50
+        $data['parents_status'] ?? null,        // 51
+        $data['guardian_prefix'] ?? null,       // 52
+        $data['guardian_firstname'] ?? null,    // 53
+        $data['guardian_lastname'] ?? null,     // 54
+        $data['guardian_relation'] ?? null,     // 55
+        $data['guardian_occupation'] ?? null,   // 56
+        $guardian_income,                       // 57 - decimal
+        $data['guardian_phone'] ?? null,        // 58
+        $data['current_class'] ?? null,         // 59
+        $data['current_level'] ?? null,         // 60
+        $data['current_school'] ?? null,        // 61
+        $data['school_address'] ?? null,        // 62
+        $gpa,                                   // 63 - decimal
+        $graduation_year,                       // 64
+        $apply_level,                           // 65
+        $department_id,                         // 66 - integer
+        $photo_path,                            // 67
+        $transcript_path,                       // 68
+        'pending',                              // 69
+        null                                    // 70
     ];
     
-    // บรรทัดนี้จะถูกตรวจสอบว่าถูกต้อง (70 == 70)
-    if (strlen($bind_string) !== count($variables_to_bind)) {
-        throw new Exception("Code error: Bind string length (" . strlen($bind_string) . ") does not match value count (" . count($variables_to_bind) . ")");
+    if (strlen($bind_string) !== count($variables)) {
+        throw new Exception("Bind error: " . strlen($bind_string) . " types vs " . count($variables) . " values");
     }
 
     $stmt = $conn->prepare($sql);
@@ -172,7 +238,7 @@ try {
     }
 
     $bind_args = [$bind_string];
-    foreach ($variables_to_bind as &$value) {
+    foreach ($variables as &$value) {
         $bind_args[] = &$value;
     }
     
@@ -204,7 +270,7 @@ try {
     
     sendJSON([
         'success' => false,
-        'message' => 'Database operation failed: ' . $e->getMessage(), 
+        'message' => $e->getMessage(),
         'file' => basename($e->getFile()),
         'line' => $e->getLine()
     ]);
