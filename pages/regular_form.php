@@ -277,7 +277,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                         <div class="col-md-3">
                             <label class="form-label">กรุ๊ปเลือด <span class="text-danger">*</span></label>
                             <select name="blood_group" class="form-select" required>
-                                <option value="">ไม่ระบุ</option>
+                                <option value="">เลือก</option>
                                 <option value="A">A</option>
                                 <option value="B">B</option>
                                 <option value="O">O</option>

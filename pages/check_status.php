@@ -411,9 +411,13 @@ function displayResults(applications, count) {
             <div class="card-header bg-gradient-primary text-white p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-person-badge me-2"></i>ข้อมูลการสมัคร
+                        <span class="me-3"><i class="bi bi-person-badge me-2"></i>ข้อมูลการสมัคร</span> ${formTypeBadge}
                     </h5>
-                    ${formTypeBadge}
+                    <a href="pages/download_application_pdf.php?app_no=${data.application_no}&type=${data.form_type}" 
+                        class="btn btn-light btn-sm ms-2 fs-6"
+                        target="_blank">
+                        <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควต้า
+                    </a>
                 </div>
             </div>
             <div class="card-body p-4">
