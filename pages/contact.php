@@ -49,12 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_contact'])) {
 }
 
 // Get contact info from settings
-$phone = get_setting('contact_phone', '034-251-081');
-$email = get_setting('contact_email', 'info@nc.ac.th');
-$address = get_setting('contact_address', 'วิทยาลัยอาชีวศึกษานครปฐม จังหวัดนครปฐม');
+$phone = get_setting('contact_phone', '#');
+$email = get_setting('contact_email', '#');
+$address = get_setting('contact_address', '#');
 $facebook = get_setting('facebook_url', '#');
-$line = get_setting('line_url', '#');
-$google_map = get_setting('google_map_url', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.839471779832!2d100.06037931483044!3d13.738045090357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDQ0JzE3LjAiTiAxMDDCsDAzJzQ1LjAiRQ!5e0!3m2!1sth!2sth!4v1234567890');
+$tiktok = get_setting('tiktok_url', '#');
+$google_map = get_setting('google_map_url', '#');
 ?>
 
 <!-- Page Header -->
@@ -266,10 +266,10 @@ $google_map = get_setting('google_map_url', 'https://www.google.com/maps/embed?p
                                class="btn btn-outline-primary btn-lg text-start">
                                 <i class="bi bi-facebook me-3"></i> Facebook
                             </a>
-                            <a href="<?php echo $line; ?>" 
-                               target="_blank"
-                               class="btn btn-outline-success btn-lg text-start">
-                                <i class="bi bi-line me-3"></i> Line Official
+                            <a href="<?php echo $tiktok; ?>" 
+                                target="_blank"
+                                class="btn btn-outline-dark btn-lg text-start">
+                                <i class="bi bi-tiktok me-3"></i> TikTok Official
                             </a>
                             <a href="<?php echo get_setting('youtube_url', '#'); ?>" 
                                target="_blank"
