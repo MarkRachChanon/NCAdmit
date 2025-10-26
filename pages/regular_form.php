@@ -505,7 +505,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                 <div class="card-header bg-gradient-primary text-white">
                     <h5 class="mb-0">
                         <i class="bi bi-people-fill me-2"></i>
-                        ขั้นตอนที่ 4: ข้อมูลครอบครัว
+                        ข้อมูลครอบครัว
                     </h5>
                 </div>
                 <div class="card-body">
