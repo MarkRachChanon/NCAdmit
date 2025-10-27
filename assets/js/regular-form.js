@@ -333,24 +333,6 @@ function setupFormInputs() {
         });
     }
 
-    // Auto-format Phone
-    // const phoneInput = document.getElementById('phone');
-    // if (phoneInput) {
-    //     phoneInput.addEventListener('input', function (e) {
-    //         let value = e.target.value.replace(/\D/g, '');
-    //         if (value.length > 10) value = value.substring(0, 10);
-
-    //         if (value.length > 3) {
-    //             value = value.substring(0, 3) + '-' + value.substring(3);
-    //         }
-    //         if (value.length > 7) {
-    //             value = value.substring(0, 7) + '-' + value.substring(7);
-    //         }
-
-    //         e.target.value = value;
-    //     });
-    // }
-
     // Auto-calculate Age
     const birthDateInput = document.querySelector('[name="birth_date"]');
     const ageInput = document.querySelector('[name="age"]');
