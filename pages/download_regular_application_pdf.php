@@ -477,10 +477,10 @@ function createRegularApplicationImage($data)
     $x += 515; // ปรับจาก 315 เป็น 515 (เพื่อให้ระยะห่างเท่าเดิม)
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'อาชีพ:');
     $x += 60;
-    drawDottedLine($image, $x, $y + 2, 430, $black);
+    drawDottedLine($image, $x, $y + 2, 390, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['mother_occupation'] ?? '');
 
-    $x += 439;
+    $x += 399;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'รายได้ต่อปี:');
     $x += 110;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
@@ -546,13 +546,13 @@ function createRegularApplicationImage($data)
 
     // ===== ข้อมูลผู้ปกครอง =====
     $x = $margin_left + 40;
-    $guardian_fullname = ($data['guardian_prefix'] ?? '') . ' ' . ($data['guardian_firstname'] ?? '') . ' ' . ($data['guardian_lastname'] ?? '');
+    $guardian_fullname = ($data['guardian_prefix'] ?? '') . '' . ($data['guardian_firstname'] ?? '') . ' ' . ($data['guardian_lastname'] ?? '');
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'ชื่อ-นามสกุล ผู้ปกครอง:');
-    $x += 185;
-    drawDottedLine($image, $x, $y + 2, 350, $black);
+    $x += 200;
+    drawDottedLine($image, $x, $y + 2, 450, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $guardian_fullname);
 
-    $x += 365;
+    $x += 465;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'ความสัมพันธ์:');
     $x += 125;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
@@ -562,10 +562,10 @@ function createRegularApplicationImage($data)
     $x = $margin_left + 40;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'อาชีพ:');
     $x += 60;
-    drawDottedLine($image, $x, $y + 2, 250, $black);
+    drawDottedLine($image, $x, $y + 2, 400, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['guardian_occupation'] ?? '');
 
-    $x += 265;
+    $x += 415;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'รายได้ต่อปี:');
     $x += 110;
     drawDottedLine($image, $x, $y + 2, 180, $black);
