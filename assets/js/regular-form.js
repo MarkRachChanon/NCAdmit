@@ -308,9 +308,9 @@ function validateFileInputs() {
 
 function setupFormInputs() {
     setupPhoneInputFormat('phone');
-    setupPhoneInputFormat('father_phone'); // ✅ เพิ่มสำหรับเบอร์บิดา
-    setupPhoneInputFormat('mother_phone'); // ✅ เพิ่มสำหรับเบอร์มารดา
-    setupPhoneInputFormat('guardian_phone'); // 💡 แนะนำให้เพิ่มเบอร์ผู้ปกครองด้วย (ถ้ามี)
+    setupPhoneInputFormat('father_phone');
+    setupPhoneInputFormat('mother_phone');
+    setupPhoneInputFormat('guardian_phone');
 
     // ID Card Format (X-XXXX-XXXXX-XX-X)
     const idCardInput = document.getElementById('id_card');
