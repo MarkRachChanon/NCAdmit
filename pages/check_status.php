@@ -406,6 +406,19 @@ function displayResults(applications, count) {
             ? '<span class="badge bg-primary me-2 fs-6"><i class="bi bi-award me-1"></i>รอบโควต้า</span>' 
             : '<span class="badge bg-primary me-2 fs-6"><i class="bi bi-people me-1"></i>รอบปกติ</span>';
         
+        // กำหนดปุ่มดาวน์โหลดตามประเภทรอบ
+        const downloadButton = data.form_type === 'quota'
+            ? `<a href="pages/download_application_pdf.php?app_no=${data.application_no}&type=quota" 
+                class="btn btn-light btn-sm ms-2 fs-6"
+                target="_blank">
+                <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควต้า
+            </a>`
+            : `<a href="pages/download_regular_application_pdf.php?app_no=${data.application_no}" 
+                class="btn btn-light btn-sm ms-2 fs-6"
+                target="_blank">
+                <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครปกติ
+            </a>`;
+        
         html += `
         <div class="card border-0 shadow-sm application-card mb-4" data-aos="fade-up" data-aos-delay="${index * 100}">
             <div class="card-header bg-gradient-primary text-white p-4">
@@ -413,11 +426,7 @@ function displayResults(applications, count) {
                     <h5 class="mb-0 fw-bold">
                         <span class="me-3"><i class="bi bi-person-badge me-2"></i>ข้อมูลการสมัคร</span> ${formTypeBadge}
                     </h5>
-                    <a href="pages/download_application_pdf.php?app_no=${data.application_no}&type=${data.form_type}" 
-                        class="btn btn-light btn-sm ms-2 fs-6"
-                        target="_blank">
-                        <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควต้า
-                    </a>
+                    ${downloadButton}
                 </div>
             </div>
             <div class="card-body p-4">
