@@ -162,7 +162,7 @@ function createRegularApplicationImage($data)
     // ===== วันที่ =====
     $created_date = formatDateThaiFull($data['created_at']);
     $parts = explode(' ', $created_date);
-    
+
     $x = $width - 550;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'วันที่:');
     $x += 50;
@@ -186,7 +186,7 @@ function createRegularApplicationImage($data)
     $x = $margin_left;
     imagettftext($image, 24, 0, $x, $y, $black, $font, '1. ชื่อผู้สมัคร:');
     $x += 120;
-    $fullname = ($data['prefix'] ?? '') . '' . ($data['firstname_th'] ?? '') . ' ' . ($data['lastname_th'] ?? '');
+    $fullname = ($data['prefix'] ?? '') . '' . ($data['firstname_th'] ?? '');
     drawDottedLine($image, $x, $y + 2, 350, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $fullname);
 
@@ -246,15 +246,15 @@ function createRegularApplicationImage($data)
     // *** ส่วนที่แก้ไข: เพิ่ม (เซนติเมตร) เข้าไปในข้อความ และปรับตำแหน่ง $x ***
     $x += 75;
     // เพิ่ม "(เซนติเมตร)" กลับเข้าไปในข้อความ
-    imagettftext($image, 24, 0, $x, $y, $black, $font, 'ซ.ม.(เซนติเมตร) น้ำหนัก:'); 
-    
+    imagettftext($image, 24, 0, $x, $y, $black, $font, 'ซ.ม.(เซนติเมตร) น้ำหนัก:');
+
     // ปรับระยะ $x$ ให้เหมาะสมกับข้อความที่ยาวขึ้น (จากเดิม 140 ปรับเป็น 250)
-    $x += 215; 
-    
+    $x += 215;
+
     drawDottedLine($image, $x, $y + 2, 60, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['weight'] ?? '');
 
-    $x += 75; 
+    $x += 75;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'กิโลกรัม');
     // *** สิ้นสุดส่วนที่แก้ไข ***
     $y += 50;
@@ -262,7 +262,7 @@ function createRegularApplicationImage($data)
     // ===== เชื้อชาติ สัญชาติ ศาสนา กรุ๊ปเลือด (บรรทัดที่แก้ไข) =====
     $x = $margin_left + 40;
     // บรรทัดนี้เริ่มต้นด้วย 'เชื้อชาติ' เหมือนเดิม
-    imagettftext($image, 24, 0, $x, $y, $black, $font, 'เชื้อชาติ:'); 
+    imagettftext($image, 24, 0, $x, $y, $black, $font, 'เชื้อชาติ:');
     $x += 78;
     drawDottedLine($image, $x, $y + 2, 100, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['ethnicity'] ?? '');
@@ -281,7 +281,7 @@ function createRegularApplicationImage($data)
 
     $x += 125;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'กรุ๊ปเลือด:');
-    $x +=90;
+    $x += 90;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['blood_group'] ?? '');
     // *** สิ้นสุดส่วนที่แก้ไข 2 ***
@@ -299,7 +299,7 @@ function createRegularApplicationImage($data)
     $x = $margin_left + 40;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'ความพิการ:');
     $x += 110;
-    
+
     $disability = $data['disability'] ?? 'ไม่มี';
     drawCheckbox($image, $x, $y - 20, $disability === 'ไม่มี', $black);
     $x += 35;
@@ -361,7 +361,7 @@ function createRegularApplicationImage($data)
 
     $x += 235;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'อำเภอ/เขต:');
-    $x += 100;
+    $x += 105;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['district'] ?? '');
     $y += 45;
@@ -581,48 +581,36 @@ function createRegularApplicationImage($data)
     // ===== ข้อ 4: ข้อมูลการศึกษา =====
     $x = $margin_left;
     imagettftext($image, 24, 0, $x, $y, $black, $font, '4. ข้อมูลด้านการศึกษา:');
-    $x += 185;
-    drawDottedLine($image, $x, $y + 2, 150, $black);
-    imagettftext($image, 24, 0, $x, $y, $black, $font, $data['current_level'] ?? '');
-
-    $x += 165;
-    imagettftext($image, 24, 0, $x, $y, $black, $font, 'ชั้น:');
-    $x += 50;
+    $x += 205;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
-    imagettftext($image, 24, 0, $x, $y, $black, $font, $data['current_class'] ?? '');
+    $full_level_name = ($data['current_level'] ?? '') . getLevelFullName($data['current_level'] ?? '');
+    imagettftext($image, 24, 0, $x, $y, $black, $font, $full_level_name);
     $y += 45;
 
     $x = $margin_left + 40;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'สถานศึกษา:');
-    $x += 100;
+    $x += 110;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['current_school'] ?? '');
     $y += 45;
 
     $x = $margin_left + 40;
-    imagettftext($image, 24, 0, $x, $y, $black, $font, 'อำเภอ/เขต:');
-    $x += 100;
+    imagettftext($image, 24, 0, $x, $y, $black, $font, 'ที่อยู่สถานศึกษา:');
+    $x += 145;
     $school_address = $data['school_address'] ?? '';
-    $address_parts = parseSchoolAddress($school_address);
-    drawDottedLine($image, $x, $y + 2, 220, $black);
-    imagettftext($image, 24, 0, $x, $y, $black, $font, $address_parts['district']);
-
-    $x += 235;
-    imagettftext($image, 24, 0, $x, $y, $black, $font, 'จังหวัด:');
-    $x += 75;
-    drawDottedLine($image, $x, $y + 2, 220, $black);
-    imagettftext($image, 24, 0, $x, $y, $black, $font, $address_parts['province']);
-
-    $x += 235;
-    imagettftext($image, 24, 0, $x, $y, $black, $font, 'เกรดเฉลี่ยสะสม (GPA):');
-    $x += 185;
-    drawDottedLine($image, $x, $y + 2, 100, $black);
-    imagettftext($image, 24, 0, $x, $y, $black, $font, $data['gpa'] ?? '');
+    drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
+    imagettftext($image, 24, 0, $x, $y, $black, $font, $school_address);
     $y += 45;
 
     $x = $margin_left + 40;
+    imagettftext($image, 24, 0, $x, $y, $black, $font, 'เกรดเฉลี่ยสะสม (GPA):');
+    $x += 200;
+    drawDottedLine($image, $x, $y + 2, 140, $black);
+    imagettftext($image, 24, 0, $x, $y, $black, $font, $data['gpa'] ?? '');
+
+    $x += 145;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'ปีการศึกษา:');
-    $x += 100;
+    $x += 110;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['graduation_year'] ?? '');
     $y += 60;
@@ -630,13 +618,14 @@ function createRegularApplicationImage($data)
     // ===== ข้อ 5: ความประสงค์ =====
     $x = $margin_left;
     imagettftext($image, 24, 0, $x, $y, $black, $font, '5. ข้าพเจ้าประสงค์จะสมัครศึกษาต่อในระดับ:');
-    $x += 365;
-    drawDottedLine($image, $x, $y + 2, 180, $black);
-    imagettftext($image, 24, 0, $x, $y, $black, $font, $data['apply_level'] ?? '');
+    $x += 380;
+    drawDottedLine($image, $x, $y + 2, 370, $black);
+    $full_apply_name = ($data['apply_level'] ?? '') . getLevelFullName($data['apply_level'] ?? '');
+    imagettftext($image, 24, 0, $x, $y, $black, $font, $full_apply_name);
 
-    $x += 195;
+    $x += 385;
     imagettftext($image, 24, 0, $x, $y, $black, $font, 'สาขาวิชา/สาขางาน:');
-    $x += 165;
+    $x += 175;
     drawDottedLine($image, $x, $y + 2, $width - $margin_right - $x, $black);
     imagettftext($image, 24, 0, $x, $y, $black, $font, $data['department_name'] ?? '');
     $y += 60;
@@ -650,7 +639,7 @@ function createRegularApplicationImage($data)
     $y += 60;
 
     // ===== ลายเซ็น =====
-    $x = $width - 600;
+    $x = $width - 650;
     imagettftext($image, 22, 0, $x, $y, $black, $font, 'ลงชื่อ');
     $x += 60;
     drawDottedLine($image, $x, $y + 2, 400, $black);
@@ -658,10 +647,10 @@ function createRegularApplicationImage($data)
     imagettftext($image, 22, 0, $x, $y, $black, $font, 'ผู้สมัคร');
     $y += 45;
 
-    $fullname = ($data['prefix'] ?? '') . ' ' . ($data['firstname_th'] ?? '') . ' ' . ($data['lastname_th'] ?? '');
-    $x = $width - 540;
+    $fullname = ($data['prefix'] ?? '') . '' . ($data['firstname_th'] ?? '') . ' ' . ($data['lastname_th'] ?? '');
+    $x = $width - 580;
     imagettftext($image, 22, 0, $x, $y, $black, $font, '(');
-    $x += 20;
+    $x += 10;
     $bbox = imagettfbbox(22, 0, $font, $fullname);
     $name_width = $bbox[2] - $bbox[0];
     $x_name = $x + (360 - $name_width) / 2;
@@ -671,7 +660,7 @@ function createRegularApplicationImage($data)
     imagettftext($image, 22, 0, $x, $y, $black, $font, ')');
     $y += 45;
 
-    $x = $width - 480;
+    $x = $width - 490;
     imagettftext($image, 22, 0, $x, $y, $black, $font, '.......... / .......... / ..........');
     $y += 50;
 
@@ -680,7 +669,7 @@ function createRegularApplicationImage($data)
     $agreement_text = 'หากตรวจสอบพบว่า คุณวุฒิและคุณสมบัติของข้าพเจ้าไม่ตรงตามที่สถานศึกษากำหนดหรือตรวจสอบพบว่ามีการปลอมแปลงเอกสาร ข้าพเจ้ายินยอมให้ทาง สถานศึกษาเพิกถอนสิทธิ์การสมัครสอบคัดเลือกและการมอบตัว';
     imagettftext($image, 18, 0, $x, $y, $black, $font, $agreement_text);
     $y += 30;
-    
+
     $agreement_text2 = 'ทุกประการและไม่ขอรับเงินค่าสอบคัดเลือกและค่ามอบตัวคืนไม่ว่ากรณีใด และข้าพเจ้ายินยอมให้ สถานศึกษานำข้อมูลในใบสมัครของข้าพเจ้าไปใช้ประโยชน์ตามที่สถานศึกษาพิจารณาเห็นสมควร';
     imagettftext($image, 18, 0, $x, $y, $black, $font, $agreement_text2);
     $y += 50;
@@ -705,7 +694,7 @@ function createRegularApplicationImage($data)
     $bbox = imagettfbbox(20, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
     imagettftext($image, 20, 0, $margin_left + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
-    
+
     $text = 'ลงชื่อ .......................................... กรรมการรับสมัคร';
     $bbox = imagettfbbox(20, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
@@ -744,7 +733,7 @@ function parseSchoolAddress($address)
     // แยกที่อยู่ออกเป็นอำเภอและจังหวัด
     $district = '';
     $province = '';
-    
+
     if (!empty($address)) {
         // ตัวอย่าง: "อ.เมือง จ.นครปฐม"
         if (preg_match('/อ\.([^\s]+)/', $address, $matches)) {
@@ -754,7 +743,7 @@ function parseSchoolAddress($address)
             $province = $matches[1];
         }
     }
-    
+
     return ['district' => $district, 'province' => $province];
 }
 
@@ -789,8 +778,19 @@ function formatDateThaiFull($date)
 
     $timestamp = strtotime($date);
     $thai_months_full = [
-        '', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        '',
+        'มกราคม',
+        'กุมภาพันธ์',
+        'มีนาคม',
+        'เมษายน',
+        'พฤษภาคม',
+        'มิถุนายน',
+        'กรกฎาคม',
+        'สิงหาคม',
+        'กันยายน',
+        'ตุลาคม',
+        'พฤศจิกายน',
+        'ธันวาคม'
     ];
 
     $day = (int)date('j', $timestamp);
@@ -799,4 +799,30 @@ function formatDateThaiFull($date)
 
     return "$day $month พ.ศ. $year";
 }
-?>
+
+/**
+ * Maps an educational level abbreviation to its full Thai name.
+ * @param string|null $level
+ * @return string The full name in parentheses, or an empty string if no mapping is found.
+ */
+
+function getLevelFullName($level)
+{
+    if (empty($level)) {
+        return '';
+    }
+    $level_map = [
+        'ม.3' => 'มัธยมศึกษาปีที่ 3',
+        'ม.6.' => 'มัธยมศึกษาปีที่ 6',
+        'ปวช.' => 'ประกาศนียบัตรวิชาชีพ',
+        'ปวส.' => 'ประกาศนียบัตรวิชาชีพชั้นสูง',
+        'ปริญญาตรี' => 'ปริญญาตรี',
+    ];
+
+    $full_name = $level_map[$level] ?? null;
+
+    if (!empty($full_name)) {
+        return " ({$full_name})";
+    }
+    return '';
+}
