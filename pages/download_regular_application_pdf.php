@@ -631,38 +631,34 @@ function createRegularApplicationImage($data)
     $y += 60;
 
     // ===== ข้อรับรอง =====
+    $x = $margin_left;
+    drawCheckbox($image, $x, $y - 20, true, $black);
+    $x += 35;
     $text = 'ข้าพเจ้าขอรับรองว่าข้อความดังกล่าวข้างต้นเป็นความจริงทุกประการ';
-    $bbox = imagettfbbox(22, 0, $fontBold, $text);
-    $text_width = $bbox[2] - $bbox[0];
-    $x_center = ($width - $text_width) / 2;
-    imagettftext($image, 22, 0, $x_center, $y, $black, $fontBold, $text);
+    imagettftext($image, 22, 0, $x, $y, $black, $fontBold, $text);
     $y += 60;
 
     // ===== ลายเซ็น =====
-    $x = $width - 650;
-    imagettftext($image, 22, 0, $x, $y, $black, $font, 'ลงชื่อ');
-    $x += 60;
-    drawDottedLine($image, $x, $y + 2, 400, $black);
-    $x += 410;
-    imagettftext($image, 22, 0, $x, $y, $black, $font, 'ผู้สมัคร');
+    $signature_line_text = 'ลงชื่อ.......................................................ผู้สมัคร';
+    $x_signature_start = $width - 650;
+    imagettftext($image, 22, 0, $x_signature_start, $y, $black, $font, $signature_line_text);
     $y += 45;
 
     $fullname = ($data['prefix'] ?? '') . '' . ($data['firstname_th'] ?? '') . ' ' . ($data['lastname_th'] ?? '');
-    $x = $width - 580;
-    imagettftext($image, 22, 0, $x, $y, $black, $font, '(');
-    $x += 10;
-    $bbox = imagettfbbox(22, 0, $font, $fullname);
-    $name_width = $bbox[2] - $bbox[0];
-    $x_name = $x + (360 - $name_width) / 2;
-    drawDottedLine($image, $x, $y + 2, 360, $black);
-    imagettftext($image, 22, 0, $x_name, $y, $black, $font, $fullname);
-    $x += 360;
-    imagettftext($image, 22, 0, $x, $y, $black, $font, ')');
+    $full_name_in_parens = '( ' . $fullname . ' )';
+
+    $bbox_name = imagettfbbox(22, 0, $font, $full_name_in_parens);
+    $name_width = $bbox_name[2] - $bbox_name[0];
+    $bbox_sign = imagettfbbox(22, 0, $font, $signature_line_text);
+    $sign_line_width = $bbox_sign[2] - $bbox_sign[0];
+
+    $x_name_center = $x_signature_start + ($sign_line_width / 2) - ($name_width / 2);
+    imagettftext($image, 22, 0, $x_name_center, $y, $black, $font, $full_name_in_parens);
     $y += 45;
 
-    $x = $width - 490;
+    $x = $width - 550;
     imagettftext($image, 22, 0, $x, $y, $black, $font, '.......... / .......... / ..........');
-    $y += 50;
+    $y += 35;
 
     // ===== ข้อตกลง =====
     $x = $margin_left + 40;
@@ -672,53 +668,204 @@ function createRegularApplicationImage($data)
 
     $agreement_text2 = 'ทุกประการและไม่ขอรับเงินค่าสอบคัดเลือกและค่ามอบตัวคืนไม่ว่ากรณีใด และข้าพเจ้ายินยอมให้ สถานศึกษานำข้อมูลในใบสมัครของข้าพเจ้าไปใช้ประโยชน์ตามที่สถานศึกษาพิจารณาเห็นสมควร';
     imagettftext($image, 18, 0, $x, $y, $black, $font, $agreement_text2);
-    $y += 50;
+    $y += 20;
 
     // ===== ตารางส่วนเจ้าหน้าที่ =====
     imagesetthickness($image, 1);
     $table_y = $y;
-    $col_width = 747; // (1654 - 200) / 2
+    $table_width = $width - $margin_left - $margin_right;
+    $col_width = intval($table_width / 2);
     $row_height = 40;
 
-    // Header
-    imagerectangle($image, $margin_left, $table_y, $margin_left + $col_width, $table_y + $row_height, $gray);
-    imagerectangle($image, $margin_left + $col_width, $table_y, $width - $margin_right, $table_y + $row_height, $gray);
+    // Header - ส่วนที่ 1 และ 2 (วาดเฉพาะเส้นบนและข้าง ไม่มีเส้นล่าง)
+    imageline($image, $margin_left, $table_y, $width - $margin_right, $table_y, $black);
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $row_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $row_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $row_height, $black);
+
+    // ข้อความชิดซ้าย
     imagettftext($image, 22, 0, $margin_left + 10, $table_y + 28, $black, $font, 'ส่วนที่ 1 เฉพาะเจ้าหน้าที่');
     imagettftext($image, 22, 0, $margin_left + $col_width + 10, $table_y + 28, $black, $font, 'ส่วนที่ 2 เฉพาะเจ้าหน้าที่');
 
     // ลายเซ็นกรรมการ
     $table_y += $row_height;
-    imagerectangle($image, $margin_left, $table_y, $margin_left + $col_width, $table_y + $row_height, $gray);
-    imagerectangle($image, $margin_left + $col_width, $table_y, $width - $margin_right, $table_y + $row_height, $gray);
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $row_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $row_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $row_height, $black);
+
     $text = 'ลงชื่อ .......................................... กรรมการรับเงิน';
     $bbox = imagettfbbox(20, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
-    imagettftext($image, 20, 0, $margin_left + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
+    $x_center = intval($margin_left + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 28, $black, $font, $text);
 
     $text = 'ลงชื่อ .......................................... กรรมการรับสมัคร';
     $bbox = imagettfbbox(20, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
-    imagettftext($image, 20, 0, $margin_left + $col_width + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
+    $x_center = intval($margin_left + $col_width + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 28, $black, $font, $text);
 
-    // วงเล็บชื่อ
     $table_y += $row_height;
-    imagerectangle($image, $margin_left, $table_y, $margin_left + $col_width, $table_y + $row_height, $gray);
-    imagerectangle($image, $margin_left + $col_width, $table_y, $width - $margin_right, $table_y + $row_height, $gray);
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $row_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $row_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $row_height, $black);
+
     $text = '(.....................................................)';
     $bbox = imagettfbbox(20, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
-    imagettftext($image, 20, 0, $margin_left + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
-    imagettftext($image, 20, 0, $margin_left + $col_width + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
+    $x_center = intval($margin_left + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 28, $black, $font, $text);
 
-    // วันที่
+    $x_center = intval($margin_left + $col_width + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 28, $black, $font, $text);
+
     $table_y += $row_height;
-    imagerectangle($image, $margin_left, $table_y, $margin_left + $col_width, $table_y + $row_height, $gray);
-    imagerectangle($image, $margin_left + $col_width, $table_y, $width - $margin_right, $table_y + $row_height, $gray);
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $row_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $row_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $row_height, $black);
+    imageline($image, $margin_left, $table_y + $row_height, $width - $margin_right, $table_y + $row_height, $black);
+
     $text = '.......... / .......... / ..........';
     $bbox = imagettfbbox(20, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
-    imagettftext($image, 20, 0, $margin_left + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
-    imagettftext($image, 20, 0, $margin_left + $col_width + ($col_width - $text_width) / 2, $table_y + 28, $black, $font, $text);
+    $x_center = intval($margin_left + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 28, $black, $font, $text);
+
+    $x_center = intval($margin_left + $col_width + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 28, $black, $font, $text);
+
+    // บัตรประจำตัวผู้สมัครสอบ - Header
+    $table_y += $row_height;
+    $card_row_height = 35;
+
+    // วาดเฉพาะเส้นบน ซ้าย กลาง ขวา (ไม่มีเส้นล่าง)
+    imageline($image, $margin_left, $table_y, $width - $margin_right, $table_y, $black);
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $card_row_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $card_row_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $card_row_height, $black);
+
+    $text = 'บัตรประจำตัวผู้สมัครสอบ (ส่วนของสถานศึกษา)';
+    $bbox = imagettfbbox(20, 0, $font, $text);
+    $text_width = $bbox[2] - $bbox[0];
+    $x_center = intval($margin_left + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 25, $black, $font, $text);
+
+    $text = 'บัตรประจำตัวผู้สมัครสอบ (ส่วนของผู้สมัคร)';
+    $bbox = imagettfbbox(20, 0, $font, $text);
+    $text_width = $bbox[2] - $bbox[0];
+    $x_center = intval($margin_left + $col_width + ($col_width - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 25, $black, $font, $text);
+
+    // รายละเอียดผู้สมัคร + รูปถ่าย
+    $table_y += $card_row_height;
+    $detail_height = 145;
+    $half_col = intval($col_width / 2);
+
+    // วาดเฉพาะเส้นซ้าย กลาง ขวา (ไม่มีเส้นบนและล่าง)
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $detail_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $detail_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $detail_height, $black);
+
+    // ส่วนซ้าย - รายละเอียด + รูปถ่าย
+    $detail_y = $table_y + 25;
+    $line_height = 24;
+
+    // รายละเอียดฝั่งซ้าย
+    $details = [
+        'เลขที่ผู้สมัครสอบ : ' . ($data['application_no'] ?? ''),
+        'ชื่อ-สกุล : ' . ($data['prefix'] ?? '') . ($data['firstname_th'] ?? '') . ' ' . ($data['lastname_th'] ?? ''),
+        'ระดับชั้น : ' . ($data['apply_level'] ?? ''),
+        'สาขาวิชา/สาขางาน :',
+        ($data['department_name'] ?? ''),
+    ];
+
+    foreach ($details as $detail) {
+        imagettftext($image, 18, 0, $margin_left + 10, $detail_y, $black, $font, $detail);
+        $detail_y += $line_height;
+    }
+
+    // กรอบรูปถ่าย ฝั่งซ้าย
+    $photo_size = 130;
+    $photo_x = intval($margin_left + $half_col + ($half_col - $photo_size) / 2);
+    $photo_y = intval($table_y + ($detail_height - $photo_size) / 2);
+    imagerectangle($image, $photo_x, $photo_y, $photo_x + $photo_size, $photo_y + $photo_size, $black);
+    imagettftext($image, 16, 0, $photo_x + 15, intval($photo_y + $photo_size / 2), $black, $font, 'รูปถ่าย ขนาด 1 นิ้ว');
+
+    // รายละเอียดฝั่งขวา
+    $detail_y = $table_y + 25;
+    foreach ($details as $detail) {
+        imagettftext($image, 18, 0, $margin_left + $col_width + 10, $detail_y, $black, $font, $detail);
+        $detail_y += $line_height;
+    }
+
+    // กรอบรูปถ่าย ฝั่งขวา
+    $photo_x = intval($margin_left + $col_width + $half_col + ($half_col - $photo_size) / 2);
+    imagerectangle($image, $photo_x, $photo_y, $photo_x + $photo_size, $photo_y + $photo_size, $black);
+    imagettftext($image, 16, 0, $photo_x + 15, intval($photo_y + $photo_size / 2), $black, $font, 'รูปถ่าย ขนาด 1 นิ้ว');
+
+    // ส่วนลายเซ็น (เพิ่มความสูงให้มากขึ้น)
+    $table_y += $detail_height;
+    $sign_section_height = 60; // เพิ่มความสูงจาก 50 เป็น 60
+
+    // วาดเฉพาะเส้นซ้าย กลาง ขวา (ไม่มีเส้นบนและล่าง)
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $sign_section_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $sign_section_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $sign_section_height, $black);
+
+    // วาดเส้นประสำหรับลายเซ็น (ห่างจากด้านบน)
+    $sign_line_y = $table_y + 50;
+    $dot_line_length = 180; // ความยาวเส้นประ
+
+    // เส้นประฝั่งซ้าย - ผู้สมัคร
+    $line_start = intval($margin_left + ($half_col - $dot_line_length) / 2);
+    drawDottedLine($image, $line_start, $sign_line_y, $dot_line_length, $black);
+
+    // เส้นประฝั่งซ้าย - กรรมการ
+    $line_start = intval($margin_left + $half_col + ($half_col - $dot_line_length) / 2);
+    drawDottedLine($image, $line_start, $sign_line_y, $dot_line_length, $black);
+
+    // เส้นประฝั่งขวา - ผู้สมัคร
+    $line_start = intval($margin_left + $col_width + ($half_col - $dot_line_length) / 2);
+    drawDottedLine($image, $line_start, $sign_line_y, $dot_line_length, $black);
+
+    // เส้นประฝั่งขวา - กรรมการ
+    $line_start = intval($margin_left + $col_width + $half_col + ($half_col - $dot_line_length) / 2);
+    drawDottedLine($image, $line_start, $sign_line_y, $dot_line_length, $black);
+
+    // ข้อความผู้สมัคร/กรรมการ
+    $table_y += $sign_section_height;
+    $label_row_height = 50;
+
+    // วาดเฉพาะเส้นซ้าย กลาง ขวา และล่าง (ไม่มีเส้นบน)
+    imageline($image, $margin_left, $table_y, $margin_left, $table_y + $label_row_height, $black);
+    imageline($image, $margin_left + $col_width, $table_y, $margin_left + $col_width, $table_y + $label_row_height, $black);
+    imageline($image, $width - $margin_right, $table_y, $width - $margin_right, $table_y + $label_row_height, $black);
+    imageline($image, $margin_left, $table_y + $label_row_height, $width - $margin_right, $table_y + $label_row_height, $black);
+
+    // ข้อความผู้สมัครและกรรมการ (ไม่มีเส้นใต้)
+    $text = 'ผู้สมัคร';
+    $bbox = imagettfbbox(20, 0, $font, $text);
+    $text_width = $bbox[2] - $bbox[0];
+    $x_center = intval($margin_left + ($half_col - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 22, $black, $font, $text);
+
+    $text = 'กรรมการรับสมัคร';
+    $bbox = imagettfbbox(20, 0, $font, $text);
+    $text_width = $bbox[2] - $bbox[0];
+    $x_center = intval($margin_left + $half_col + ($half_col - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 22, $black, $font, $text);
+
+    $text = 'ผู้สมัคร';
+    $bbox = imagettfbbox(20, 0, $font, $text);
+    $text_width = $bbox[2] - $bbox[0];
+    $x_center = intval($margin_left + $col_width + ($half_col - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 22, $black, $font, $text);
+
+    $text = 'กรรมการรับสมัคร';
+    $bbox = imagettfbbox(20, 0, $font, $text);
+    $text_width = $bbox[2] - $bbox[0];
+    $x_center = intval($margin_left + $col_width + $half_col + ($half_col - $text_width) / 2);
+    imagettftext($image, 20, 0, $x_center, $table_y + 22, $black, $font, $text);
 
     // บันทึกเป็นไฟล์ชั่วคราว
     $temp_file = sys_get_temp_dir() . '/regular_application_' . uniqid() . '.png';
