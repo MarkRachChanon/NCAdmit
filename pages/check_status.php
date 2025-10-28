@@ -413,7 +413,7 @@ function displayResults(applications, count) {
                 target="_blank">
                 <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควต้า
             </a>`
-            : `<a href="pages/download_regular_application_pdf.php?app_no=${data.application_no}" 
+            : `<a href="pages/download_regular_application_pdf.php?app_no=${data.application_no}&type=regular" 
                 class="btn btn-light btn-sm ms-2 fs-6"
                 target="_blank">
                 <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครปกติ

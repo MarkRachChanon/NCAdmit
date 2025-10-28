@@ -63,7 +63,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
 
                 <!-- Right: User Menu -->
                 <div class="dropdown">
-                    <button class="btn btn-link text-white dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-link text-white dropdown-toggle text-decoration-none" type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-2"></i>
                         <span class="d-none d-sm-inline"><?php echo htmlspecialchars($admin_fullname); ?></span>
                         <span class="badge bg-warning text-dark ms-2 d-none d-md-inline"><?php echo $admin_role; ?></span>

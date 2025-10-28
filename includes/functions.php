@@ -145,6 +145,29 @@ function get_status_badge($status) {
     return isset($badges[$status]) ? $badges[$status] : $status;
 }
 
+function get_status_class($status) {
+    switch ($status) {
+        case 'pending': return 'bg-warning text-dark';
+        case 'approved': return 'bg-success';
+        case 'rejected': return 'bg-danger';
+        case 'cancelled': return 'bg-secondary';
+        default: return 'bg-info';
+    }
+}
+
+/**
+ * Get Status Text
+ */
+function get_status_text($status) {
+    switch ($status) {
+        case 'pending': return 'รอตรวจสอบ';
+        case 'approved': return 'อนุมัติ';
+        case 'rejected': return 'ไม่อนุมัติ';
+        case 'cancelled': return 'ยกเลิก';
+        default: return 'ไม่ทราบสถานะ';
+    }
+}
+
 /**
  * Redirect Function
  */

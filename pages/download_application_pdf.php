@@ -30,20 +30,6 @@ try {
             WHERE sq.application_no = ?
             LIMIT 1
         ");
-    } else {
-        $stmt = $conn->prepare("
-            SELECT 
-                sr.*,
-                d.name_th as department_name,
-                d.level as department_level,
-                d.study_type as study_type,
-                dc.name as category_name
-            FROM students_regular sr
-            LEFT JOIN departments d ON sr.department_id = d.id
-            LEFT JOIN department_categories dc ON d.category_id = dc.id
-            WHERE sr.application_no = ?
-            LIMIT 1
-        ");
     }
 
     $stmt->bind_param("s", $application_no);

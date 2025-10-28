@@ -6,7 +6,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-header">
         <img src="../assets/images/logo.png" alt="Logo" height="50">
-        <h5 class="mt-2 mb-0">NC-Admission</h5>
+        <h5 class="mt-2 mb-0">E-Pers NC-Admission</h5>
         <small class="text-muted">ระบบจัดการหลังบ้าน</small>
     </div>
     

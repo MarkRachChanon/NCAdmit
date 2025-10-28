@@ -18,6 +18,8 @@
     --admin-sidebar-width: 260px;
     --admin-navbar-height: 60px;
     --admin-transition: all 0.3s ease;
+    --admin-scroll-color: #ffffff;
+    --admin-scroll-background: #60efff;
 }
 
 /* ============================================
@@ -39,7 +41,7 @@
     left: 0;
     right: 0;
     height: var(--admin-navbar-height);
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(135deg, #0061ff 0%, #764ba2 100%);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1030;
     padding: 0 20px;
@@ -70,9 +72,13 @@
     height: calc(100vh - var(--admin-navbar-height));
     background: #ffffff;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-    overflow-y: auto;
+    /* ลบ: overflow-y: auto; */
     transition: var(--admin-transition);
     z-index: 1020;
+    
+    /* เพิ่ม: กำหนดให้เป็น Flex Container จัดเรียงแนวตั้ง */
+    display: flex;
+    flex-direction: column;
 }
 
 .admin-sidebar.collapsed {
@@ -98,6 +104,10 @@
 /* Sidebar Menu */
 .sidebar-menu {
     padding: 20px 0;
+    /* เพิ่ม: ยืดพื้นที่ทั้งหมดที่เหลืออยู่ */
+    flex-grow: 1; 
+    /* เพิ่ม: กำหนดให้ Scrollbar แสดงเฉพาะส่วนเมนูเท่านั้น */
+    overflow-y: auto;
 }
 
 .sidebar-menu .nav-link {
@@ -146,14 +156,13 @@
 
 /* Sidebar Footer */
 .sidebar-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    /* ลบ: position: absolute; bottom: 0; left: 0; right: 0; */
     padding: 15px 20px;
     border-top: 2px solid #f0f0f0;
     background: #fafafa;
     text-align: center;
+    /* เพิ่ม: ป้องกัน Footer ถูกบีบอัด */
+    flex-shrink: 0; 
 }
 
 /* ============================================
@@ -355,21 +364,26 @@ table.dataTable tbody tr:hover {
 /* ============================================
    Scrollbar
 ============================================ */
-.admin-sidebar::-webkit-scrollbar {
-    width: 6px;
+/* 1. สำหรับ Webkit browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 5px; /* ความกว้างของ Scrollbar */
 }
 
-.admin-sidebar::-webkit-scrollbar-track {
-    background: #f1f1f1;
+/* 2. Track (พื้นหลังของ Scrollbar) */
+::-webkit-scrollbar-track {
+    background: var(--admin-scroll-background);
+    border-radius: 10px;
 }
 
-.admin-sidebar::-webkit-scrollbar-thumb {
-    background: #bdc3c7;
-    border-radius: 3px;
+/* 3. Handle (ส่วนที่เลื่อนได้) */
+::-webkit-scrollbar-thumb {
+    background: var(--admin-scroll-color); /* ใช้สีเดียวกับ Navbar */
+    border-radius: 10px;
 }
 
-.admin-sidebar::-webkit-scrollbar-thumb:hover {
-    background: #95a5a6;
+/* 4. Handle on hover (เมื่อเมาส์ชี้) */
+::-webkit-scrollbar-thumb:hover {
+    background: #e1e1e1; /* สีเข้มขึ้นเล็กน้อยเมื่อชี้ */
 }
 
 /* ============================================
@@ -411,4 +425,30 @@ table.dataTable tbody tr:hover {
 
 .shadow-admin-lg {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* DataTables Display Fix (Show X entries width) */
+/* -------------------------------------------------------------------------- */
+
+.dataTables_length select {
+    width: 80px !important; 
+    display: inline-block;
+}
+
+.dataTables_filter input {
+    min-width: 150px; 
+}
+
+.dataTables_filter input,
+.dataTables_length select {
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+}
+
+.table-responsive {
+    min-height: 500px !important;
+    max-height: 800px !important;
+    overflow-y: auto;
 }

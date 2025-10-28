@@ -1,6 +1,7 @@
 /**
  * NC-Admission - Admin Panel JavaScript
  */
+$.fn.dataTable.ext.errMode = 'none';
 
 // Initialize DataTables
 $(document).ready(function() {

@@ -6,7 +6,7 @@ $contact_email = get_setting('contact_email', 'info@nc.ac.th');
 $contact_address = get_setting('contact_address', 'วิทยาลัยอาชีวศึกษานครปฐม จังหวัดนครปฐม');
 $facebook_url = get_setting('facebook_url', '#');
 $youtube_url = get_setting('youtube_url', '#');
-$line_url = get_setting('line_url', '#');
+$tiktok_url = get_setting('tiktok_url', '#');
 $current_year = date('Y') + 543;
 ?>
 
@@ -26,17 +26,17 @@ $current_year = date('Y') + 543;
                     <?php echo nl2br($site_description); ?>
                 </p>
                 <div class="social-links mt-3">
-                    <a href="<?php echo $facebook_url; ?>" class="text-white me-3" title="Facebook" 
+                    <a href="<?php echo $facebook_url; ?>" class="text-white me-3 text-decoration-none" title="Facebook" 
                        <?php echo ($facebook_url != '#') ? 'target="_blank"' : ''; ?>>
                         <i class="bi bi-facebook fs-4"></i>
                     </a>
-                    <a href="<?php echo $youtube_url; ?>" class="text-white me-3" title="YouTube"
+                    <a href="<?php echo $youtube_url; ?>" class="text-white me-3 text-decoration-none" title="YouTube"
                        <?php echo ($youtube_url != '#') ? 'target="_blank"' : ''; ?>>
                         <i class="bi bi-youtube fs-4"></i>
                     </a>
-                    <a href="<?php echo $line_url; ?>" class="text-white me-3" title="Line"
-                       <?php echo ($line_url != '#') ? 'target="_blank"' : ''; ?>>
-                        <i class="bi bi-line fs-4"></i>
+                    <a href="<?php echo $tiktok_url; ?>" class="text-white me-3 text-decoration-none" title="Line"
+                       <?php echo ($tiktok_url != '#') ? 'target="_blank"' : ''; ?>>
+                        <i class="bi bi-tiktok  fs-4"></i>
                     </a>
                 </div>
             </div>

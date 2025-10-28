@@ -8,6 +8,7 @@ use Mpdf\Config\FontVariables;
 
 // รับพารามิเตอร์
 $application_no = isset($_GET['app_no']) ? trim($_GET['app_no']) : '';
+$form_type = isset($_GET['type']) ? trim($_GET['type']) : '';
 
 if (empty($application_no)) {
     die('ข้อมูลไม่ครบถ้วน: กรุณาระบุเลขที่ใบสมัคร');
@@ -15,17 +16,19 @@ if (empty($application_no)) {
 
 try {
     // ดึงข้อมูลจาก Database
-    $stmt = $conn->prepare("
-        SELECT 
-            sr.*,
-            d.name_th as department_name,
-            d.level as department_level,
-            d.study_type as study_type
-        FROM students_regular sr
-        LEFT JOIN departments d ON sr.department_id = d.id
-        WHERE sr.application_no = ?
-        LIMIT 1
-    ");
+    if ($form_type === 'regular') {
+        $stmt = $conn->prepare("
+            SELECT 
+                sr.*,
+                d.name_th as department_name,
+                d.level as department_level,
+                d.study_type as study_type
+            FROM students_regular sr
+            LEFT JOIN departments d ON sr.department_id = d.id
+            WHERE sr.application_no = ?
+            LIMIT 1
+        ");
+    }
 
     $stmt->bind_param("s", $application_no);
     $stmt->execute();
