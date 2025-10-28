@@ -442,14 +442,30 @@ while ($dept = $departments_result->fetch_assoc()) {
                     <h5 class="fw-bold mb-3">ข้อมูลเพิ่มเติม (ถ้ามี)</h5>
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">ผลงาน/รางวัลที่ได้รับ</label>
-                            <textarea name="awards" class="form-control" rows="3" placeholder="ระบุผลงาน หรือรางวัลที่เคยได้รับ..."></textarea>
+                            <label class="form-label">ผลงาน/รางวัลที่ได้รับ <span class="text-muted">(สูงสุด 50 ตัวอักษร)</span></label>
+                            <textarea name="awards" class="form-control" rows="3" maxlength="50" placeholder="ระบุผลงาน หรือรางวัลที่เคยได้รับ..."></textarea>
+                            <div class="form-text">
+                                <span id="awards-count">0</span>/50 ตัวอักษร
+                            </div>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">ความสามารถพิเศษ</label>
-                            <textarea name="talents" class="form-control" rows="3" placeholder="เช่น ดนตรี, กีฬา, คอมพิวเตอร์..."></textarea>
+                            <label class="form-label">ความสามารถพิเศษ <span class="text-muted">(สูงสุด 50 ตัวอักษร)</span></label>
+                            <textarea name="talents" class="form-control" rows="3" maxlength="50" placeholder="เช่น ดนตรี, กีฬา, คอมพิวเตอร์..."></textarea>
+                            <div class="form-text">
+                                <span id="talents-count">0</span>/50 ตัวอักษร
+                            </div>
                         </div>
                     </div>
+                    <script>
+                        // นับจำนวนตัวอักษรสำหรับผลงาน/รางวัล
+                        document.querySelector('textarea[name="awards"]').addEventListener('input', function() {
+                            document.getElementById('awards-count').textContent = this.value.length;
+                        });
+                        // นับจำนวนตัวอักษรสำหรับความสามารถพิเศษ
+                        document.querySelector('textarea[name="talents"]').addEventListener('input', function() {
+                            document.getElementById('talents-count').textContent = this.value.length;
+                        });
+                    </script>
                 </div>
                 <div class="card-footer bg-light">
                     <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
@@ -877,7 +893,7 @@ while ($dept = $departments_result->fetch_assoc()) {
             applyLevel === 'ปริญญาตรี' ? 'ปริญญาตรี' : '-';
         const summaryApplyLevelElement = document.getElementById('summary_apply_level');
         if (summaryApplyLevelElement) {
-            summaryApplyLevelElement.textContent = applyLevelText; 
+            summaryApplyLevelElement.textContent = applyLevelText;
         }
         const selectedDeptName = document.getElementById('selected_dept_name').textContent;
         const selectedDeptCategory = document.getElementById('selected_dept_category').textContent;

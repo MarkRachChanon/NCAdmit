@@ -316,9 +316,17 @@ while ($dept = $departments_result->fetch_assoc()) {
                             </select>
                         </div>
                         <div class="col-md-6" id="disability_type_wrapper">
-                            <label class="form-label">พิการทาง</label>
-                            <input type="text" class="form-control" name="disability_type">
+                            <label class="form-label">พิการทาง (ถ้ามี) <span class="text-muted">(สูงสุด 30 ตัวอักษร)</span></label>
+                            <input type="text" class="form-control" name="disability_type" maxlength="30" placeholder="เช่น การเคลื่อนไหว, การได้ยิน">
+                            <div class="form-text">
+                                <span id="disability_type-count">0</span>/30 ตัวอักษร
+                            </div>
                         </div>
+                        <script>
+                            document.querySelector('input[name="disability_type"]').addEventListener('input', function() {
+                                document.getElementById('disability_type-count').textContent = this.value.length;
+                            });
+                        </script>
                         <div class="col-md-4">
                             <label class="form-label">เบอร์โทรศัพท์ <span class="text-danger">*</span></label>
                             <input type="tel" name="phone" id="phone" class="form-control"
@@ -482,10 +490,19 @@ while ($dept = $departments_result->fetch_assoc()) {
                     <h5 class="fw-bold mb-3">ข้อมูลเพิ่มเติม (ถ้ามี)</h5>
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">ความสามารถพิเศษ</label>
-                            <textarea name="talents" class="form-control" rows="3" placeholder="เช่น ดนตรี, กีฬา, คอมพิวเตอร์..."></textarea>
+                            <label class="form-label">ความสามารถพิเศษ <span class="text-muted">(สูงสุด 50 ตัวอักษร)</span></label>
+                            <textarea name="talents" class="form-control" rows="3" maxlength="50" placeholder="เช่น ดนตรี, กีฬา, คอมพิวเตอร์..."></textarea>
+                            <div class="form-text">
+                                <span id="talents-count">0</span>/50 ตัวอักษร
+                            </div>
                         </div>
                     </div>
+                    <script>
+                        // นับจำนวนตัวอักษรสำหรับความสามารถพิเศษ
+                        document.querySelector('textarea[name="talents"]').addEventListener('input', function() {
+                            document.getElementById('talents-count').textContent = this.value.length;
+                        });
+                    </script>
                 </div>
                 <div class="card-footer bg-light">
                     <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
@@ -557,9 +574,17 @@ while ($dept = $departments_result->fetch_assoc()) {
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">พิการทาง (ถ้ามี)</label>
-                            <input type="text" class="form-control" name="father_disability_type">
+                            <label class="form-label">พิการทาง (ถ้ามี) <span class="text-muted">(สูงสุด 30 ตัวอักษร)</span></label>
+                            <input type="text" class="form-control" name="father_disability_type" maxlength="30" placeholder="เช่น การเคลื่อนไหว, การได้ยิน">
+                            <div class="form-text">
+                                <span id="father_disability_type-count">0</span>/30 ตัวอักษร
+                            </div>
                         </div>
+                        <script>
+                            document.querySelector('input[name="father_disability_type"]').addEventListener('input', function() {
+                                document.getElementById('father_disability_type-count').textContent = this.value.length;
+                            });
+                        </script>
                     </div>
 
                     <!-- ข้อมูลมารดา -->
@@ -611,9 +636,17 @@ while ($dept = $departments_result->fetch_assoc()) {
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">พิการทาง (ถ้ามี)</label>
-                            <input type="text" class="form-control" name="mother_disability_type">
+                            <label class="form-label">พิการทาง (ถ้ามี) <span class="text-muted">(สูงสุด 30 ตัวอักษร)</span></label>
+                            <input type="text" class="form-control" name="mother_disability_type" maxlength="30" placeholder="เช่น การเคลื่อนไหว, การได้ยิน">
+                            <div class="form-text">
+                                <span id="mother_disability_type-count">0</span>/30 ตัวอักษร
+                            </div>
                         </div>
+                        <script>
+                            document.querySelector('input[name="mother_disability_type"]').addEventListener('input', function() {
+                                document.getElementById('mother_disability_type-count').textContent = this.value.length;
+                            });
+                        </script>
                     </div>
 
                     <!-- สถานะบิดา-มารดา -->
@@ -987,18 +1020,96 @@ while ($dept = $departments_result->fetch_assoc()) {
                         <h6 class="fw-bold text-primary mb-3">
                             <i class="bi bi-people-fill me-2"></i>ข้อมูลครอบครัว
                         </h6>
+                        <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">
+                            <i class="bi bi-person me-2"></i>บิดา
+                        </h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">ชื่อ-นามสกุล:</small>
+                                <p class="mb-0 fw-medium" id="summary_father_name">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">สถานะ:</small>
+                                <p class="mb-0 fw-medium" id="summary_father_status">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">อาชีพ:</small>
+                                <p class="mb-0 fw-medium" id="summary_father_occupation">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">รายได้ (บาท/ปี):</small>
+                                <p class="mb-0 fw-medium" id="summary_father_income">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">เบอร์โทรศัพท์:</small>
+                                <p class="mb-0 fw-medium" id="summary_father_phone">-</p>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block">ความพิการ (ถ้ามี):</small>
+                                <p class="mb-0 fw-medium" id="summary_father_disability">-</p>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">
+                            <i class="bi bi-person me-2"></i>มารดา
+                        </h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">ชื่อ-นามสกุล:</small>
+                                <p class="mb-0 fw-medium" id="summary_mother_name">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">สถานะ:</small>
+                                <p class="mb-0 fw-medium" id="summary_mother_status">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">อาชีพ:</small>
+                                <p class="mb-0 fw-medium" id="summary_mother_occupation">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">รายได้ (บาท/ปี):</small>
+                                <p class="mb-0 fw-medium" id="summary_mother_income">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">เบอร์โทรศัพท์:</small>
+                                <p class="mb-0 fw-medium" id="summary_mother_phone">-</p>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block">ความพิการ (ถ้ามี):</small>
+                                <p class="mb-0 fw-medium" id="summary_mother_disability">-</p>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <small class="text-muted d-block">สถานะบิดา-มารดา:</small>
+                                <p class="mb-0 fw-medium" id="summary_parents_status">-</p>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-secondary mb-3 pt-3 border-top">
+                            <i class="bi bi-person-check me-2"></i>ผู้ปกครอง (ถ้าไม่ใช่บิดา/มารดา)
+                        </h6>
                         <div class="row g-3">
-                            <div class="col-12">
-                                <small class="text-muted d-block">บิดา:</small>
-                                <p class="mb-0 fw-medium" id="summary_father">-</p>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">ชื่อ-นามสกุล:</small>
+                                <p class="mb-0 fw-medium" id="summary_guardian_name">-</p>
                             </div>
-                            <div class="col-12">
-                                <small class="text-muted d-block">มารดา:</small>
-                                <p class="mb-0 fw-medium" id="summary_mother">-</p>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">ความสัมพันธ์:</small>
+                                <p class="mb-0 fw-medium" id="summary_guardian_relation">-</p>
                             </div>
-                            <div class="col-12">
-                                <small class="text-muted d-block">ผู้ปกครอง:</small>
-                                <p class="mb-0 fw-medium" id="summary_guardian">-</p>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">อาชีพ:</small>
+                                <p class="mb-0 fw-medium" id="summary_guardian_occupation">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">รายได้ (บาท/ปี):</small>
+                                <p class="mb-0 fw-medium" id="summary_guardian_income">-</p>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">เบอร์โทรศัพท์:</small>
+                                <p class="mb-0 fw-medium" id="summary_guardian_phone">-</p>
                             </div>
                         </div>
                     </div>
@@ -1175,27 +1286,52 @@ while ($dept = $departments_result->fetch_assoc()) {
         setText('summary_talents', val(form.talents?.value));
 
         // Step 4: Family
+        // บิดา
         const fatherName = [
             form.father_prefix?.value,
             form.father_firstname?.value,
             form.father_lastname?.value
         ].filter(Boolean).join(' ');
-        setText('summary_father', val(fatherName) || 'ไม่ระบุ');
+        setText('summary_father_name', val(fatherName) || 'ไม่ระบุ');
+        setText('summary_father_status', val(form.father_status?.value));
+        setText('summary_father_occupation', val(form.father_occupation?.value));
+        setText('summary_father_income', val(form.father_income?.value ? `${parseInt(form.father_income.value).toLocaleString('th-TH')} บาท` : ''));
+        const fatherDisability = form.father_disability?.value === 'มี' ? 
+            `มี (${val(form.father_disability_type?.value)})` : 
+            val(form.father_disability?.value);
+        setText('summary_father_disability', fatherDisability);
+        setText('summary_father_phone', val(form.father_phone?.value));
 
+        // มารดา
         const motherName = [
             form.mother_prefix?.value,
             form.mother_firstname?.value,
             form.mother_lastname?.value
         ].filter(Boolean).join(' ');
-        setText('summary_mother', val(motherName) || 'ไม่ระบุ');
+        setText('summary_mother_name', val(motherName) || 'ไม่ระบุ');
+        setText('summary_mother_status', val(form.mother_status?.value));
+        setText('summary_mother_occupation', val(form.mother_occupation?.value));
+        setText('summary_mother_income', val(form.mother_income?.value ? `${parseInt(form.mother_income.value).toLocaleString('th-TH')} บาท` : ''));
+        const motherDisability = form.mother_disability?.value === 'มี' ? 
+            `มี (${val(form.mother_disability_type?.value)})` : 
+            val(form.mother_disability?.value);
+        setText('summary_mother_disability', motherDisability);
+        setText('summary_mother_phone', val(form.mother_phone?.value));
+        
+        // สถานะบิดา-มารดา
+        setText('summary_parents_status', val(form.parents_status?.value));
 
+        // ผู้ปกครอง
         const guardianName = [
             form.guardian_prefix?.value,
             form.guardian_firstname?.value,
-            form.guardian_lastname?.value,
-            form.guardian_relation?.value ? `(${form.guardian_relation.value})` : ''
+            form.guardian_lastname?.value
         ].filter(Boolean).join(' ');
-        setText('summary_guardian', val(guardianName) || 'ไม่ระบุ');
+        setText('summary_guardian_name', val(guardianName) || 'ไม่ระบุ');
+        setText('summary_guardian_relation', val(form.guardian_relation?.value));
+        setText('summary_guardian_occupation', val(form.guardian_occupation?.value));
+        setText('summary_guardian_income', val(form.guardian_income?.value ? `${parseInt(form.guardian_income.value).toLocaleString('th-TH')} บาท` : ''));
+        setText('summary_guardian_phone', val(form.guardian_phone?.value));
 
         // 🎯 Step 5: Apply Level + Department
         const applyLevel = document.getElementById('education_level_apply')?.value;
@@ -1204,7 +1340,7 @@ while ($dept = $departments_result->fetch_assoc()) {
             applyLevel === 'ปริญญาตรี' ? 'ปริญญาตรี' : '-';
         const summaryApplyLevelElement = document.getElementById('summary_apply_level');
         if (summaryApplyLevelElement) {
-            summaryApplyLevelElement.textContent = applyLevelText; 
+            summaryApplyLevelElement.textContent = applyLevelText;
         }
         const selectedDeptName = document.getElementById('selected_dept_name')?.textContent || '-';
         const selectedDeptCategory = document.getElementById('selected_dept_category')?.textContent || '-';

@@ -133,7 +133,7 @@ function createRegularApplicationImage($data)
     $photo_y = 60;
     imagesetthickness($image, 1);
     imagerectangle($image, $photo_x, $photo_y, $photo_x + $photo_size, $photo_y + $photo_size, $black);
-    imagettftext($image, 20, 0, $photo_x + 30, $photo_y + $photo_size / 2, $black, $font, 'รูปถ่ายขนาด 1 นิ้ว');
+    imagettftext($image, 20, 0, $photo_x + 30, $photo_y + $photo_size / 2, $black, $font, 'รูปถ่าย ขนาด 1 นิ้ว');
 
     $y = 280;
 
