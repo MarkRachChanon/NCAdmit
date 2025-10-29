@@ -11,7 +11,10 @@ $type = isset($_GET['type']) ? clean_input($_GET['type']) : 'quota';
 
 // Validate
 if ($student_id == 0) {
-    echo '<div class="alert alert-danger">ไม่พบข้อมูลผู้สมัคร</div>';
+    echo '<div class="alert alert-danger m-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            ไม่พบข้อมูลผู้สมัคร
+          </div>';
     exit();
 }
 
@@ -38,7 +41,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
-    echo '<div class="alert alert-danger">ไม่พบข้อมูลผู้สมัคร</div>';
+    echo '<div class="alert alert-danger m-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            ไม่พบข้อมูลผู้สมัคร
+          </div>';
     exit();
 }
 
@@ -254,10 +260,11 @@ if (empty($student['age']) && !empty($student['birth_date'])) {
                         </p>
                         <p class="mb-2">
                             <i class="bi bi-mortarboard text-primary me-2"></i>
-                            <strong>สาขาวิชา:</strong><br>
+                            <strong>ระดับชั้น/สาขาวิชา:</strong><br>
                             <span class="ms-4">
-                                [<?php echo htmlspecialchars($student['department_code']); ?>]<br>
+                                <?php echo htmlspecialchars($student['apply_level']); ?> |
                                 <?php echo htmlspecialchars($student['department_name']); ?>
+                                [<?php echo htmlspecialchars($student['department_code']); ?>]
                             </span>
                         </p>
                     </div>
@@ -998,6 +1005,54 @@ if (empty($student['age']) && !empty($student['birth_date'])) {
             }
         } catch (error) {
             showError('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
+        }
+    }
+
+    // Delete Student Function
+    async function deleteStudent(id, type) {
+        const result = await Swal.fire({
+            title: 'ยืนยันการลบ',
+            text: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้? การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'ลบเลย',
+            cancelButtonText: 'ยกเลิก'
+        });
+
+        if (result.isConfirmed) {
+            showLoading('กำลังลบข้อมูล...');
+
+            try {
+                const response = await fetch('api/delete_student.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        type: type
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สำเร็จ',
+                        text: 'ลบข้อมูลเรียบร้อยแล้ว',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    showError('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถลบข้อมูลได้');
+                }
+            } catch (error) {
+                showError('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
+            }
         }
     }
 
