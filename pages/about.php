@@ -30,7 +30,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80" 
+                    <img src="/ncadmission/assets/images/admission.png" 
                          alt="NC-Admission System" 
                          class="img-fluid rounded-4 shadow-lg">
                     <div class="position-absolute bottom-0 start-0 m-4 p-3 bg-white rounded-3 shadow">
@@ -106,7 +106,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
         <div class="row align-items-center">
             <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0" data-aos="fade-left">
                 <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80" 
+                    <img src="/ncadmission/assets/images/nvc.jpg" 
                          alt="วิทยาลัยอาชีวศึกษานครปฐม" 
                          class="img-fluid rounded-4 shadow-lg">
                     <div class="position-absolute top-0 end-0 m-4 p-3 bg-white rounded-3 shadow">
