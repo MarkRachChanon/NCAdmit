@@ -55,7 +55,7 @@ function createDirectoryStructure($academic_year, $type) {
             throw new Exception('ไม่สามารถสร้างโฟลเดอร์ได้');
         }
         
-        $htaccess = "Options -Indexes\n<FilesMatch \"\\.(jpg|jpeg|png|pdf)$\">\n    Require all denied\n</FilesMatch>";
+        $htaccess = "Options -Indexes\n# Allow image and PDF files\n<FilesMatch \"\\.(jpg|jpeg|png|pdf)$\">\n    Require all granted\n</FilesMatch>";
         @file_put_contents($upload_dir . '.htaccess', $htaccess);
         @file_put_contents($upload_dir . 'index.php', '<?php http_response_code(403); ?>');
     }
