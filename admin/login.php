@@ -96,7 +96,7 @@ $site_name = get_setting('site_name', 'NC-Admission');
 
     <style>
         body {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #3776ffff 0%, #00f2fe 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -117,7 +117,7 @@ $site_name = get_setting('site_name', 'NC-Admission');
         }
 
         .login-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -151,7 +151,7 @@ $site_name = get_setting('site_name', 'NC-Admission');
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
             color: white;
             border: none;
             border-radius: 10px;
