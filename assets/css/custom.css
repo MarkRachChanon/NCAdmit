@@ -45,6 +45,8 @@
     --secondary-blue: #00f2fe;
     --dark-blue: #0061ff;
     --light-blue: #60efff;
+    --scroll-color: #60efff;
+    --scroll-background: #ffffff;
     
     /* Shadows */
     --shadow-sm: 0 2px 8px rgba(79, 172, 254, 0.15);
@@ -611,4 +613,22 @@ footer a:hover {
     height: 20px;
     background: var(--blue-gradient);
     border-radius: 2px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scroll-background);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scroll-color); 
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0047b8; 
 }

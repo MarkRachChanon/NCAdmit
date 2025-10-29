@@ -364,26 +364,22 @@ table.dataTable tbody tr:hover {
 /* ============================================
    Scrollbar
 ============================================ */
-/* 1. สำหรับ Webkit browsers (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
-    width: 5px; /* ความกว้างของ Scrollbar */
+    width: 5px;
 }
 
-/* 2. Track (พื้นหลังของ Scrollbar) */
 ::-webkit-scrollbar-track {
     background: var(--admin-scroll-background);
     border-radius: 10px;
 }
 
-/* 3. Handle (ส่วนที่เลื่อนได้) */
 ::-webkit-scrollbar-thumb {
-    background: var(--admin-scroll-color); /* ใช้สีเดียวกับ Navbar */
+    background: var(--admin-scroll-color); 
     border-radius: 10px;
 }
 
-/* 4. Handle on hover (เมื่อเมาส์ชี้) */
 ::-webkit-scrollbar-thumb:hover {
-    background: #e1e1e1; /* สีเข้มขึ้นเล็กน้อยเมื่อชี้ */
+    background: #e1e1e1; 
 }
 
 /* ============================================
