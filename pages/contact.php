@@ -362,7 +362,7 @@ $google_map = get_setting('google_map_url', '#');
                         </h2>
                         <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                เปิดรับสมัครประมาณเดือนธันวาคม - มีนาคม ของทุกปี สามารถติดตามข่าวสารได้ที่เว็บไซต์หรือ Facebook Page
+                                เปิดรับสมัครประมาณเดือนพฤศจิกายน - มีนาคม ของทุกปี สามารถติดตามข่าวสารได้ที่เว็บไซต์หรือ Facebook Page
                             </div>
                         </div>
                     </div>
@@ -377,7 +377,7 @@ $google_map = get_setting('google_map_url', '#');
                         </h2>
                         <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                มีหลักสูตร ปวช., ปวส. และปริญญาตรี ในสาขาต่างๆ กว่า 20 สาขา ดูรายละเอียดเพิ่มเติมได้ที่หน้าข้อมูลการรับสมัคร
+                                มีหลักสูตร ปวช., ปวส. และปริญญาตรี ในสาขาต่างๆ <?= get_setting('stat_departments', '23'); ?> สาขา ดูรายละเอียดเพิ่มเติมได้ที่หน้าข้อมูลการรับสมัคร
                             </div>
                         </div>
                     </div>
@@ -392,7 +392,7 @@ $google_map = get_setting('google_map_url', '#');
                         </h2>
                         <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                ค่าใช้จ่ายขึ้นอยู่กับหลักสูตรและระดับการศึกษา โดยประมาณ 3,000-8,000 บาทต่อภาคเรียน โทรสอบถามรายละเอียดได้ที่ 034-251-081
+                                ค่าใช้จ่ายขึ้นอยู่กับหลักสูตรและระดับการศึกษา โดยประมาณ 1,000-8,000 บาทต่อภาคเรียน โทรสอบถามรายละเอียดได้ที่ <?php echo $phone; ?>
                             </div>
                         </div>
                     </div>

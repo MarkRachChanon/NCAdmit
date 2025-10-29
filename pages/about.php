@@ -131,7 +131,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                     เพื่อสร้างบุคลากรที่มีคุณภาพสู่ตลาดแรงงาน
                 </p>
                 <p class="text-muted mb-4">
-                    ด้วยประสบการณ์กว่า 50 ปีในการผลิตบุคลากรที่มีคุณภาพ 
+                    ด้วยประสบการณ์กว่า 89 ปีในการผลิตบุคลากรที่มีคุณภาพ 
                     มีหลักสูตรการเรียนการสอนที่ทันสมัย ครูผู้สอนที่มีความเชี่ยวชาญ 
                     และอุปกรณ์การเรียนการสอนที่ครบครัน พร้อมส่งเสริมให้นักเรียน
                     นักศึกษาพัฒนาตนเองอย่างเต็มศักยภาพ
@@ -238,9 +238,7 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                             <h3 class="mb-0 fw-bold">วิสัยทัศน์</h3>
                         </div>
                         <p class="text-muted mb-0 lead">
-                            "มุ่งมั่นผลิตและพัฒนากำลังคนด้านอาชีวศึกษาให้มีคุณภาพ 
-                            มาตรฐานสากล สามารถแข่งขันได้ในระดับสากล 
-                            เป็นที่ยอมรับของสถานประกอบการและชุมชน"
+                            "ผู้นำอาชีวะ ทักษะเลิศ เชิดชูคุณธรรม นำวิทยาลัยฯ สู่สากล"
                         </p>
                     </div>
                 </div>
@@ -260,19 +258,23 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                         <ul class="list-unstyled mb-0">
                             <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
-                                <span>จัดการศึกษาอาชีวศึกษาที่มีคุณภาพตามมาตรฐาน</span>
+                                <span>พัฒนาทักษะผู้เรียนให้มีความรู้ความสามารถตามสาขาวิชาชีพ เพื่อเข้าสู่ ตลาดแรงงานและอาเซียนได้อย่างมีคุณภาพ</span>
                             </li>
                             <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
-                                <span>พัฒนาทักษะวิชาชีพและคุณธรรมจริยธรรม</span>
+                                <span>ส่งเสริมและพัฒนาบุคลากรของสถาบันให้มีความรู้ ทักษะตามมาตรฐานวิชาชีพ</span>
                             </li>
                             <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
-                                <span>ส่งเสริมการวิจัยและนวัตกรรม</span>
+                                <span>เสริมสร้างคุณธรรม จริยธรรมและการดำรงชีวิตบนพื้นฐาน ความเป็นไทย ตามหลักปรัชญาของเศรษฐกิจพอเพียง</span>
+                            </li>
+                            <li class="mb-3 d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                                <span>ศึกษา วิจัย สร้างและพัฒนาสิ่งประดิษฐ์ นวัตกรรมเพื่อสังคม</span>
                             </li>
                             <li class="mb-0 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
-                                <span>สร้างเครือข่ายความร่วมมือกับสถานประกอบการ</span>
+                                <span>พัฒนาระบบการบริหารจัดการของสถานศึกษา ให้มีประสิทธิภาพ โดยการมีส่วนร่วมจากทุกภาคส่วน</span>
                             </li>
                         </ul>
                     </div>
@@ -287,24 +289,23 @@ $site_description = get_setting('site_description', 'ระบบรับสม
     <div class="container">
         <div class="row mb-5">
             <div class="col-12 text-center" data-aos="fade-up">
-                <h2 class="section-title text-gradient">ค่านิยมหลัก</h2>
-                <p class="section-subtitle">หลักการที่เรายึดถือ</p>
+                <h2 class="section-title text-gradient">ปรัชญา อัตลักษณ์ เอกลักษณ์</h2>
+                <p class="section-subtitle">ที่เรายึดถือของสถานศึกษา</p>
             </div>
         </div>
 
         <div class="row g-4">
             <!-- Value 1 -->
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+             <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="card border-0 shadow-sm h-100 text-center">
                     <div class="card-body p-4">
-                        <div class="icon-circle bg-gradient-primary text-white mx-auto mb-3" 
+                        <div class="icon-circle bg-gradient-secondary text-white mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-lightbulb-fill display-6"></i>
+                            <i class="bi bi-heart-fill display-6"></i>
                         </div>
-                        <h5 class="fw-bold mb-3">นวัตกรรม</h5>
+                        <h5 class="fw-bold mb-3">ปรัชญา</h5>
                         <p class="text-muted mb-0">
-                            ส่งเสริมความคิดสร้างสรรค์และการพัฒนานวัตกรรมใหม่ๆ 
-                            เพื่อก้าวทันเทคโนโลยี
+                            การศึกษาเพื่อพัฒนาอาชีพและพัฒนาสังคม
                         </p>
                     </div>
                 </div>
@@ -314,14 +315,13 @@ $site_description = get_setting('site_description', 'ระบบรับสม
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card border-0 shadow-sm h-100 text-center">
                     <div class="card-body p-4">
-                        <div class="icon-circle bg-gradient-secondary text-white mx-auto mb-3" 
+                        <div class="icon-circle bg-gradient-primary text-white mx-auto mb-3" 
                              style="width: 80px; height: 80px;">
-                            <i class="bi bi-heart-fill display-6"></i>
+                            <i class="bi bi-lightbulb-fill display-6"></i>
                         </div>
-                        <h5 class="fw-bold mb-3">คุณธรรม</h5>
+                        <h5 class="fw-bold mb-3">อัตลักษณ์</h5>
                         <p class="text-muted mb-0">
-                            ปลูกฝังคุณธรรม จริยธรรม และความรับผิดชอบต่อสังคม
-                            เพื่อเป็นพลเมืองดี
+                            ทักษะวิชาชีพดี
                         </p>
                     </div>
                 </div>
@@ -335,10 +335,9 @@ $site_description = get_setting('site_description', 'ระบบรับสม
                              style="width: 80px; height: 80px;">
                             <i class="bi bi-star-fill display-6"></i>
                         </div>
-                        <h5 class="fw-bold mb-3">ความเป็นเลิศ</h5>
+                        <h5 class="fw-bold mb-3">เอกลักษณ์</h5>
                         <p class="text-muted mb-0">
-                            มุ่งมั่นพัฒนาคุณภาพการศึกษาอย่างต่อเนื่อง
-                            เพื่อความเป็นเลิศทางวิชาการและวิชาชีพ
+                            เด่นวิชาการ ชำนาญวิชาชีพ
                         </p>
                     </div>
                 </div>

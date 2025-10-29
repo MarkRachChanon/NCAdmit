@@ -110,7 +110,7 @@ $current_year = date('Y') + 543;
                 <p class="mb-0 text-white-50">
                     &copy; <?php echo $current_year; ?> วิทยาลัยอาชีวศึกษานครปฐม. All rights reserved.
                     <br>
-                    <small>Powered by <strong><?php echo $site_name; ?></strong> - Dev by <strong>Mark Chanon</strong></small>
+                    <small>Powered by <strong><?php echo $site_name; ?></strong> - Dev by <strong><a href="https://www.facebook.com/chn.ptppkhm/" target="_blank" class="text-decoration-none">Mark Chanon</a></strong></small>
                 </p>
             </div>
         </div>

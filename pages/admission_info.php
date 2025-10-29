@@ -131,7 +131,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-calendar-check text-primary me-2"></i>
                                             เปิดรับสมัคร
                                         </h5>
-                                        <span class="badge bg-primary">ธันวาคม 2567</span>
+                                        <span class="badge bg-primary">พฤศจิกายน 2568</span>
                                     </div>
                                     <p class="text-muted mb-0">
                                         เปิดรับสมัครนักเรียน นักศึกษา ทั้งรอบโควต้าและรอบปกติ
@@ -153,7 +153,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-clipboard-check text-success me-2"></i>
                                             ตรวจสอบคุณสมบัติ
                                         </h5>
-                                        <span class="badge bg-success">มกราคม 2568</span>
+                                        <span class="badge bg-success">พฤศจิกายน 2568</span>
                                     </div>
                                     <p class="text-muted mb-0">
                                         ตรวจสอบเอกสารและคุณสมบัติผู้สมัคร 
@@ -175,7 +175,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-chat-dots text-info me-2"></i>
                                             สอบสัมภาษณ์
                                         </h5>
-                                        <span class="badge bg-info">กุมภาพันธ์ 2568</span>
+                                        <span class="badge bg-info">mmmm - yyyy</span>
                                     </div>
                                     <p class="text-muted mb-0">
                                         สอบสัมภาษณ์ผู้สมัคร พร้อมตรวจสอบเอกสารต้นฉบับ
@@ -196,7 +196,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-megaphone text-warning me-2"></i>
                                             ประกาศผล
                                         </h5>
-                                        <span class="badge bg-warning">มีนาคม 2568</span>
+                                        <span class="badge bg-warning">ธันวาคม 2568</span>
                                     </div>
                                     <p class="text-muted mb-0">
                                         ประกาศรายชื่อผู้ผ่านการคัดเลือก พร้อมรายละเอียดการมอบตัว
@@ -217,10 +217,10 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-person-check text-danger me-2"></i>
                                             มอบตัวและรายงานตัว
                                         </h5>
-                                        <span class="badge bg-danger">เมษายน 2568</span>
+                                        <span class="badge bg-danger">ธันวาคม 2568</span>
                                     </div>
                                     <p class="text-muted mb-0">
-                                        ผู้ผ่านการคัดเลือกมอบตัวและรายงานตัวเข้าเป็นนักเรียน นักศึกษา
+                                        ผู้ผ่านการคัดเลือกมอบตัวและรายงานตัวรับเอกสาร เข้าเป็นนักเรียน นักศึกษา
                                     </p>
                                 </div>
                             </div>
@@ -254,21 +254,17 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                     </div>
                     <div class="card-body p-4">
                         <ul class="list-unstyled mb-0">
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 สำเร็จการศึกษาระดับ ม.3
                             </li>
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 มีผลการเรียนเฉลี่ย 2.00 ขึ้นไป
                             </li>
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                มีความประพฤติดี
-                            </li>
-                            <li class="mb-3">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                ไม่มีโรคติดต่อร้ายแรง
+                                มีความประพฤติดี โดยสถานศึกษารับรองความประพฤติ
                             </li>
                         </ul>
                     </div>
@@ -286,21 +282,17 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                     </div>
                     <div class="card-body p-4">
                         <ul class="list-unstyled mb-0">
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 สำเร็จการศึกษาระดับ ม.6 หรือ ปวช.
                             </li>
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 มีผลการเรียนเฉลี่ย 2.00 ขึ้นไป
                             </li>
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                มีความประพฤติดี
-                            </li>
-                            <li class="mb-3">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                ไม่มีโรคติดต่อร้ายแรง
+                                มีความประพฤติดี โดยสถานศึกษารับรองความประพฤติ
                             </li>
                         </ul>
                     </div>
@@ -318,21 +310,17 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                     </div>
                     <div class="card-body p-4">
                         <ul class="list-unstyled mb-0">
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 สำเร็จการศึกษาระดับ ปวส.
                             </li>
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 มีผลการเรียนเฉลี่ย 2.00 ขึ้นไป
                             </li>
-                            <li class="mb-3">
+                            <li class="mb-3 d-flex">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                มีความประพฤติดี
-                            </li>
-                            <li class="mb-3">
-                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                ไม่มีโรคติดต่อร้ายแรง
+                                มีความประพฤติดี โดยสถานศึกษารับรองความประพฤติ
                             </li>
                         </ul>
                     </div>
@@ -369,7 +357,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                         <h6 class="fw-bold mb-1">รูปถ่ายหน้าตรง</h6>
                                         <p class="text-muted small mb-0">
                                             ขนาด 1 นิ้ว หรือ 2 นิ้ว<br>
-                                            ไฟล์ JPG/PNG ไม่เกิน 5 MB
+                                            ไฟล์ JPG/PNG ไม่เกิน 2 MB
                                         </p>
                                     </div>
                                 </div>
