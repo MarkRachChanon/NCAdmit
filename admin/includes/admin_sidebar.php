@@ -22,6 +22,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
             
             <li class="nav-divider">จัดการนักเรียน</li>
             
+            <?php if ($admin_role == 'quota' || $admin_role == 'superadmin'): ?>
             <!-- รอบโควต้า -->
             <li class="nav-item">
                 <a href="index.php?page=quota_list" class="nav-link <?php echo ($current_page == 'quota_list') ? 'active' : ''; ?>">
@@ -29,7 +30,9 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     <span>รายชื่อรอบโควต้า</span>
                 </a>
             </li>
-            
+            <?php endif; ?>
+
+            <?php if ($admin_role == 'regular' || $admin_role == 'superadmin'): ?>
             <!-- รอบปกติ -->
             <li class="nav-item">
                 <a href="index.php?page=regular_list" class="nav-link <?php echo ($current_page == 'regular_list') ? 'active' : ''; ?>">
@@ -37,6 +40,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     <span>รายชื่อรอบปกติ</span>
                 </a>
             </li>
+            <?php endif; ?>
             
             <!-- Export -->
             <li class="nav-item">
@@ -85,17 +89,17 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 </a>
             </li>
             
+            <?php if ($admin_role == 'superadmin'): ?>
             <li class="nav-divider">ตั้งค่า</li>
             
             <!-- จัดการ Admin -->
-            <?php if ($admin_role == 'superadmin'): ?>
             <li class="nav-item">
                 <a href="index.php?page=admin_manage" class="nav-link <?php echo ($current_page == 'admin_manage') ? 'active' : ''; ?>">
                     <i class="bi bi-shield-lock"></i>
                     <span>จัดการ Admin</span>
                 </a>
             </li>
-            <?php endif; ?>
+   
             
             <!-- ตั้งค่าระบบ -->
             <li class="nav-item">
@@ -104,9 +108,9 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     <span>ตั้งค่าระบบ</span>
                 </a>
             </li>
+        
             
             <!-- ล้างข้อมูล -->
-            <?php if ($admin_role == 'superadmin'): ?>
             <li class="nav-item">
                 <a href="index.php?page=clear_data" class="nav-link <?php echo ($current_page == 'clear_data') ? 'active' : ''; ?>">
                     <i class="bi bi-trash"></i>

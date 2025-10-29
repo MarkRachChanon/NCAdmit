@@ -1,8 +1,17 @@
 <?php
+
 /**
  * Quota List - Admin Panel
  * รายชื่อผู้สมัครรอบโควต้า
  */
+// ตรวจสอบสิทธิ์ (เฉพาะ superadmin)
+if ($_SESSION['admin_role'] != 'quota' && $_SESSION['admin_role'] != 'superadmin') {
+    echo '<div class="alert alert-danger m-4">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            คุณไม่มีสิทธิ์เข้าถึงหน้านี้
+          </div>';
+    exit();
+}
 
 // ดึงข้อมูลสถิติ
 $current_year = date('Y') + 543 + 1;
@@ -63,7 +72,7 @@ $stats = $stats_result->fetch_assoc();
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-0">
-                <i class="bi bi-person-lines-fill text-primary"></i> 
+                <i class="bi bi-person-lines-fill text-primary"></i>
                 รายชื่อผู้สมัครรอบโควต้า
             </h2>
             <p class="text-muted mb-0">
@@ -166,17 +175,17 @@ $stats = $stats_result->fetch_assoc();
         <div class="card-body">
             <form method="GET" action="index.php" class="row g-3">
                 <input type="hidden" name="page" value="quota_list">
-                
+
                 <!-- Search -->
                 <div class="col-md-4">
                     <label class="form-label fw-bold">
                         <i class="bi bi-search me-1"></i> ค้นหา
                     </label>
-                    <input type="text" 
-                           name="search" 
-                           class="form-control" 
-                           placeholder="เลขที่ใบสมัคร, ชื่อ, นามสกุล, เลขบัตร"
-                           value="<?php echo htmlspecialchars($search); ?>">
+                    <input type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="เลขที่ใบสมัคร, ชื่อ, นามสกุล, เลขบัตร"
+                        value="<?php echo htmlspecialchars($search); ?>">
                 </div>
 
                 <!-- Status Filter -->
@@ -209,8 +218,8 @@ $stats = $stats_result->fetch_assoc();
                     <select name="department" class="form-select">
                         <option value="">ทุกสาขา</option>
                         <?php while ($dept = $departments->fetch_assoc()): ?>
-                            <option value="<?php echo $dept['id']; ?>" 
-                                    <?php echo $department_filter == $dept['id'] ? 'selected' : ''; ?>>
+                            <option value="<?php echo $dept['id']; ?>"
+                                <?php echo $department_filter == $dept['id'] ? 'selected' : ''; ?>>
                                 [<?php echo $dept['level']; ?>] <?php echo $dept['name_th']; ?>
                             </option>
                         <?php endwhile; ?>
@@ -315,28 +324,31 @@ $stats = $stats_result->fetch_assoc();
                                     </td>
                                     <td class="text-center">
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-light" 
-                                                    type="button" 
-                                                    data-bs-toggle="dropdown">
+                                            <button class="btn btn-sm btn-light"
+                                                type="button"
+                                                data-bs-toggle="dropdown">
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
-                                                    <a class="dropdown-item" 
-                                                       href="index.php?page=student_detail&type=quota&id=<?php echo $student['id']; ?>">
+                                                    <a class="dropdown-item"
+                                                        href="index.php?page=student_detail&type=quota&id=<?php echo $student['id']; ?>">
                                                         <i class="bi bi-eye me-2 text-primary"></i>
                                                         ดูรายละเอียด
                                                     </a>
                                                 </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <?php 
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <?php
                                                 $current_status = $student['status'];
-                                                
+
                                                 // กำหนดตัวเลือกสถานะทั้งหมด
                                                 $status_options = [
                                                     'pending' => ['label' => 'รอตรวจสอบ', 'icon' => 'bi-hourglass-split', 'color' => 'text-warning'],
                                                     'approved' => ['label' => 'อนุมัติ', 'icon' => 'bi-check-circle', 'color' => 'text-success'],
                                                     'rejected' => ['label' => 'ไม่อนุมัติ', 'icon' => 'bi-x-circle', 'color' => 'text-danger'],
+                                                    'cancelled' => ['label' => 'ยกเลิก', 'icon' => 'bi-slash-circle', 'color' => 'text-secondary'],
                                                 ];
 
                                                 // วนลูปสร้างตัวเลือก ยกเว้นสถานะปัจจุบัน
@@ -354,21 +366,25 @@ $stats = $stats_result->fetch_assoc();
                                                     }
                                                 }
                                                 ?>
-                                                
-                                                <li><hr class="dropdown-divider"></li>
+
                                                 <li>
-                                                    <a class="dropdown-item" 
-                                                       href="../pages/download_application_pdf.php?app_no=<?php echo $student['application_no']; ?>&type=quota" 
-                                                       target="_blank">
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                        href="../pages/download_application_pdf.php?app_no=<?php echo $student['application_no']; ?>&type=quota"
+                                                        target="_blank">
                                                         <i class="bi bi-file-pdf me-2 text-danger"></i>
                                                         ดาวน์โหลด PDF
                                                     </a>
                                                 </li>
-                                                <li><hr class="dropdown-divider"></li>
                                                 <li>
-                                                    <a class="dropdown-item text-danger" 
-                                                       href="javascript:void(0)" 
-                                                       onclick="deleteStudent(<?php echo $student['id']; ?>, 'quota')">
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item text-danger"
+                                                        href="javascript:void(0)"
+                                                        onclick="deleteStudent(<?php echo $student['id']; ?>, 'quota')">
                                                         <i class="bi bi-trash me-2"></i>
                                                         ลบ
                                                     </a>
@@ -394,129 +410,132 @@ $stats = $stats_result->fetch_assoc();
 </div>
 
 <style>
-.avatar-sm {
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-}
+    .avatar-sm {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
 </style>
 
 <script>
-// Initialize DataTable
-$(document).ready(function() {
-    $('#quotaTable').DataTable({
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json'
-        },
-        responsive: true,
-        pageLength: 25,
-        order: [[0, 'asc']],
-        columnDefs: [
-            { orderable: false, targets: 'no-sort' }
-        ]
+    // Initialize DataTable
+    $(document).ready(function() {
+        $('#quotaTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json'
+            },
+            responsive: true,
+            pageLength: 25,
+            order: [
+                [0, 'asc']
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: 'no-sort'
+            }]
+        });
     });
-});
 
-// Update Status Function
-async function updateStatus(id, status, type) {
-    const statusText = {
-        'approved': 'อนุมัติ',
-        'rejected': 'ไม่อนุมัติ',
-        'cancelled': 'ยกเลิก'
-    };
-    
-    const result = await Swal.fire({
-        title: 'ยืนยันการเปลี่ยนสถานะ',
-        text: `คุณต้องการ${statusText[status]}ใบสมัครนี้ใช่หรือไม่?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: status === 'approved' ? '#28a745' : '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'ยืนยัน',
-        cancelButtonText: 'ยกเลิก'
-    });
-    
-    if (result.isConfirmed) {
-        showLoading('กำลังอัพเดทสถานะ...');
-        
-        try {
-            const response = await fetch('api/update_status.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    status: status,
-                    type: type
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'สำเร็จ',
-                    text: 'อัพเดทสถานะเรียบร้อยแล้ว',
-                    confirmButtonText: 'ตกลง'
-                }).then(() => {
-                    location.reload();
+    // Update Status Function
+    async function updateStatus(id, status, type) {
+        const statusText = {
+            'approved': 'อนุมัติ',
+            'rejected': 'ไม่อนุมัติ',
+            'cancelled': 'ยกเลิก'
+        };
+
+        const result = await Swal.fire({
+            title: 'ยืนยันการเปลี่ยนสถานะ',
+            text: `คุณต้องการ${statusText[status]}ใบสมัครนี้ใช่หรือไม่?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: status === 'approved' ? '#28a745' : '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'ยืนยัน',
+            cancelButtonText: 'ยกเลิก'
+        });
+
+        if (result.isConfirmed) {
+            showLoading('กำลังอัพเดทสถานะ...');
+
+            try {
+                const response = await fetch('api/update_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        status: status,
+                        type: type
+                    })
                 });
-            } else {
-                showError('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถอัพเดทสถานะได้');
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สำเร็จ',
+                        text: 'อัพเดทสถานะเรียบร้อยแล้ว',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    showError('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถอัพเดทสถานะได้');
+                }
+            } catch (error) {
+                showError('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
             }
-        } catch (error) {
-            showError('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
         }
     }
-}
 
-// Delete Student Function
-async function deleteStudent(id, type) {
-    const result = await Swal.fire({
-        title: 'ยืนยันการลบ',
-        text: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้? การดำเนินการนี้ไม่สามารถย้อนกลับได้',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'ลบเลย',
-        cancelButtonText: 'ยกเลิก'
-    });
-    
-    if (result.isConfirmed) {
-        showLoading('กำลังลบข้อมูล...');
-        
-        try {
-            const response = await fetch('api/delete_student.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    type: type
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'สำเร็จ',
-                    text: 'ลบข้อมูลเรียบร้อยแล้ว',
-                    confirmButtonText: 'ตกลง'
-                }).then(() => {
-                    location.reload();
+    // Delete Student Function
+    async function deleteStudent(id, type) {
+        const result = await Swal.fire({
+            title: 'ยืนยันการลบ',
+            text: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้? การดำเนินการนี้ไม่สามารถย้อนกลับได้',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'ลบเลย',
+            cancelButtonText: 'ยกเลิก'
+        });
+
+        if (result.isConfirmed) {
+            showLoading('กำลังลบข้อมูล...');
+
+            try {
+                const response = await fetch('api/delete_student.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        type: type
+                    })
                 });
-            } else {
-                showError('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถลบข้อมูลได้');
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สำเร็จ',
+                        text: 'ลบข้อมูลเรียบร้อยแล้ว',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    showError('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถลบข้อมูลได้');
+                }
+            } catch (error) {
+                showError('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
             }
-        } catch (error) {
-            showError('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
         }
     }
-}
 </script>
