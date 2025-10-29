@@ -6,15 +6,14 @@
 
 // ตรวจสอบสิทธิ์ (เฉพาะ superadmin)
 if ($_SESSION['admin_role'] != 'superadmin') {
-    echo '<div class="alert alert-danger m-4">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            คุณไม่มีสิทธิ์เข้าถึงหน้านี้
-          </div>';
+    include 'includes/403.php';
     exit();
 }
 
 // ดึงข้อมูล Admin ทั้งหมด
-$sql = "SELECT * FROM admin_users ORDER BY created_at DESC";
+$sql = "SELECT * FROM admin_users ORDER BY 
+        FIELD(role, 'superadmin', 'admin', 'staff', 'quota', 'regular'),
+        created_at DESC";
 $result = $conn->query($sql);
 
 // นับจำนวนตามสิทธิ์
@@ -153,19 +152,111 @@ $roles_info = [
         </div>
     </div>
 
+    <!-- Permission Matrix -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                <i class="bi bi-grid-3x3-gap text-primary me-2"></i>
+                ตารางสิทธิ์การเข้าถึง (Permission Matrix)
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm align-middle table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="30%">เมนู / ฟังก์ชัน</th>
+                            <th class="text-center" width="14%">
+                                <i class="bi bi-shield-fill-exclamation text-danger"></i>
+                                <br>Super Admin
+                            </th>
+                            <th class="text-center" width="14%">
+                                <i class="bi bi-shield-fill-check text-primary"></i>
+                                <br>Admin
+                            </th>
+                            <th class="text-center" width="14%">
+                                <i class="bi bi-person-badge text-info"></i>
+                                <br>Staff
+                            </th>
+                            <th class="text-center" width="14%">
+                                <i class="bi bi-person-lines-fill text-success"></i>
+                                <br>Quota
+                            </th>
+                            <th class="text-center" width="14%">
+                                <i class="bi bi-people-fill text-warning"></i>
+                                <br>Regular
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $permission_matrix = [
+                            'Dashboard' => ['dashboard'],
+                            'รายชื่อรอบโควต้า' => ['quota_list'],
+                            'รายชื่อรอบปกติ' => ['regular_list'],
+                            'ดูรายละเอียดนักเรียน' => ['student_detail'],
+                            'Export Excel' => ['export_excel'],
+                            'Export PDF' => ['export_pdf'],
+                            'จัดการข่าว' => ['news_manage', 'news_add', 'news_edit'],
+                            'จัดการแกลเลอรี่' => ['gallery_manage'],
+                            'จัดการสาขาวิชา' => ['departments_manage', 'departments_add', 'departments_edit'],
+                            'จัดการ Admin' => ['admin_manage'],
+                            'ตั้งค่าระบบ' => ['system_settings'],
+                            'ล้างข้อมูล' => ['clear_data']
+                        ];
+                        
+                        $roles = ['superadmin', 'admin', 'staff', 'quota', 'regular'];
+                        
+                        foreach ($permission_matrix as $menu_name => $pages):
+                        ?>
+                        <tr>
+                            <td><strong><?php echo $menu_name; ?></strong></td>
+                            <?php foreach ($roles as $role): ?>
+                                <?php
+                                $has_permission = false;
+                                foreach ($pages as $page) {
+                                    if (check_page_permission($page, $role)) {
+                                        $has_permission = true;
+                                        break;
+                                    }
+                                }
+                                ?>
+                                <td class="text-center">
+                                    <?php if ($has_permission): ?>
+                                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <?php else: ?>
+                                        <i class="bi bi-x-circle text-muted"></i>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="alert alert-info mt-3 mb-0">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>หมายเหตุ:</strong> 
+                <i class="bi bi-check-circle-fill text-success"></i> = มีสิทธิ์เข้าถึง | 
+                <i class="bi bi-x-circle text-muted"></i> = ไม่มีสิทธิ์เข้าถึง
+            </div>
+        </div>
+    </div>
+
     <!-- Role Info Cards -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white">
             <h5 class="mb-0">
                 <i class="bi bi-info-circle text-primary me-2"></i>
-                ระดับสิทธิ์การใช้งาน
+                คำอธิบายระดับสิทธิ์การใช้งาน
             </h5>
         </div>
         <div class="card-body">
             <div class="row g-3">
                 <?php foreach ($roles_info as $role => $info): ?>
                 <div class="col-md-4">
-                    <div class="d-flex align-items-start">
+                    <div class="d-flex align-items-start border rounded p-3 h-100">
                         <div class="bg-<?php echo $info['color']; ?> bg-opacity-10 rounded p-2 me-3">
                             <i class="bi <?php echo $info['icon']; ?> fs-4 text-<?php echo $info['color']; ?>"></i>
                         </div>
@@ -173,6 +264,9 @@ $roles_info = [
                             <h6 class="mb-1">
                                 <span class="badge bg-<?php echo $info['color']; ?>">
                                     <?php echo $info['label']; ?>
+                                </span>
+                                <span class="badge bg-secondary ms-1">
+                                    <?php echo $stats[$role] ?? 0; ?>
                                 </span>
                             </h6>
                             <small class="text-muted"><?php echo $info['description']; ?></small>
@@ -215,7 +309,7 @@ $roles_info = [
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar-sm bg-primary bg-opacity-10 rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-person text-primary"></i>
+                                                <i class="bi <?php echo $roles_info[$admin['role']]['icon']; ?> text-<?php echo $roles_info[$admin['role']]['color']; ?>"></i>
                                             </div>
                                             <strong><?php echo htmlspecialchars($admin['username']); ?></strong>
                                         </div>
@@ -232,7 +326,7 @@ $roles_info = [
                                     </td>
                                     <td>
                                         <?php 
-                                        $role_info = $roles_info[$admin['role']] ?? ['label' => $admin['role'], 'color' => 'secondary'];
+                                        $role_info = $roles_info[$admin['role']] ?? ['label' => $admin['role'], 'color' => 'secondary', 'icon' => 'bi-person'];
                                         ?>
                                         <span class="badge bg-<?php echo $role_info['color']; ?>">
                                             <i class="bi <?php echo $role_info['icon']; ?> me-1"></i>
@@ -500,6 +594,15 @@ $roles_info = [
     width: 40px;
     height: 40px;
     font-size: 1.2rem;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-color: #dee2e6;
+}
+
+.table-bordered thead th {
+    font-weight: 600;
 }
 </style>
 
