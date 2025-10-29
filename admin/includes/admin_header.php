@@ -69,12 +69,14 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                         <span class="badge bg-warning text-dark ms-2 d-none d-md-inline"><?php echo $admin_role; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <?php if ($admin_role == 'superadmin'): ?>
                         <li><a class="dropdown-item" href="index.php?page=system_settings">
                                 <i class="bi bi-gear me-2"></i> ตั้งค่า
                             </a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
+                        <?php endif; ?>
                         <li><a class="dropdown-item text-danger" href="logout.php">
                                 <i class="bi bi-box-arrow-right me-2"></i> ออกจากระบบ
                             </a></li>
