@@ -358,7 +358,7 @@ $stats = $stats_result->fetch_assoc();
                                                         echo '<li>';
                                                         echo '<a class="dropdown-item" ';
                                                         echo 'href="javascript:void(0)" ';
-                                                        echo "onclick=\"updateStatus({$student['id']}, '{$status_key}', 'regular')\">";
+                                                        echo "onclick=\"updateStatus({$student['id']}, '{$status_key}', 'quota')\">";
                                                         echo "<i class=\"bi {$option['icon']} me-2 {$option['color']}\"></i>";
                                                         echo "{$option['label']}";
                                                         echo '</a>';

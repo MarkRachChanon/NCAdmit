@@ -122,7 +122,6 @@ if (empty($student['age']) && !empty($student['birth_date'])) {
     </div>
 
     <!-- Quick Actions -->
-    <!-- Quick Actions -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
