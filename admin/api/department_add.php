@@ -107,7 +107,7 @@ if (!in_array($study_type, $valid_study_types)) {
 
 // ตรวจสอบจำนวนที่รับ
 if ($open_quota && $seats_quota <= 0) {
-    $errors[] = 'กรุณากรอกจำนวนที่รับรอบโควต้า';
+    $errors[] = 'กรุณากรอกจำนวนที่รับรอบโควตา';
 }
 
 if ($open_regular && $seats_regular <= 0) {

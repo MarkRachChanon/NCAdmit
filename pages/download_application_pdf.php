@@ -83,7 +83,7 @@ try {
     unlink($image_path);
 
     // ชื่อไฟล์
-    $filename = 'ใบสมัครโควต้า_' . $data['application_no'] . '_' . date('Ymd_His') . '.pdf';
+    $filename = 'ใบสมัครโควตา_' . $data['application_no'] . '_' . date('Ymd_His') . '.pdf';
 
     // ส่งออก PDF
     $mpdf->Output($filename, 'D');
@@ -179,7 +179,7 @@ function createApplicationImage($data, $form_type)
     imagettftext($image, 37, 0, $x_center, $y, $black, $fontBold, $text);
     $y += 53;
 
-    $text = 'ใบสมัครเข้าเป็นนักเรียน-นักศึกษา สิทธิพิเศษ (โควต้า) ปีการศึกษา ' . $academic_year;
+    $text = 'ใบสมัครเข้าเป็นนักเรียน-นักศึกษา สิทธิพิเศษ (โควตา) ปีการศึกษา ' . $academic_year;
     $bbox = imagettfbbox(32, 0, $fontBold, $text);
     $text_width = $bbox[2] - $bbox[0];
     $x_center = ($width - $text_width) / 2;
@@ -510,7 +510,7 @@ function createApplicationImage($data, $form_type)
     imageline($image, $margin_left, $y, $width - $margin_right, $y, $black);
     $y += 40;
 
-    $text = 'หมายเหตุ นักเรียน - นักศึกษาที่แจ้งความประสงค์เป็นนักศึกษาสิทธิพิเศษ (โควต้า) ปีการศึกษา ' . $academic_year;
+    $text = 'หมายเหตุ นักเรียน - นักศึกษาที่แจ้งความประสงค์เป็นนักศึกษาสิทธิพิเศษ (โควตา) ปีการศึกษา ' . $academic_year;
     $bbox = imagettfbbox(21, 0, $font, $text);
     $text_width = $bbox[2] - $bbox[0];
     $x_center = ($width - $text_width) / 2;

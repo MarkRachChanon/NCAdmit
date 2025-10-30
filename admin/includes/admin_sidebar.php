@@ -30,12 +30,12 @@ require_once __DIR__ . '/permissions.php';
             <li class="nav-divider">จัดการนักเรียน</li>
             <?php endif; ?>
             
-            <!-- รอบโควต้า -->
+            <!-- รอบโควตา -->
             <?php if (can_show_menu('quota_list', $admin_role)): ?>
             <li class="nav-item">
                 <a href="index.php?page=quota_list" class="nav-link <?php echo ($current_page == 'quota_list') ? 'active' : ''; ?>">
                     <i class="bi bi-person-lines-fill"></i>
-                    <span>รายชื่อรอบโควต้า</span>
+                    <span>รายชื่อรอบโควตา</span>
                 </a>
             </li>
             <?php endif; ?>

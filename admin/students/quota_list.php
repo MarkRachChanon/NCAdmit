@@ -2,7 +2,7 @@
 
 /**
  * Quota List - Admin Panel
- * รายชื่อผู้สมัครรอบโควต้า
+ * รายชื่อผู้สมัครรอบโควตา
  */
 // ตรวจสอบสิทธิ์ (เฉพาะ superadmin)
 if ($_SESSION['admin_role'] != 'quota' && $_SESSION['admin_role'] != 'superadmin') {
@@ -73,10 +73,10 @@ $stats = $stats_result->fetch_assoc();
         <div>
             <h2 class="mb-0">
                 <i class="bi bi-person-lines-fill text-primary"></i>
-                รายชื่อผู้สมัครรอบโควต้า
+                รายชื่อผู้สมัครรอบโควตา
             </h2>
             <p class="text-muted mb-0">
-                จัดการข้อมูลผู้สมัครรอบโควต้า ปีการศึกษา <?php echo $current_year; ?>
+                จัดการข้อมูลผู้สมัครรอบโควตา ปีการศึกษา <?php echo $current_year; ?>
             </p>
         </div>
         <div>

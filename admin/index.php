@@ -76,7 +76,7 @@ include 'includes/admin_sidebar.php';
             $is_allowed = true;
             if ($admin_role === 'quota' && $student_type !== 'quota') {
                 $is_allowed = false;
-                $required_type = 'รอบโควต้า';
+                $required_type = 'รอบโควตา';
             } elseif ($admin_role === 'regular' && $student_type !== 'regular') {
                 $is_allowed = false;
                 $required_type = 'รอบปกติ';

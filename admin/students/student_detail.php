@@ -20,7 +20,7 @@ if ($student_id == 0) {
 
 // เลือกตาราง
 $table = ($type == 'quota') ? 'students_quota' : 'students_regular';
-$type_text = ($type == 'quota') ? 'รอบโควต้า' : 'รอบปกติ';
+$type_text = ($type == 'quota') ? 'รอบโควตา' : 'รอบปกติ';
 $type_icon = ($type == 'quota') ? 'person-lines-fill' : 'people-fill';
 $type_color = ($type == 'quota') ? 'primary' : 'success';
 

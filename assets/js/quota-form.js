@@ -1,6 +1,6 @@
 /**
  * Quota Form - Multi-Step Navigation
- * ฟอร์มรับสมัครรอบโควต้า
+ * ฟอร์มรับสมัครรอบโควตา
  * * Updated to match new form structure (aligned with students_quota table)
  */
 

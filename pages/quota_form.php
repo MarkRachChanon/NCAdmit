@@ -1,25 +1,25 @@
 <?php
 
 /**
- * Quota Form - ใบสมัครรอบโควต้า
+ * Quota Form - ใบสมัครรอบโควตา
  * Multi-Step Form with Session Storage
  * * Updated to match 'students_quota' table structure.
  */
 
-// ตรวจสอบว่าเปิดรับสมัครรอบโควต้าหรือไม่
+// ตรวจสอบว่าเปิดรับสมัครรอบโควตาหรือไม่
 if (!is_admission_open('quota')) {
     echo '<section class="py-5">
                 <div class="container">
                     <div class="row mb-5 text-center">
                         <div class="col-12" data-aos="fade-up">
                             <h2 class="section-title text-gradient">ตอนยังไม่เปิดรับสมัคร</h2>
-                            <p class="section-subtitle">ขณะนี้ยังไม่เปิดรับสมัครรอบโควต้า</p>
+                            <p class="section-subtitle">ขณะนี้ยังไม่เปิดรับสมัครรอบโควตา</p>
                         </div>
                     </div>
                     <div class="alert text-center shadow text-black" data-aos="fade-up">
                         <i class="bi bi-exclamation-triangle-fill fs-1 mb-3 d-block text-primary"></i>
-                        <h4 class="mb-3">ยังไม่เปิดรับสมัครรอบโควต้า</h4>
-                        <p class="mb-4 text-muted">ขณะนี้ยังไม่เปิดรับสมัครรอบโควต้า กรุณาติดตามข่าวสารเพิ่มเติม</p>
+                        <h4 class="mb-3">ยังไม่เปิดรับสมัครรอบโควตา</h4>
+                        <p class="mb-4 text-muted">ขณะนี้ยังไม่เปิดรับสมัครรอบโควตา กรุณาติดตามข่าวสารเพิ่มเติม</p>
                         <a href="index.php?page=admission_info" class="btn btn-gradient">
                             กลับหน้ารับสมัคร <i class="bi bi-arrow-right ms-2"></i>
                         </a>
@@ -154,7 +154,7 @@ while ($dept = $departments_result->fetch_assoc()) {
             <div class="col-md-8">
                 <h2 class="mb-1">
                     <i class="bi bi-file-earmark-text me-2"></i>
-                    สมัครเข้าศึกษาต่อ รอบโควต้า (วิทยาลัยอาชีวศึกษานครปฐม)
+                    สมัครเข้าศึกษาต่อ รอบโควตา (วิทยาลัยอาชีวศึกษานครปฐม)
                 </h2>
                 <p class="mb-0 opacity-75">ปีการศึกษา <?php echo (date('Y') + 543 + 1); ?></p>
             </div>

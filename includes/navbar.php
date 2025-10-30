@@ -52,7 +52,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="index.php?page=quota_form">
-                                <i class="bi bi-pencil-square me-2"></i> สมัครรอบโควต้า
+                                <i class="bi bi-pencil-square me-2"></i> สมัครรอบโควตา
                             </a>
                         </li>
                         <li>

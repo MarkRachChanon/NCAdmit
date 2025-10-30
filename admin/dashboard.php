@@ -8,7 +8,7 @@
 // ดึงข้อมูลสถิติ
 $current_year = date('Y') + 543 + 1;
 
-// นับจำนวนผู้สมัครรอบโควต้า
+// นับจำนวนผู้สมัครรอบโควตา
 $sql_quota = "SELECT 
     COUNT(*) as total,
     SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
@@ -128,13 +128,13 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
 
     <!-- Stats Cards Row 1 -->
     <div class="row g-3 mb-4">
-        <!-- Card 1: รอบโควต้า -->
+        <!-- Card 1: รอบโควตา -->
         <div class="col-md-3">
             <div class="card stat-card bg-gradient-primary text-white h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="text-white-50 mb-2">ผู้สมัครรอบโควต้า</h6>
+                            <h6 class="text-white-50 mb-2">ผู้สมัครรอบโควตา</h6>
                             <h2 class="mb-0 fw-bold"><?php echo number_format($quota_stats['total']); ?></h2>
                             <small class="text-white-50">คน</small>
                         </div>
@@ -204,7 +204,7 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
                     </div>
                     <div class="mt-3 pt-3 border-top border-white-25">
                         <small>
-                            โควต้า: <?php echo number_format($quota_stats['approved']); ?> | ปกติ: <?php echo number_format($regular_stats['approved']); ?>
+                            โควตา: <?php echo number_format($quota_stats['approved']); ?> | ปกติ: <?php echo number_format($regular_stats['approved']); ?>
                         </small>
                     </div>
                 </div>
@@ -280,7 +280,7 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
         <div class="col-lg-4">
             <div class="card mb-3">
                 <div class="card-header bg-white">
-                    <h6 class="mb-0"><i class="bi bi-clock-history text-primary"></i> ผู้สมัครล่าสุด (โควต้า)</h6>
+                    <h6 class="mb-0"><i class="bi bi-clock-history text-primary"></i> ผู้สมัครล่าสุด (โควตา)</h6>
                 </div>
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
@@ -368,7 +368,7 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
                         <div class="col-md-3">
                             <a href="index.php?page=quota_list&status=pending" class="btn btn-outline-primary w-100">
                                 <i class="bi bi-hourglass-split me-2"></i>
-                                ตรวจสอบใบสมัคร (โควต้า)
+                                ตรวจสอบใบสมัคร (โควตา)
                             </a>
                         </div>
                         <div class="col-md-3">

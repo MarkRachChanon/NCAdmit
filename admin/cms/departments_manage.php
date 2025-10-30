@@ -286,7 +286,7 @@ $departments_result = $conn->query($departments_sql);
                             <td class="text-center">
                                 <div class="d-flex flex-column gap-1">
                                     <?php if ($dept['open_quota']): ?>
-                                    <span class="badge bg-primary">โควต้า: <?php echo $dept['seats_quota']; ?></span>
+                                    <span class="badge bg-primary">โควตา: <?php echo $dept['seats_quota']; ?></span>
                                     <?php endif; ?>
                                     <?php if ($dept['open_regular']): ?>
                                     <span class="badge bg-success">ปกติ: <?php echo $dept['seats_regular']; ?></span>

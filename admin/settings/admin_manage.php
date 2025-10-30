@@ -54,7 +54,7 @@ $roles_info = [
         'label' => 'Quota Manager',
         'color' => 'success',
         'icon' => 'bi-person-lines-fill',
-        'description' => 'จัดการเฉพาะรอบโควต้า'
+        'description' => 'จัดการเฉพาะรอบโควตา'
     ],
     'regular' => [
         'label' => 'Regular Manager',
@@ -192,7 +192,7 @@ $roles_info = [
                         <?php
                         $permission_matrix = [
                             'Dashboard' => ['dashboard'],
-                            'รายชื่อรอบโควต้า' => ['quota_list'],
+                            'รายชื่อรอบโควตา' => ['quota_list'],
                             'รายชื่อรอบปกติ' => ['regular_list'],
                             'ดูรายละเอียดนักเรียน' => ['student_detail'],
                             'Export Excel' => ['export_excel'],

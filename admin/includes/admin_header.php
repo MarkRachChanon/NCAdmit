@@ -5,7 +5,7 @@ require_once __DIR__ . '/permissions.php';
 
 $page_titles = [
     'dashboard' => 'แดชบอร์ด',
-    'quota_list' => 'รายชื่อรอบโควต้า',
+    'quota_list' => 'รายชื่อรอบโควตา',
     'regular_list' => 'รายชื่อรอบปกติ',
     'student_detail' => 'รายละเอียดนักเรียน',
     'news_manage' => 'จัดการข่าว',

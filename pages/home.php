@@ -27,7 +27,7 @@ $news_result = $conn->query($sql_news);
                     </p>
                     <div class="hero-buttons d-flex flex-column flex-md-row gap-3">
                         <a href="index.php?page=quota_form" class="btn btn-light btn-lg px-4 px-md-5 shadow">
-                            <i class="bi bi-pencil-square me-2"></i> สมัครรอบโควต้า
+                            <i class="bi bi-pencil-square me-2"></i> สมัครรอบโควตา
                         </a>
                         <a href="index.php?page=regular_form" class="btn btn-outline-light btn-lg px-4 px-md-5">
                             <i class="bi bi-pencil-square me-2"></i> สมัครรอบปกติ

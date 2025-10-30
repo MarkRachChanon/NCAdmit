@@ -27,7 +27,7 @@ function get_page_title($page) {
         'gallery' => 'แกลเลอรี่',
         'contact' => 'ติดต่อเรา',
         'admission_info' => 'ข้อมูลการรับสมัคร',
-        'quota_form' => 'สมัครรอบโควต้า',
+        'quota_form' => 'สมัครรอบโควตา',
         'regular_form' => 'สมัครรอบปกติ',
         'check_status' => 'ตรวจสอบสถานะการสมัคร'
     ];

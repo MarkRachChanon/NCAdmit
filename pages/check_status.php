@@ -392,7 +392,7 @@ function displayResults(applications, count) {
                 <i class="bi bi-info-circle-fill fs-3 me-3"></i>
                 <div>
                     <h6 class="mb-0 fw-bold">พบข้อมูลการสมัคร ${count} รอบ</h6>
-                    <small>คุณได้สมัครทั้งรอบโควต้าและรอบปกติ</small>
+                    <small>คุณได้สมัครทั้งรอบโควตาและรอบปกติ</small>
                 </div>
             </div>
         </div>
@@ -403,7 +403,7 @@ function displayResults(applications, count) {
     applications.forEach((data, index) => {
         const statusConfig = getStatusConfig(data.status);
         const formTypeBadge = data.form_type === 'quota' 
-            ? '<span class="badge bg-primary me-2 fs-6"><i class="bi bi-award me-1"></i>รอบโควต้า</span>' 
+            ? '<span class="badge bg-primary me-2 fs-6"><i class="bi bi-award me-1"></i>รอบโควตา</span>' 
             : '<span class="badge bg-primary me-2 fs-6"><i class="bi bi-people me-1"></i>รอบปกติ</span>';
         
         // กำหนดปุ่มดาวน์โหลดตามประเภทรอบ
@@ -411,7 +411,7 @@ function displayResults(applications, count) {
             ? `<a href="pages/download_application_pdf.php?app_no=${data.id}&type=quota" 
                 class="btn btn-light btn-sm ms-2 fs-6 w-100 w-md-auto"
                 target="_blank">
-                <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควต้า
+                <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควตา
             </a>`
             : `<a href="pages/download_regular_application_pdf.php?app_no=${data.id}&type=regular" 
                 class="btn btn-light btn-sm ms-2 fs-6 w-100 w-md-auto"

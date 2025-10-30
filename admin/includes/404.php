@@ -35,7 +35,7 @@
                             <?php if (can_show_menu('quota_list', $admin_role)): ?>
                             <a href="index.php?page=quota_list" class="list-group-item list-group-item-action">
                                 <i class="bi bi-person-lines-fill text-success me-2"></i>
-                                รายชื่อรอบโควต้า
+                                รายชื่อรอบโควตา
                             </a>
                             <?php endif; ?>
                             

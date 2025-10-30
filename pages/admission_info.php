@@ -32,7 +32,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
 <section class="py-5 bg-light">
     <div class="container">
         <div class="row g-4">
-            <!-- รอบโควต้า -->
+            <!-- รอบโควตา -->
             <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
@@ -41,7 +41,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                 <i class="bi bi-award display-6"></i>
                             </div>
                             <div>
-                                <h4 class="mb-0 fw-bold">รอบโควต้า</h4>
+                                <h4 class="mb-0 fw-bold">รอบโควตา</h4>
                                 <?php if ($quota_open): ?>
                                     <span class="badge bg-success">เปิดรับสมัคร</span>
                                 <?php else: ?>
@@ -134,7 +134,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                         <span class="badge bg-primary">พฤศจิกายน 2568</span>
                                     </div>
                                     <p class="text-muted mb-0">
-                                        เปิดรับสมัครนักเรียน นักศึกษา ทั้งรอบโควต้าและรอบปกติ
+                                        เปิดรับสมัครนักเรียน นักศึกษา ทั้งรอบโควตาและรอบปกติ
                                         ผ่านระบบออนไลน์
                                     </p>
                                 </div>

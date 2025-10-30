@@ -170,13 +170,13 @@ $categories_result = $conn->query($categories_sql);
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <!-- รอบโควต้า -->
+                            <!-- รอบโควตา -->
                             <div class="col-md-6">
                                 <div class="card border-primary mb-3">
                                     <div class="card-header bg-primary bg-opacity-10">
                                         <h6 class="mb-0">
                                             <i class="bi bi-star me-2"></i>
-                                            รอบโควต้า (Quota)
+                                            รอบโควตา (Quota)
                                         </h6>
                                     </div>
                                     <div class="card-body">
@@ -188,7 +188,7 @@ $categories_result = $conn->query($categories_sql);
                                                    value="1"
                                                    checked>
                                             <label class="form-check-label" for="open_quota">
-                                                <strong>เปิดรับสมัครรอบโควต้า</strong>
+                                                <strong>เปิดรับสมัครรอบโควตา</strong>
                                             </label>
                                         </div>
                                         <div class="mb-3">
@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'warning',
                     title: 'กรุณาเลือกรอบรับสมัคร',
-                    text: 'กรุณาเปิดรับสมัครอย่างน้อย 1 รอบ (โควต้าหรือปกติ)'
+                    text: 'กรุณาเปิดรับสมัครอย่างน้อย 1 รอบ (โควตาหรือปกติ)'
                 });
                 return;
             }
