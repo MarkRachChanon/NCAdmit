@@ -7,10 +7,10 @@ use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 
 // รับพารามิเตอร์
-$application_no = isset($_GET['app_no']) ? trim($_GET['app_no']) : '';
+$student_id = isset($_GET['app_no']) ? trim($_GET['app_no']) : '';
 $form_type = isset($_GET['type']) ? trim($_GET['type']) : '';
 
-if (empty($application_no) || empty($form_type)) {
+if (empty($student_id) || empty($form_type)) {
     die('ข้อมูลไม่ครบถ้วน');
 }
 
@@ -27,12 +27,12 @@ try {
             FROM students_quota sq
             LEFT JOIN departments d ON sq.department_id = d.id
             LEFT JOIN department_categories dc ON d.category_id = dc.id
-            WHERE sq.application_no = ?
+            WHERE sq.id = ?
             LIMIT 1
         ");
     }
 
-    $stmt->bind_param("s", $application_no);
+    $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -83,7 +83,7 @@ try {
     unlink($image_path);
 
     // ชื่อไฟล์
-    $filename = 'ใบสมัคร_' . $application_no . '_' . date('Ymd_His') . '.pdf';
+    $filename = 'ใบสมัครโควต้า_' . $data['application_no'] . '_' . date('Ymd_His') . '.pdf';
 
     // ส่งออก PDF
     $mpdf->Output($filename, 'D');

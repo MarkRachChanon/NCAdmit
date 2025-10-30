@@ -363,7 +363,7 @@ $stats = $stats_result->fetch_assoc();
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item"
-                                                        href="../pages/download_regular_application_pdf.php?app_no=<?php echo $student['application_no']; ?>&type=regular"
+                                                        href="../pages/download_regular_application_pdf.php?app_no=<?php echo $student['id']; ?>&type=regular"
                                                         target="_blank">
                                                         <i class="bi bi-file-pdf me-2 text-danger"></i>
                                                         ดาวน์โหลด PDF

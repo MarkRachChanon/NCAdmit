@@ -408,12 +408,12 @@ function displayResults(applications, count) {
         
         // กำหนดปุ่มดาวน์โหลดตามประเภทรอบ
         const downloadButton = data.form_type === 'quota'
-            ? `<a href="pages/download_application_pdf.php?app_no=${data.application_no}&type=quota" 
+            ? `<a href="pages/download_application_pdf.php?app_no=${data.id}&type=quota" 
                 class="btn btn-light btn-sm ms-2 fs-6 w-100 w-md-auto"
                 target="_blank">
                 <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครโควต้า
             </a>`
-            : `<a href="pages/download_regular_application_pdf.php?app_no=${data.application_no}&type=regular" 
+            : `<a href="pages/download_regular_application_pdf.php?app_no=${data.id}&type=regular" 
                 class="btn btn-light btn-sm ms-2 fs-6 w-100 w-md-auto"
                 target="_blank">
                 <i class="bi bi-download me-2"></i>ดาวน์โหลดใบสมัครปกติ

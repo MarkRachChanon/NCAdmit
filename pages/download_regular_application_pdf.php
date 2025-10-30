@@ -7,10 +7,10 @@ use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 
 // รับพารามิเตอร์
-$application_no = isset($_GET['app_no']) ? trim($_GET['app_no']) : '';
+$student_id = isset($_GET['app_no']) ? trim($_GET['app_no']) : '';
 $form_type = isset($_GET['type']) ? trim($_GET['type']) : '';
 
-if (empty($application_no)) {
+if (empty($student_id)) {
     die('ข้อมูลไม่ครบถ้วน: กรุณาระบุเลขที่ใบสมัคร');
 }
 
@@ -25,12 +25,12 @@ try {
                 d.study_type as study_type
             FROM students_regular sr
             LEFT JOIN departments d ON sr.department_id = d.id
-            WHERE sr.application_no = ?
+            WHERE sr.id = ?
             LIMIT 1
         ");
     }
 
-    $stmt->bind_param("s", $application_no);
+    $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -81,7 +81,7 @@ try {
     unlink($image_path);
 
     // ชื่อไฟล์
-    $filename = 'ใบสมัครรอบปกติ_' . $application_no . '_' . date('Ymd_His') . '.pdf';
+    $filename = 'ใบสมัครรอบปกติ_' . $data['application_no'] . '_' . date('Ymd_His') . '.pdf';
 
     // ส่งออก PDF
     $mpdf->Output($filename, 'D');

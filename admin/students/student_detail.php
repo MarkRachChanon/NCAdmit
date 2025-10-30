@@ -89,7 +89,7 @@ if (empty($student['age']) && !empty($student['birth_date'])) {
                 <i class="bi bi-arrow-left me-2"></i>
                 กลับ
             </a>
-            <a href="../pages/download_<?php echo ($type == 'quota') ? 'application' : 'regular_application'; ?>_pdf.php?app_no=<?php echo $student['application_no']; ?>&type=<?php echo $type; ?>"
+            <a href="../pages/download_<?php echo ($type == 'quota') ? 'application' : 'regular_application'; ?>_pdf.php?app_no=<?php echo $student['id']; ?>&type=<?php echo $type; ?>"
                 class="btn btn-danger"
                 target="_blank">
                 <i class="bi bi-file-pdf me-2"></i>
