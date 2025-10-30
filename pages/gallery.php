@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Gallery Page - แกลเลอรี่
  */
@@ -68,9 +69,9 @@ $cat_result = $conn->query($cat_sql);
         <div class="row">
             <div class="col-12">
                 <div class="d-flex gap-2 flex-wrap justify-content-center" data-aos="fade-up">
-                    <a href="index.php?page=gallery" 
-                       class="btn <?php echo ($category_id == 0) ? 'btn-gradient' : 'btn-outline-primary'; ?> btn-sm px-4">
-                        <i class="bi bi-grid-3x3-gap-fill me-2"></i> 
+                    <a href="index.php?page=gallery"
+                        class="btn <?php echo ($category_id == 0) ? 'btn-gradient' : 'btn-outline-primary'; ?> btn-sm px-4">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>
                         ทั้งหมด
                         <?php if ($category_id == 0): ?>
                             <span class="badge bg-white text-primary ms-2"><?php echo number_format($total_items); ?></span>
@@ -79,8 +80,8 @@ $cat_result = $conn->query($cat_sql);
                     <?php if ($cat_result && $cat_result->num_rows > 0): ?>
                         <?php while ($cat = $cat_result->fetch_assoc()): ?>
                             <?php if ($cat['item_count'] > 0): ?>
-                                <a href="index.php?page=gallery&cat=<?php echo $cat['id']; ?>" 
-                                   class="btn <?php echo ($category_id == $cat['id']) ? 'btn-gradient' : 'btn-outline-primary'; ?> btn-sm px-4">
+                                <a href="index.php?page=gallery&cat=<?php echo $cat['id']; ?>"
+                                    class="btn <?php echo ($category_id == $cat['id']) ? 'btn-gradient' : 'btn-outline-primary'; ?> btn-sm px-4">
                                     <?php if ($cat['icon']): ?>
                                         <i class="bi bi-<?php echo $cat['icon']; ?> me-2"></i>
                                     <?php endif; ?>
@@ -130,19 +131,19 @@ $cat_result = $conn->query($cat_sql);
     <div class="container">
         <?php if ($gallery_result && $gallery_result->num_rows > 0): ?>
             <div class="row g-4 gallery-masonry">
-                <?php 
+                <?php
                 $delay = 100;
-                while ($item = $gallery_result->fetch_assoc()): 
+                while ($item = $gallery_result->fetch_assoc()):
                 ?>
                     <div class="col-md-6 col-lg-4 col-xl-3" data-aos="fade-up" data-aos-delay="<?php echo $delay; ?>">
                         <div class="gallery-item">
                             <div class="gallery-image-wrapper">
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" 
-                                     alt="<?php echo htmlspecialchars($item['title']); ?>"
-                                     class="gallery-image"
-                                     data-lightbox="gallery"
-                                     data-title="<?php echo htmlspecialchars($item['title']); ?>">
-                                
+                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>"
+                                    alt="<?php echo htmlspecialchars($item['title']); ?>"
+                                    class="gallery-image"
+                                    data-lightbox="gallery"
+                                    data-title="<?php echo htmlspecialchars($item['title']); ?>">
+
                                 <!-- Overlay -->
                                 <div class="gallery-overlay">
                                     <div class="gallery-content">
@@ -154,8 +155,8 @@ $cat_result = $conn->query($cat_sql);
                                                 <?php echo htmlspecialchars(mb_substr($item['description'], 0, 80, 'UTF-8')); ?>...
                                             </p>
                                         <?php endif; ?>
-                                        <button class="btn btn-light btn-sm" 
-                                                onclick="openLightbox('<?php echo htmlspecialchars($item['image_url']); ?>', '<?php echo htmlspecialchars($item['title']); ?>', '<?php echo htmlspecialchars($item['description'] ?? ''); ?>')">
+                                        <button class="btn btn-light btn-sm"
+                                            onclick='openLightbox(<?php echo json_encode($item["image_url"]); ?>, <?php echo json_encode($item["title"]); ?>, <?php echo json_encode($item["description"] ?? ""); ?>)'>
                                             <i class="bi bi-zoom-in me-2"></i> ดูภาพ
                                         </button>
                                     </div>
@@ -172,7 +173,7 @@ $cat_result = $conn->query($cat_sql);
                             </div>
                         </div>
                     </div>
-                    <?php 
+                    <?php
                     $delay += 50;
                     if ($delay > 300) $delay = 100;
                     ?>
@@ -187,8 +188,8 @@ $cat_result = $conn->query($cat_sql);
                             <!-- Previous -->
                             <?php if ($page_num > 1): ?>
                                 <li class="page-item">
-                                    <a class="page-link" 
-                                       href="?page=gallery&p=<?php echo ($page_num - 1); ?><?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">
+                                    <a class="page-link"
+                                        href="?page=gallery&p=<?php echo ($page_num - 1); ?><?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">
                                         <i class="bi bi-chevron-left"></i> ก่อนหน้า
                                     </a>
                                 </li>
@@ -198,7 +199,7 @@ $cat_result = $conn->query($cat_sql);
                             <?php
                             $start_page = max(1, $page_num - 2);
                             $end_page = min($total_pages, $page_num + 2);
-                            
+
                             if ($start_page > 1): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=gallery&p=1<?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">1</a>
@@ -210,8 +211,8 @@ $cat_result = $conn->query($cat_sql);
 
                             <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
                                 <li class="page-item <?php echo ($i == $page_num) ? 'active' : ''; ?>">
-                                    <a class="page-link" 
-                                       href="?page=gallery&p=<?php echo $i; ?><?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">
+                                    <a class="page-link"
+                                        href="?page=gallery&p=<?php echo $i; ?><?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">
                                         <?php echo $i; ?>
                                     </a>
                                 </li>
@@ -229,8 +230,8 @@ $cat_result = $conn->query($cat_sql);
                             <!-- Next -->
                             <?php if ($page_num < $total_pages): ?>
                                 <li class="page-item">
-                                    <a class="page-link" 
-                                       href="?page=gallery&p=<?php echo ($page_num + 1); ?><?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">
+                                    <a class="page-link"
+                                        href="?page=gallery&p=<?php echo ($page_num + 1); ?><?php echo $category_id > 0 ? '&cat=' . $category_id : ''; ?>">
                                         ถัดไป <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>
@@ -267,8 +268,8 @@ $cat_result = $conn->query($cat_sql);
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content bg-transparent border-0">
             <div class="modal-body p-0">
-                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
-                        data-bs-dismiss="modal" aria-label="Close" style="z-index: 1050;"></button>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    data-bs-dismiss="modal" aria-label="Close" style="z-index: 1050;"></button>
                 <div class="text-center">
                     <img id="lightboxImage" src="" alt="" class="img-fluid rounded-3 shadow-lg">
                     <div class="mt-3 text-white">
@@ -282,134 +283,134 @@ $cat_result = $conn->query($cat_sql);
 </div>
 
 <style>
-/* Gallery Styles */
-.gallery-item {
-    height: 100%;
-}
-
-.gallery-image-wrapper {
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
-    height: 280px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.gallery-image-wrapper:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
-
-.gallery-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-}
-
-.gallery-image-wrapper:hover .gallery-image {
-    transform: scale(1.1);
-}
-
-/* Overlay */
-.gallery-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    display: flex;
-    align-items: flex-end;
-    padding: 1.5rem;
-}
-
-.gallery-image-wrapper:hover .gallery-overlay {
-    opacity: 1;
-}
-
-.gallery-content {
-    width: 100%;
-}
-
-/* Category Badge */
-.gallery-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 10;
-}
-
-/* Lightbox Modal */
-#lightboxModal .modal-content {
-    background-color: rgba(0, 0, 0, 0.9) !important;
-}
-
-#lightboxImage {
-    max-height: 80vh;
-    width: auto;
-    max-width: 100%;
-}
-
-/* Pagination */
-.pagination .page-link {
-    border-radius: 8px;
-    margin: 0 4px;
-    border: none;
-    background: transparent;
-    color: #4facfe;
-    font-weight: 500;
-}
-
-.pagination .page-item.active .page-link {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
-}
-
-.pagination .page-link:hover {
-    background: rgba(79, 172, 254, 0.1);
-    color: #4facfe;
-}
-
-.pagination .page-item.disabled .page-link {
-    color: #6c757d;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .gallery-image-wrapper {
-        height: 220px;
+    /* Gallery Styles */
+    .gallery-item {
+        height: 100%;
     }
-    
+
+    .gallery-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        height: 280px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .gallery-image-wrapper:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .gallery-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .gallery-image-wrapper:hover .gallery-image {
+        transform: scale(1.1);
+    }
+
+    /* Overlay */
     .gallery-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: flex-end;
+        padding: 1.5rem;
+    }
+
+    .gallery-image-wrapper:hover .gallery-overlay {
         opacity: 1;
     }
-}
+
+    .gallery-content {
+        width: 100%;
+    }
+
+    /* Category Badge */
+    .gallery-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10;
+    }
+
+    /* Lightbox Modal */
+    #lightboxModal .modal-content {
+        background-color: rgba(0, 0, 0, 0.9) !important;
+    }
+
+    #lightboxImage {
+        max-height: 80vh;
+        width: auto;
+        max-width: 100%;
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 4px;
+        border: none;
+        background: transparent;
+        color: #4facfe;
+        font-weight: 500;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background: rgba(79, 172, 254, 0.1);
+        color: #4facfe;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .gallery-image-wrapper {
+            height: 220px;
+        }
+
+        .gallery-overlay {
+            opacity: 1;
+        }
+    }
 </style>
 
 <script>
-// Lightbox Function
-function openLightbox(imageUrl, title, description) {
-    document.getElementById('lightboxImage').src = imageUrl;
-    document.getElementById('lightboxTitle').textContent = title;
-    document.getElementById('lightboxDescription').textContent = description || '';
-    
-    const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
-    modal.show();
-}
+    // Lightbox Function
+    function openLightbox(imageUrl, title, description) {
+        document.getElementById('lightboxImage').src = imageUrl;
+        document.getElementById('lightboxTitle').textContent = title;
+        document.getElementById('lightboxDescription').textContent = description || '';
 
-// Close lightbox on ESC key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const modalEl = document.getElementById('lightboxModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) {
-            modal.hide();
-        }
+        const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+        modal.show();
     }
-});
+
+    // Close lightbox on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modalEl = document.getElementById('lightboxModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) {
+                modal.hide();
+            }
+        }
+    });
 </script>
