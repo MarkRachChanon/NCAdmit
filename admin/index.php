@@ -117,22 +117,6 @@ include 'includes/admin_sidebar.php';
             }
             break;
 
-        case 'news_add':
-            if (can_show_menu('news_add', $admin_role)) {
-                include 'cms/news_add.php';
-            } else {
-                include 'includes/403.php';
-            }
-            break;
-
-        case 'news_edit':
-            if (can_show_menu('news_edit', $admin_role)) {
-                include 'cms/news_edit.php';
-            } else {
-                include 'includes/403.php';
-            }
-            break;
-
         // ==================== Gallery Management ====================
         case 'gallery_manage':
             if (can_show_menu('gallery_manage', $admin_role)) {
