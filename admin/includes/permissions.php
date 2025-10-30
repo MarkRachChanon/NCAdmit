@@ -20,6 +20,7 @@ $role_permissions = [
         'departments_manage',
         'departments_add',
         'departments_edit',
+        'categories_manage',
         'admin_manage',
         'system_settings',
         'clear_data'
@@ -37,7 +38,8 @@ $role_permissions = [
         'gallery_manage',
         'departments_manage',
         'departments_add',
-        'departments_edit'
+        'departments_edit',
+        'categories_manage'
     ],
     'quota' => [
         'dashboard',
@@ -48,7 +50,11 @@ $role_permissions = [
         'news_manage',
         'news_add',
         'news_edit',
-        'gallery_manage'
+        'gallery_manage',
+        'departments_manage',
+        'departments_add',
+        'departments_edit',
+        'categories_manage'
     ],
     'regular' => [
         'dashboard',

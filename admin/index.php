@@ -39,7 +39,7 @@ include 'includes/admin_sidebar.php';
         unset($_SESSION['permission_error']);
     endif;
     ?>
-    
+
     <?php
     // Route Pages
     switch ($page) {
@@ -162,6 +162,15 @@ include 'includes/admin_sidebar.php';
         case 'departments_edit':
             if (can_show_menu('departments_edit', $admin_role)) {
                 include 'cms/departments_edit.php';
+            } else {
+                include 'includes/403.php';
+            }
+            break;
+
+        // ==================== Categories Management ====================
+        case 'categories_manage':
+            if (in_array($admin_role, ['superadmin', 'admin'])) {
+                include 'cms/categories_manage.php';
             } else {
                 include 'includes/403.php';
             }
