@@ -255,8 +255,8 @@ while ($dept = $departments_result->fetch_assoc()) {
                             <input type="text" name="lastname_th" class="form-control" placeholder="นามสกุล" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">ชื่อเล่น</label>
-                            <input type="text" name="nickname" class="form-control" placeholder="ชื่อเล่น">
+                            <label class="form-label">ชื่อเล่น <span class="text-danger">*</span></label>
+                            <input type="text" name="nickname" class="form-control" placeholder="ชื่อเล่น" required>
                         </div>
 
                         <div class="col-md-4">

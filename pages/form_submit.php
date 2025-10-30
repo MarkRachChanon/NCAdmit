@@ -78,10 +78,6 @@ try {
     $stmt->close();
 
     $year = isset($data['academic_year']) ? $data['academic_year'] : (date('Y') + 543 + 1);
-    $last_id_stmt = $conn->query("SELECT MAX(id) AS max_id FROM students_quota");
-    $max_id = $last_id_stmt->fetch_assoc()['max_id'] ?? 0;
-    $new_id_part = str_pad($max_id + 1, 4, '0', STR_PAD_LEFT);
-    $application_no = 'Q' . substr($year, -2) . $new_id_part;
 
     $uploads = isset($data['uploaded_files']) ? $data['uploaded_files'] : [];
     $academic_year_val = (string)$year;
@@ -110,7 +106,7 @@ try {
     error_log("✅ FINAL graduation_year: '$graduation_year_value'");
 
     $variables_to_bind = [
-        $application_no,
+        null,  // ✅ application_no จะ UPDATE ทีหลัง
         $data['prefix'] ?? null,
         $data['firstname_th'] ?? null,
         $data['lastname_th'] ?? null,
@@ -140,7 +136,7 @@ try {
         (string)($data['gpa'] ?? 0),
         $data['awards'] ?? null,
         $data['talents'] ?? null,
-        $apply_level,  // 🎯 เพิ่ม
+        $apply_level,
         (string)($data['department_id'] ?? null),
         $academic_year_val,
         $photo_path,
@@ -185,10 +181,32 @@ try {
         throw new Exception('Execute failed: ' . $stmt->error);
     }
 
+    // ✅ ดึง ID ที่เพิ่งสร้าง
+    $inserted_id = $conn->insert_id;
     $stmt->close();
+
+    // ✅ สร้าง application_no จาก ID
+    $year_suffix = substr($year, -2);
+    $id_part = str_pad($inserted_id, 5, '0', STR_PAD_LEFT);
+    $application_no = 'Q' . $year_suffix . $id_part;
+    
+    error_log("✅ Generated application_no from ID: '$application_no' (ID: $inserted_id)");
+
+    // ✅ UPDATE application_no
+    $update_stmt = $conn->prepare("UPDATE students_quota SET application_no = ? WHERE id = ?");
+    if (!$update_stmt) {
+        throw new Exception('Update prepare failed: ' . $conn->error);
+    }
+    
+    $update_stmt->bind_param("si", $application_no, $inserted_id);
+    if (!$update_stmt->execute()) {
+        throw new Exception('Update execute failed: ' . $update_stmt->error);
+    }
+    $update_stmt->close();
+
     $conn->commit();
 
-    error_log("✅ SUCCESS - Application: $application_no, graduation_year saved: $graduation_year_value");
+    error_log("✅ SUCCESS - ID: $inserted_id, Application: $application_no, graduation_year: $graduation_year_value");
 
     sendJSON([
         'success' => true,
