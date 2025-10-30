@@ -4,7 +4,7 @@
  */
 
 // Get Latest News
-$sql_news = "SELECT * FROM news WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3";
+$sql_news = "SELECT * FROM news WHERE is_published = 1 ORDER BY published_at DESC LIMIT 3";
 $news_result = $conn->query($sql_news);
 ?>
 
@@ -148,7 +148,7 @@ $news_result = $conn->query($sql_news);
                             <div class="card-body d-flex flex-column">
                                 <div class="text-muted small mb-2">
                                     <i class="bi bi-calendar3 me-1"></i>
-                                    <?php echo thai_date($news['created_at'], 'short'); ?>
+                                    <?php echo thai_date($news['published_at'], 'short'); ?>
                                 </div>
                                 <h5 class="card-title fw-bold">
                                     <?php echo htmlspecialchars($news['title']); ?>

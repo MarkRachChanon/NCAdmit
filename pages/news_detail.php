@@ -39,7 +39,7 @@ $update_stmt->execute();
 // Get Related News
 $related_sql = "SELECT * FROM news 
                 WHERE category_id = ? AND id != ? AND is_published = 1 
-                ORDER BY created_at DESC 
+                ORDER BY published_at DESC 
                 LIMIT 3";
 $related_stmt = $conn->prepare($related_sql);
 $related_stmt->bind_param('ii', $news['category_id'], $news_id);
@@ -49,7 +49,7 @@ $related_result = $related_stmt->get_result();
 // Get Latest News
 $latest_sql = "SELECT * FROM news 
                WHERE is_published = 1 AND id != ? 
-               ORDER BY created_at DESC 
+               ORDER BY published_at DESC 
                LIMIT 5";
 $latest_stmt = $conn->prepare($latest_sql);
 $latest_stmt->bind_param('i', $news_id);
@@ -102,7 +102,7 @@ $latest_result = $latest_stmt->get_result();
                             
                             <span class="text-muted">
                                 <i class="bi bi-calendar3 me-2"></i>
-                                <?php echo thai_date($news['created_at']); ?>
+                                <?php echo thai_date($news['published_at']); ?>
                             </span>
                             
                             <span class="text-muted">
@@ -219,7 +219,7 @@ $latest_result = $latest_stmt->get_result();
                                             </h6>
                                             <small class="text-muted">
                                                 <i class="bi bi-calendar3 me-1"></i>
-                                                <?php echo thai_date($related['created_at'], 'short'); ?>
+                                                <?php echo thai_date($related['published_at'], 'short'); ?>
                                             </small>
                                         </div>
                                     </div>
@@ -247,7 +247,7 @@ $latest_result = $latest_stmt->get_result();
                                     </h6>
                                     <small class="text-muted">
                                         <i class="bi bi-calendar3 me-1"></i>
-                                        <?php echo thai_date($latest['created_at'], 'short'); ?>
+                                        <?php echo thai_date($latest['published_at'], 'short'); ?>
                                     </small>
                                 </a>
                             <?php endwhile; ?>

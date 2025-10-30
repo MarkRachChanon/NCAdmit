@@ -46,7 +46,7 @@ $sql = "SELECT n.*, c.name as category_name, c.color as category_color
         FROM news n 
         LEFT JOIN categories c ON n.category_id = c.id 
         WHERE $where_sql 
-        ORDER BY is_pinned DESC, created_at DESC 
+        ORDER BY is_pinned DESC, published_at DESC 
         LIMIT ? OFFSET ?";
 
 $stmt = $conn->prepare($sql);
@@ -265,7 +265,7 @@ $cat_result = $conn->query($cat_sql);
                                 <div class="d-flex align-items-center gap-3 mb-3 text-muted small">
                                     <span>
                                         <i class="bi bi-calendar3 me-1"></i>
-                                        <?php echo thai_date($news['created_at'], 'short'); ?>
+                                        <?php echo thai_date($news['published_at'], 'short'); ?>
                                     </span>
                                     <span>
                                         <i class="bi bi-eye me-1"></i>
