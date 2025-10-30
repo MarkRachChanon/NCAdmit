@@ -536,4 +536,50 @@ function file_exists_in_uploads($path) {
     $full_path = '../uploads/' . $path;
     return file_exists($full_path);
 }
+
+function get_admission_schedule($type = 'quota') {
+    return [
+        'start_date' => get_setting("{$type}_start_date", ''),
+        'end_date' => get_setting("{$type}_end_date", ''),
+        'announce_date' => get_setting("{$type}_announce_date", ''),
+        'confirm_start' => get_setting("{$type}_confirm_start", ''),
+        'confirm_end' => get_setting("{$type}_confirm_end", ''),
+        'report_date' => get_setting("{$type}_report_date", '')
+    ];
+}
+
+function get_admission_phase($type = 'quota') {
+    $schedule = get_admission_schedule($type);
+    $today = date('Y-m-d');
+    
+    if (empty($schedule['start_date'])) {
+        return 'not_started';
+    }
+    
+    if ($today < $schedule['start_date']) {
+        return 'not_started';
+    }
+    
+    if ($today >= $schedule['start_date'] && $today <= $schedule['end_date']) {
+        return 'registration';
+    }
+    
+    if ($today > $schedule['end_date'] && $today < $schedule['announce_date']) {
+        return 'closed';
+    }
+    
+    if ($today >= $schedule['announce_date'] && $today < $schedule['confirm_start']) {
+        return 'announced';
+    }
+    
+    if ($today >= $schedule['confirm_start'] && $today <= $schedule['confirm_end']) {
+        return 'confirming';
+    }
+    
+    if ($today >= $schedule['report_date']) {
+        return 'reporting';
+    }
+    
+    return 'ended';
+}
 ?>

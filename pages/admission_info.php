@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admission Info Page - ข้อมูลการรับสมัคร
  */
@@ -50,7 +51,7 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                             </div>
                         </div>
                         <p class="text-muted mb-4">
-                            รับสมัครนักเรียน นักศึกษาที่มีผลการเรียนดี มีความประพฤติดี 
+                            รับสมัครนักเรียน นักศึกษาที่มีผลการเรียนดี มีความประพฤติดี
                             และมีคุณสมบัติตามที่กำหนด
                         </p>
                         <div class="d-grid">
@@ -117,10 +118,69 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
             </div>
         </div>
 
+        <?php
+        // ดึงกำหนดการรับสมัคร
+        $quota_schedule = get_admission_schedule('quota');
+        $regular_schedule = get_admission_schedule('regular');
+
+        // ฟังก์ชันแปลงวันที่เป็นภาษาไทย
+        function format_thai_date($date_str)
+        {
+            if (empty($date_str)) return '-';
+
+            $date = new DateTime($date_str);
+            $thai_months = [
+                1 => 'มกราคม',
+                2 => 'กุมภาพันธ์',
+                3 => 'มีนาคม',
+                4 => 'เมษายน',
+                5 => 'พฤษภาคม',
+                6 => 'มิถุนายน',
+                7 => 'กรกฎาคม',
+                8 => 'สิงหาคม',
+                9 => 'กันยายน',
+                10 => 'ตุลาคม',
+                11 => 'พฤศจิกายน',
+                12 => 'ธันวาคม'
+            ];
+
+            $month = (int)$date->format('n');
+            $year = $date->format('Y') + 543;
+
+            return $date->format('j') . ' ' . $thai_months[$month] . ' ' . $year;
+        }
+
+        function get_month_year_thai($date_str)
+        {
+            if (empty($date_str)) return 'ยังไม่กำหนด';
+
+            $date = new DateTime($date_str);
+            $thai_months = [
+                1 => 'มกราคม',
+                2 => 'กุมภาพันธ์',
+                3 => 'มีนาคม',
+                4 => 'เมษายน',
+                5 => 'พฤษภาคม',
+                6 => 'มิถุนายน',
+                7 => 'กรกฎาคม',
+                8 => 'สิงหาคม',
+                9 => 'กันยายน',
+                10 => 'ตุลาคม',
+                11 => 'พฤศจิกายน',
+                12 => 'ธันวาคม'
+            ];
+
+            $month = (int)$date->format('n');
+            $year = $date->format('Y') + 543;
+
+            return $thai_months[$month] . ' ' . $year;
+        }
+        ?>
+
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
                 <div class="timeline" data-aos="fade-up" data-aos-delay="100">
-                    <!-- Timeline Item 1 -->
+                    <!-- Timeline Item 1: เปิดรับสมัคร -->
                     <div class="timeline-item">
                         <div class="timeline-marker bg-primary"></div>
                         <div class="timeline-content">
@@ -131,18 +191,52 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-calendar-check text-primary me-2"></i>
                                             เปิดรับสมัคร
                                         </h5>
-                                        <span class="badge bg-primary">พฤศจิกายน 2568</span>
+                                        <span class="badge bg-primary">
+                                            <?php
+                                            if (!empty($quota_schedule['start_date'])) {
+                                                echo get_month_year_thai($quota_schedule['start_date']);
+                                            } else {
+                                                echo 'ยังไม่กำหนด';
+                                            }
+                                            ?>
+                                        </span>
                                     </div>
-                                    <p class="text-muted mb-0">
-                                        เปิดรับสมัครนักเรียน นักศึกษา ทั้งรอบโควตาและรอบปกติ
-                                        ผ่านระบบออนไลน์
+                                    <p class="text-muted mb-2">
+                                        เปิดรับสมัครนักเรียน นักศึกษา ทั้งรอบโควตาและรอบปกติ ผ่านระบบออนไลน์
                                     </p>
+                                    <?php if (!empty($quota_schedule['start_date']) || !empty($regular_schedule['start_date'])): ?>
+                                        <div class="mt-3 pt-3 border-top">
+                                            <?php if (!empty($quota_schedule['start_date'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-primary-subtle text-primary me-2">โควตา</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($quota_schedule['start_date']); ?>
+                                                        <?php if (!empty($quota_schedule['end_date'])): ?>
+                                                            - <?php echo format_thai_date($quota_schedule['end_date']); ?>
+                                                        <?php endif; ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($regular_schedule['start_date'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-warning-subtle text-warning me-2">ปกติ</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($regular_schedule['start_date']); ?>
+                                                        <?php if (!empty($regular_schedule['end_date'])): ?>
+                                                            - <?php echo format_thai_date($regular_schedule['end_date']); ?>
+                                                        <?php endif; ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Timeline Item 2 -->
+                    <!-- Timeline Item 2: ตรวจสอบคุณสมบัติ -->
                     <div class="timeline-item">
                         <div class="timeline-marker bg-success"></div>
                         <div class="timeline-content">
@@ -153,18 +247,25 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-clipboard-check text-success me-2"></i>
                                             ตรวจสอบคุณสมบัติ
                                         </h5>
-                                        <span class="badge bg-success">พฤศจิกายน 2568</span>
+                                        <span class="badge bg-success">
+                                            <?php
+                                            if (!empty($quota_schedule['end_date'])) {
+                                                echo get_month_year_thai($quota_schedule['end_date']);
+                                            } else {
+                                                echo 'ยังไม่กำหนด';
+                                            }
+                                            ?>
+                                        </span>
                                     </div>
                                     <p class="text-muted mb-0">
-                                        ตรวจสอบเอกสารและคุณสมบัติผู้สมัคร 
-                                        ประกาศรายชื่อผู้มีสิทธิ์สอบสัมภาษณ์
+                                        ตรวจสอบเอกสารและคุณสมบัติผู้สมัคร ประกาศรายชื่อผู้มีสิทธิ์เข้าศึกษา
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Timeline Item 3 -->
+                    <!-- Timeline Item 3: สอบสัมภาษณ์ (ถ้ามี) -->
                     <div class="timeline-item">
                         <div class="timeline-marker bg-info"></div>
                         <div class="timeline-content">
@@ -175,17 +276,17 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-chat-dots text-info me-2"></i>
                                             สอบสัมภาษณ์
                                         </h5>
-                                        <span class="badge bg-info">mmmm - yyyy</span>
+                                        <span class="badge bg-info">ตามประกาศ</span>
                                     </div>
                                     <p class="text-muted mb-0">
-                                        สอบสัมภาษณ์ผู้สมัคร พร้อมตรวจสอบเอกสารต้นฉบับ
+                                        สอบสัมภาษณ์ผู้สมัคร (กรณีที่สาขาวิชากำหนด) พร้อมตรวจสอบเอกสารต้นฉบับ
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Timeline Item 4 -->
+                    <!-- Timeline Item 4: ประกาศผล -->
                     <div class="timeline-item">
                         <div class="timeline-marker bg-warning"></div>
                         <div class="timeline-content">
@@ -196,17 +297,102 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                             <i class="bi bi-megaphone text-warning me-2"></i>
                                             ประกาศผล
                                         </h5>
-                                        <span class="badge bg-warning">ธันวาคม 2568</span>
+                                        <span class="badge bg-warning">
+                                            <?php
+                                            if (!empty($quota_schedule['announce_date'])) {
+                                                echo get_month_year_thai($quota_schedule['announce_date']);
+                                            } else {
+                                                echo 'ยังไม่กำหนด';
+                                            }
+                                            ?>
+                                        </span>
                                     </div>
-                                    <p class="text-muted mb-0">
-                                        ประกาศรายชื่อผู้ผ่านการคัดเลือก พร้อมรายละเอียดการมอบตัว
+                                    <p class="text-muted mb-2">
+                                        ประกาศรายชื่อผู้ผ่านการคัดเลือก พร้อมรายละเอียดการยืนยันสิทธิ์
                                     </p>
+                                    <?php if (!empty($quota_schedule['announce_date']) || !empty($regular_schedule['announce_date'])): ?>
+                                        <div class="mt-3 pt-3 border-top">
+                                            <?php if (!empty($quota_schedule['announce_date'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-primary-subtle text-primary me-2">โควตา</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($quota_schedule['announce_date']); ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($regular_schedule['announce_date'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-warning-subtle text-warning me-2">ปกติ</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($regular_schedule['announce_date']); ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Timeline Item 5 -->
+                    <!-- Timeline Item 5: ยืนยันสิทธิ์ -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-purple"></div>
+                        <div class="timeline-content">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h5 class="fw-bold mb-0">
+                                            <i class="bi bi-hand-thumbs-up text-purple me-2"></i>
+                                            ยืนยันสิทธิ์
+                                        </h5>
+                                        <span class="badge" style="background-color: #6f42c1;">
+                                            <?php
+                                            if (!empty($quota_schedule['confirm_start'])) {
+                                                echo get_month_year_thai($quota_schedule['confirm_start']);
+                                            } else {
+                                                echo 'ยังไม่กำหนด';
+                                            }
+                                            ?>
+                                        </span>
+                                    </div>
+                                    <p class="text-muted mb-2">
+                                        ผู้ผ่านการคัดเลือกยืนยันสิทธิ์เข้าศึกษา พร้อมชำระค่าธรรมเนียม
+                                    </p>
+                                    <?php if (!empty($quota_schedule['confirm_start']) || !empty($regular_schedule['confirm_start'])): ?>
+                                        <div class="mt-3 pt-3 border-top">
+                                            <?php if (!empty($quota_schedule['confirm_start'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-primary-subtle text-primary me-2">โควตา</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($quota_schedule['confirm_start']); ?>
+                                                        <?php if (!empty($quota_schedule['confirm_end'])): ?>
+                                                            - <?php echo format_thai_date($quota_schedule['confirm_end']); ?>
+                                                        <?php endif; ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($regular_schedule['confirm_start'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-warning-subtle text-warning me-2">ปกติ</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($regular_schedule['confirm_start']); ?>
+                                                        <?php if (!empty($regular_schedule['confirm_end'])): ?>
+                                                            - <?php echo format_thai_date($regular_schedule['confirm_end']); ?>
+                                                        <?php endif; ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 6: รายงานตัว -->
                     <div class="timeline-item">
                         <div class="timeline-marker bg-danger"></div>
                         <div class="timeline-content">
@@ -215,13 +401,42 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <h5 class="fw-bold mb-0">
                                             <i class="bi bi-person-check text-danger me-2"></i>
-                                            มอบตัวและรายงานตัว
+                                            รายงานตัวและมอบตัว
                                         </h5>
-                                        <span class="badge bg-danger">ธันวาคม 2568</span>
+                                        <span class="badge bg-danger">
+                                            <?php
+                                            if (!empty($quota_schedule['report_date'])) {
+                                                echo get_month_year_thai($quota_schedule['report_date']);
+                                            } else {
+                                                echo 'ยังไม่กำหนด';
+                                            }
+                                            ?>
+                                        </span>
                                     </div>
-                                    <p class="text-muted mb-0">
-                                        ผู้ผ่านการคัดเลือกมอบตัวและรายงานตัวรับเอกสาร เข้าเป็นนักเรียน นักศึกษา
+                                    <p class="text-muted mb-2">
+                                        ผู้ผ่านการคัดเลือกรายงานตัวและมอบตัวเข้าเป็นนักเรียน นักศึกษา
                                     </p>
+                                    <?php if (!empty($quota_schedule['report_date']) || !empty($regular_schedule['report_date'])): ?>
+                                        <div class="mt-3 pt-3 border-top">
+                                            <?php if (!empty($quota_schedule['report_date'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-primary-subtle text-primary me-2">โควตา</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($quota_schedule['report_date']); ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($regular_schedule['report_date'])): ?>
+                                                <div class="mb-2">
+                                                    <span class="badge bg-warning-subtle text-warning me-2">ปกติ</span>
+                                                    <small class="text-muted">
+                                                        <?php echo format_thai_date($regular_schedule['report_date']); ?>
+                                                    </small>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -348,8 +563,8 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                             <div class="col-md-6">
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
-                                        <div class="icon-circle bg-primary bg-opacity-10 text-primary" 
-                                             style="width: 65px; height: 65px;">
+                                        <div class="icon-circle bg-primary bg-opacity-10 text-primary"
+                                            style="width: 65px; height: 65px;">
                                             <i class="bi bi-file-earmark-person display-6"></i>
                                         </div>
                                     </div>
@@ -366,8 +581,8 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                             <div class="col-md-6">
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
-                                        <div class="icon-circle bg-success bg-opacity-10 text-success" 
-                                             style="width: 65px; height: 65px;">
+                                        <div class="icon-circle bg-success bg-opacity-10 text-success"
+                                            style="width: 65px; height: 65px;">
                                             <i class="bi bi-file-earmark-text display-6"></i>
                                         </div>
                                     </div>
@@ -384,8 +599,8 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                             <div class="col-md-6">
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
-                                        <div class="icon-circle bg-info bg-opacity-10 text-info" 
-                                             style="width: 65px; height: 65px;">
+                                        <div class="icon-circle bg-info bg-opacity-10 text-info"
+                                            style="width: 65px; height: 65px;">
                                             <i class="bi bi-person-badge display-6"></i>
                                         </div>
                                     </div>
@@ -401,8 +616,8 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                             <div class="col-md-6">
                                 <div class="d-flex mb-3">
                                     <div class="flex-shrink-0">
-                                        <div class="icon-circle bg-warning bg-opacity-10 text-warning" 
-                                             style="width: 65px; height: 65px;">
+                                        <div class="icon-circle bg-warning bg-opacity-10 text-warning"
+                                            style="width: 65px; height: 65px;">
                                             <i class="bi bi-file-earmark-medical display-6"></i>
                                         </div>
                                     </div>
@@ -438,33 +653,33 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
         </div>
 
         <?php foreach ($levels as $index => $level): ?>
-            <?php 
+            <?php
             $departments = get_departments($level);
             if (count($departments) > 0):
             ?>
-            <div class="mb-5" data-aos="fade-up" data-aos-delay="<?php echo ($index * 100); ?>">
-                <h4 class="fw-bold mb-4">
-                    <span class="badge bg-gradient-primary me-2"><?php echo $level; ?></span>
-                    <?php echo count($departments); ?> สาขาวิชา
-                </h4>
-                <div class="row g-3">
-                    <?php foreach ($departments as $dept): ?>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card border-0 shadow-sm h-100">
-                                <div class="card-body p-3">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-mortarboard-fill text-primary fs-3 me-3"></i>
-                                        <div>
-                                            <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($dept['name_th']); ?></h6>
-                                            <small class="text-muted"><?php echo htmlspecialchars($dept['category_name']); ?></small>
+                <div class="mb-5" data-aos="fade-up" data-aos-delay="<?php echo ($index * 100); ?>">
+                    <h4 class="fw-bold mb-4">
+                        <span class="badge bg-gradient-primary me-2"><?php echo $level; ?></span>
+                        <?php echo count($departments); ?> สาขาวิชา
+                    </h4>
+                    <div class="row g-3">
+                        <?php foreach ($departments as $dept): ?>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-mortarboard-fill text-primary fs-3 me-3"></i>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($dept['name_th']); ?></h6>
+                                                <small class="text-muted"><?php echo htmlspecialchars($dept['category_name']); ?></small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
         <?php endforeach; ?>
     </div>
@@ -483,8 +698,8 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
                             ติดต่อสอบถามข้อมูลเพิ่มเติมได้ที่งานรับสมัคร
                         </p>
                         <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
-                            <a href="tel:<?php echo str_replace('-', '', get_setting('contact_phone', '0342510810')); ?>" 
-                               class="btn btn-light btn-lg px-5">
+                            <a href="tel:<?php echo str_replace('-', '', get_setting('contact_phone', '0342510810')); ?>"
+                                class="btn btn-light btn-lg px-5">
                                 <i class="bi bi-telephone me-2"></i>
                                 <?php echo get_setting('contact_phone', '034-251-081'); ?>
                             </a>
@@ -500,60 +715,198 @@ $levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
 </section>
 
 <style>
-/* Timeline Styles */
-.timeline {
-    position: relative;
-    padding: 0;
-}
+    /* Timeline Styles */
+    .timeline {
+        position: relative;
+        padding: 0;
+    }
 
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 30px;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(to bottom, #4facfe, #00f2fe);
-}
-
-.timeline-item {
-    position: relative;
-    padding-left: 80px;
-    margin-bottom: 30px;
-}
-
-.timeline-marker {
-    position: absolute;
-    left: 18px;
-    top: 10px;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    border: 4px solid white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.timeline-content {
-    position: relative;
-}
-
-.timeline-item:last-child {
-    margin-bottom: 0;
-}
-
-@media (max-width: 768px) {
     .timeline::before {
-        left: 15px;
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #4facfe, #00f2fe);
     }
-    
+
+    .timeline-marker.bg-purple {
+        background-color: #6f42c1 !important;
+    }
+
+    .text-purple {
+        color: #6f42c1 !important;
+    }
+
+    .badge.bg-primary-subtle {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+        color: #0d6efd !important;
+    }
+
+    .badge.bg-warning-subtle {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+        color: #ffc107 !important;
+    }
+
     .timeline-item {
-        padding-left: 50px;
+        position: relative;
+        padding-left: 80px;
+        margin-bottom: 30px;
     }
-    
+
     .timeline-marker {
-        left: 7px;
-        width: 18px;
-        height: 18px;
+        position: absolute;
+        left: 18px;
+        top: 10px;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
-}
+
+    .timeline-content {
+        position: relative;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+        .timeline::before {
+            left: 15px;
+        }
+
+        .timeline-item {
+            padding-left: 50px;
+        }
+
+        .timeline-marker {
+            left: 7px;
+            width: 18px;
+            height: 18px;
+        }
+    }
 </style>
+
+<script>
+    document.getElementById('previewTimeline')?.addEventListener('click', function() {
+        const quotaSchedule = {
+            start: document.getElementById('quota_start_date').value,
+            end: document.getElementById('quota_end_date').value,
+            announce: document.getElementById('quota_announce_date').value,
+            confirm_start: document.getElementById('quota_confirm_start').value,
+            confirm_end: document.getElementById('quota_confirm_end').value,
+            report: document.getElementById('quota_report_date').value
+        };
+
+        const regularSchedule = {
+            start: document.getElementById('regular_start_date').value,
+            end: document.getElementById('regular_end_date').value,
+            announce: document.getElementById('regular_announce_date').value,
+            confirm_start: document.getElementById('regular_confirm_start').value,
+            confirm_end: document.getElementById('regular_confirm_end').value,
+            report: document.getElementById('regular_report_date').value
+        };
+
+        function formatThaiDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+            ];
+            return `${date.getDate()} ${thaiMonths[date.getMonth()]} ${date.getFullYear() + 543}`;
+        }
+
+        const html = `
+        <div style="text-align: left; max-height: 500px; overflow-y: auto;">
+            <h5 class="text-primary mb-3"><i class="bi bi-calendar-star me-2"></i>รอบโควต้า</h5>
+            <div class="timeline-preview mb-4">
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-primary me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>เปิดรับสมัคร</strong><br>
+                        <small class="text-muted">${formatThaiDate(quotaSchedule.start)} - ${formatThaiDate(quotaSchedule.end)}</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-success me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>ตรวจสอบคุณสมบัติ</strong><br>
+                        <small class="text-muted">ตรวจสอบอัตโนมัติ</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-info me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>ประกาศผล</strong><br>
+                        <small class="text-muted">${formatThaiDate(quotaSchedule.announce)}</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-warning me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>ยืนยันสิทธิ์</strong><br>
+                        <small class="text-muted">${formatThaiDate(quotaSchedule.confirm_start)} - ${formatThaiDate(quotaSchedule.confirm_end)}</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-danger me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>รายงานตัว</strong><br>
+                        <small class="text-muted">${formatThaiDate(quotaSchedule.report)}</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h5 class="text-warning mb-3"><i class="bi bi-calendar me-2"></i>รอบปกติ</h5>
+            <div class="timeline-preview">
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-primary me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>เปิดรับสมัคร</strong><br>
+                        <small class="text-muted">${formatThaiDate(regularSchedule.start)} - ${formatThaiDate(regularSchedule.end)}</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-success me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>ตรวจสอบคุณสมบัติ</strong><br>
+                        <small class="text-muted">ตรวจสอบอัตโนมัติ</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-info me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>ประกาศผล</strong><br>
+                        <small class="text-muted">${formatThaiDate(regularSchedule.announce)}</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-warning me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>ยืนยันสิทธิ์</strong><br>
+                        <small class="text-muted">${formatThaiDate(regularSchedule.confirm_start)} - ${formatThaiDate(regularSchedule.confirm_end)}</small>
+                    </div>
+                </div>
+                <div class="d-flex mb-2">
+                    <div class="timeline-dot bg-danger me-3" style="margin-top: 3px;"></div>
+                    <div>
+                        <strong>รายงานตัว</strong><br>
+                        <small class="text-muted">${formatThaiDate(regularSchedule.report)}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+        Swal.fire({
+            title: 'ตัวอย่างกำหนดการรับสมัคร',
+            html: html,
+            width: 700,
+            confirmButtonText: 'ปิด'
+        });
+    });
+</script>
