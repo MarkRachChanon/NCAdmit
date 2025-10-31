@@ -101,6 +101,36 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
     $sql_dept_stats = "SELECT name_th, 0 as total_applications FROM departments WHERE is_active = 1 LIMIT 5";
     $dept_stats = $conn->query($sql_dept_stats);
 }
+
+// ข้อมูลสำหรับแสดงรายละเอียดทุกสาขา (สำหรับ Modal)
+$sql_all_departments = "SELECT 
+    d.id,
+    d.code,
+    d.name_th,
+    d.level,
+    COALESCE(COUNT(DISTINCT sq.id), 0) as quota_count,
+    COALESCE(COUNT(DISTINCT sr.id), 0) as regular_count,
+    COALESCE(COUNT(DISTINCT sq.id), 0) + COALESCE(COUNT(DISTINCT sr.id), 0) as total_count
+FROM departments d
+LEFT JOIN students_quota sq ON d.id = sq.department_id AND sq.academic_year = '$current_year'
+LEFT JOIN students_regular sr ON d.id = sr.department_id AND sr.academic_year = '$current_year'
+WHERE d.is_active = 1
+GROUP BY d.id, d.code, d.name_th, d.level
+ORDER BY d.level, total_count DESC, d.name_th";
+$all_departments_result = $conn->query($sql_all_departments);
+
+// จัดกลุ่มข้อมูลตามระดับชั้น
+$departments_by_level = [
+    'ปวช.' => [],
+    'ปวส.' => [],
+    'ปริญญาตรี' => []
+];
+
+if ($all_departments_result && $all_departments_result->num_rows > 0) {
+    while ($dept = $all_departments_result->fetch_assoc()) {
+        $departments_by_level[$dept['level']][] = $dept;
+    }
+}
 ?>
 
 <div class="container-fluid py-4">
@@ -268,8 +298,11 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
             </div>
 
             <div class="card">
-                <div class="card-header bg-white">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-bar-chart text-success"></i> สาขาที่มีผู้สมัครมากที่สุด (Top 5)</h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#allDepartmentsModal">
+                        <i class="bi bi-list-ul me-1"></i> ดูทุกสาขา
+                    </button>
                 </div>
                 <div class="card-body">
                     <canvas id="departmentChart"></canvas>
@@ -391,6 +424,163 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal: แสดงข้อมูลทุกสาขาวิชา -->
+<div class="modal fade" id="allDepartmentsModal" tabindex="-1" aria-labelledby="allDepartmentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="allDepartmentsModalLabel">
+                    <i class="bi bi-list-ul me-2"></i>ข้อมูลจำนวนผู้สมัครทุกสาขาวิชา
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>ข้อมูล ณ ปีการศึกษา <?php echo $current_year; ?></strong>
+                    <span class="ms-2">แสดงจำนวนผู้สมัครแยกตามระดับชั้นและรอบการสมัคร</span>
+                </div>
+
+                <?php foreach ($departments_by_level as $level => $departments): ?>
+                    <?php if (!empty($departments)): ?>
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-mortarboard-fill text-primary me-2"></i>
+                                ระดับ <?php echo $level; ?>
+                                <span class="badge bg-primary ms-2"><?php echo count($departments); ?> สาขา</span>
+                            </h5>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="10%" class="text-center">#</th>
+                                            <th width="15%">รหัสสาขา</th>
+                                            <th width="35%">ชื่อสาขาวิชา</th>
+                                            <th width="13%" class="text-center">รอบโควตา</th>
+                                            <th width="13%" class="text-center">รอบปกติ</th>
+                                            <th width="14%" class="text-center">รวมทั้งหมด</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        $no = 1;
+                                        foreach ($departments as $dept): 
+                                        ?>
+                                            <tr>
+                                                <td class="text-center"><?php echo $no++; ?></td>
+                                                <td><code><?php echo htmlspecialchars($dept['code']); ?></code></td>
+                                                <td><?php echo htmlspecialchars($dept['name_th']); ?></td>
+                                                <td class="text-center">
+                                                    <?php if ($dept['quota_count'] > 0): ?>
+                                                        <span class="badge bg-primary fs-6">
+                                                            <?php echo number_format($dept['quota_count']); ?> คน
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if ($dept['regular_count'] > 0): ?>
+                                                        <span class="badge bg-success fs-6">
+                                                            <?php echo number_format($dept['regular_count']); ?> คน
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if ($dept['total_count'] > 0): ?>
+                                                        <span class="badge bg-dark fs-6">
+                                                            <?php echo number_format($dept['total_count']); ?> คน
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">ยังไม่มี</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        
+                                        <!-- แถวสรุปยอดรวมในแต่ละระดับ -->
+                                        <tr class="table-secondary fw-bold">
+                                            <td colspan="3" class="text-end">รวม <?php echo $level; ?>:</td>
+                                            <td class="text-center">
+                                                <?php 
+                                                $quota_total = array_sum(array_column($departments, 'quota_count'));
+                                                echo number_format($quota_total) . ' คน';
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <?php 
+                                                $regular_total = array_sum(array_column($departments, 'regular_count'));
+                                                echo number_format($regular_total) . ' คน';
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <?php 
+                                                $level_total = array_sum(array_column($departments, 'total_count'));
+                                                echo number_format($level_total) . ' คน';
+                                                ?>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                
+                <!-- สรุปยอดรวมทั้งหมด -->
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-2">รวมรอบโควตา</h6>
+                                <h3 class="text-primary mb-0">
+                                    <?php 
+                                    $total_quota = 0;
+                                    foreach ($departments_by_level as $depts) {
+                                        $total_quota += array_sum(array_column($depts, 'quota_count'));
+                                    }
+                                    echo number_format($total_quota);
+                                    ?>
+                                    <small class="text-muted">คน</small>
+                                </h3>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-2">รวมรอบปกติ</h6>
+                                <h3 class="text-success mb-0">
+                                    <?php 
+                                    $total_regular = 0;
+                                    foreach ($departments_by_level as $depts) {
+                                        $total_regular += array_sum(array_column($depts, 'regular_count'));
+                                    }
+                                    echo number_format($total_regular);
+                                    ?>
+                                    <small class="text-muted">คน</small>
+                                </h3>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-2">รวมทั้งหมด</h6>
+                                <h3 class="text-dark mb-0">
+                                    <?php echo number_format($total_quota + $total_regular); ?>
+                                    <small class="text-muted">คน</small>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> ปิด
+                </button>
             </div>
         </div>
     </div>

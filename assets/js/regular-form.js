@@ -279,23 +279,61 @@ function validateFileInputs() {
     const photoFile = document.getElementById('photo').files[0];
     const transcriptFile = document.getElementById('transcript').files[0];
 
-    // 🚨 หากมีไฟล์อื่น ๆ ที่จำเป็น ต้องเพิ่มการตรวจสอบที่นี่
-
+    // ===== เช็ครูปภาพ =====
     if (!photoFile) {
         Swal.fire({
             icon: 'error',
             title: 'ขาดไฟล์ที่จำเป็น',
-            text: 'กรุณาอัปโหลดรูปถ่ายหน้าตรง'
+            text: 'กรุณาอัปโหลดรูปถ่ายหน้าตรง',
+            confirmButtonColor: '#4facfe'
         });
         return false;
     }
 
+    // 🚀 ตรวจสอบว่ารูปภาพเป็น JPG/PNG จริงๆ
+    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!validImageTypes.includes(photoFile.type)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ไฟล์รูปภาพไม่ถูกต้อง',
+            text: 'กรุณาอัปโหลดไฟล์รูปภาพ JPG หรือ PNG เท่านั้น\n(ไฟล์ที่คุณเลือก: ' + photoFile.type + ')',
+            confirmButtonColor: '#4facfe'
+        });
+        document.getElementById('photo').value = ''; // เคลียร์ไฟล์
+        return false;
+    }
+
+    // ===== เช็ค Transcript =====
     if (!transcriptFile) {
         Swal.fire({
             icon: 'error',
             title: 'ขาดไฟล์ที่จำเป็น',
-            text: 'กรุณาอัปโหลดใบรับรองผลการเรียน'
+            text: 'กรุณาอัปโหลดใบรับรองผลการเรียน',
+            confirmButtonColor: '#4facfe'
         });
+        return false;
+    }
+
+    // 🚀 ตรวจสอบว่า Transcript เป็น PDF จริงๆ (CRITICAL!)
+    if (transcriptFile.type !== 'application/pdf') {
+        Swal.fire({
+            icon: 'error',
+            title: 'ไฟล์ PDF ไม่ถูกต้อง',
+            html: `
+                <p>ไฟล์ที่คุณเลือกไม่ใช่ PDF จริง</p>
+                <small class="text-muted">ประเภทไฟล์ที่ตรวจพบ: ${transcriptFile.type || 'ไม่ทราบ'}</small>
+                <br><br>
+                <p class="text-start">
+                    <strong>💡 วิธีแก้ไข:</strong><br>
+                    1. เปิดไฟล์ต้นฉบับ (เช่น Word, รูปภาพ)<br>
+                    2. เลือก File → Save As / Export to PDF<br>
+                    3. อัปโหลดไฟล์ PDF ที่ได้ใหม่
+                </p>
+            `,
+            confirmButtonColor: '#4facfe',
+            width: '500px'
+        });
+        document.getElementById('transcript').value = ''; // เคลียร์ไฟล์
         return false;
     }
 
@@ -546,13 +584,66 @@ function loadSavedData() {
         }
     }
 
-    // 🎯 โหลด apply_level
-    const savedApplyLevel = sessionStorage.getItem('regular_apply_level');
-    if (savedApplyLevel) {
-        const applyLevelSelect = document.getElementById('education_level_apply');
-        if (applyLevelSelect) {
-            applyLevelSelect.value = savedApplyLevel;
+    // 🚀 โหลดระดับชั้นและสาขาวิชา
+    loadDepartmentSelection();
+}
+
+/**
+ * 🚀 ฟังก์ชันใหม่: โหลดข้อมูลระดับชั้นและสาขาวิชา
+ */
+function loadDepartmentSelection() {
+    // 1. โหลดระดับชั้นที่เลือก
+    const savedLevel = sessionStorage.getItem('regular_apply_level');
+    const educationLevelApply = document.getElementById('education_level_apply');
+    
+    if (savedLevel && educationLevelApply) {
+        educationLevelApply.value = savedLevel;
+        
+        // 2. โหลดสาขาวิชาตามระดับชั้น
+        if (typeof loadDepartmentsByLevel === 'function') {
+            loadDepartmentsByLevel(savedLevel);
         }
+        
+        // 3. รอให้สาขาวิชาโหลดเสร็จ แล้วค่อยเลือกสาขาที่เคยเลือกไว้
+        setTimeout(() => {
+            const savedDeptId = sessionStorage.getItem('regular_selected_dept_id');
+            const savedDeptName = sessionStorage.getItem('regular_selected_dept_name');
+            const savedDeptCategory = sessionStorage.getItem('regular_selected_dept_category');
+            
+            if (savedDeptId) {
+                // หาการ์ดสาขาที่ตรงกับ ID ที่บันทึกไว้
+                const deptCard = document.querySelector(`.department-card[data-dept-id="${savedDeptId}"]`);
+                
+                if (deptCard) {
+                    // เลือกสาขานั้น (โดยไม่บันทึกซ้ำ)
+                    document.querySelectorAll('.department-card').forEach(card => {
+                        card.classList.remove('border-primary', 'bg-light');
+                        card.style.borderWidth = '1px';
+                        card.querySelector('.bi-check-circle-fill').style.display = 'none';
+                    });
+                    
+                    deptCard.classList.add('border-primary', 'bg-light');
+                    deptCard.style.borderWidth = '3px';
+                    deptCard.querySelector('.bi-check-circle-fill').style.display = 'block';
+                    
+                    // Set hidden input
+                    document.getElementById('department_id').value = savedDeptId;
+                    
+                    // Show selected department
+                    if (savedDeptName && savedDeptCategory) {
+                        document.getElementById('selected_dept_name').textContent = savedDeptName;
+                        document.getElementById('selected_dept_category').textContent = savedDeptCategory;
+                        document.getElementById('selected_department').style.display = 'block';
+                    }
+                    
+                    // แสดง Department Selection Card
+                    const selectionCard = document.getElementById('department_selection_card');
+                    if (selectionCard) {
+                        selectionCard.style.display = 'block';
+                    }
+                }
+            }
+        }, 500); // รอ 500ms ให้สาขาโหลดเสร็จ
     }
 }
 
@@ -708,8 +799,12 @@ function selectDepartment(cardElement) {
     const deptName = cardElement.dataset.deptName;
     const deptCategory = cardElement.dataset.deptCategory;
 
-    // *** FIELD ID UPDATED ***
     document.getElementById('department_id').value = deptId;
+
+    // 🚀 บันทึก Department ID และข้อมูลลง sessionStorage
+    sessionStorage.setItem('regular_selected_dept_id', deptId);
+    sessionStorage.setItem('regular_selected_dept_name', deptName);
+    sessionStorage.setItem('regular_selected_dept_category', deptCategory);
 
     // Show selected department
     document.getElementById('selected_dept_name').textContent = deptName;
@@ -736,9 +831,13 @@ function clearDepartmentSelection() {
         card.querySelector('.bi-check-circle-fill').style.display = 'none';
     });
 
-    // *** FIELD ID UPDATED ***
     document.getElementById('department_id').value = '';
     document.getElementById('selected_department').style.display = 'none';
+
+    // 🚀 ลบข้อมูลสาขาออกจาก sessionStorage
+    sessionStorage.removeItem('regular_selected_dept_id');
+    sessionStorage.removeItem('regular_selected_dept_name');
+    sessionStorage.removeItem('regular_selected_dept_category');
 
     Toast.fire({
         icon: 'info',
@@ -820,6 +919,8 @@ async function handleFileUploads(academicYear) {
     const results = await Promise.all(uploadPromises);
     let allSuccess = true;
 
+    const errorMessages = [];
+
     results.forEach(res => {
         if (res.success) {
             uploadedFilesData[res.type] = {
@@ -829,12 +930,23 @@ async function handleFileUploads(academicYear) {
             };
         } else {
             allSuccess = false;
+
+            // 🚀 เก็บ Error Message พร้อมประเภทไฟล์
+            const fileTypeName = res.type === 'photo' ? 'รูปถ่าย' :
+                res.type === 'transcript' ? 'ใบรับรองผลการเรียน' :
+                    res.type;
+            errorMessages.push(`${fileTypeName}: ${res.message}`);
+
             console.error('Upload failed for', res.type, res.message);
         }
     });
 
     if (!allSuccess) {
-        return { success: false, data: null, error: 'One or more files failed to upload.' };
+        return {
+            success: false,
+            data: null,
+            error: errorMessages.join('\n') || 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์'
+        };
     }
 
     // บันทึก path ที่อัปโหลดสำเร็จลง Session Storage เพื่อให้ getFormData() นำไปใช้
@@ -917,10 +1029,25 @@ async function submitForm() {
 
     if (!uploadResult.success) {
         hideLoading();
+
+        // 🚀 แสดง Error Message จาก Server
         Swal.fire({
             icon: 'error',
             title: 'อัปโหลดเอกสารไม่สำเร็จ',
-            text: uploadResult.error || 'เกิดข้อผิดพลาดขณะอัปโหลดไฟล์'
+            html: `
+                <div class="text-start">
+                    <p class="mb-3">${uploadResult.error}</p>
+                    <hr>
+                    <p class="small text-muted mb-2"><strong>คำแนะนำ:</strong></p>
+                    <ul class="small text-muted">
+                        <li>ตรวจสอบว่าไฟล์เป็น PDF จริง (ไม่ใช่การเปลี่ยนนามสกุล)</li>
+                        <li>ตรวจสอบว่ารูปภาพเป็น JPG หรือ PNG</li>
+                        <li>ตรวจสอบขนาดไฟล์ไม่เกินที่กำหนด</li>
+                    </ul>
+                </div>
+            `,
+            confirmButtonColor: '#4facfe',
+            width: '600px'
         });
         return;
     }
@@ -1070,7 +1197,13 @@ function getFormData() {
 }
 
 function clearAllData() {
-    // 🚀 FIX: เคลียร์ข้อมูลทั้งหมดตั้งแต่ Step 1 ถึง Step 7 รวมถึงข้อมูลอัปโหลดและ Progress
-    ['regularFormStep1', 'regularFormStep2', 'regularFormStep3', 'regularFormStep4', 'regularFormStep5', 'regularFormStep6', 'regularFormStep7', 'regularFormUploads', 'regularFormProgress']
-        .forEach(key => sessionStorage.removeItem(key));
+    [
+        'regularFormStep1', 'regularFormStep2', 'regularFormStep3', 
+        'regularFormStep4', 'regularFormStep5', 'regularFormStep6', 
+        'regularFormStep7', 'regularFormUploads', 'regularFormProgress',
+        'regular_apply_level',
+        'regular_selected_dept_id',
+        'regular_selected_dept_name',
+        'regular_selected_dept_category'
+    ].forEach(key => sessionStorage.removeItem(key));
 }

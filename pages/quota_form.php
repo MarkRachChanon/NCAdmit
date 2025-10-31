@@ -146,6 +146,16 @@ while ($dept = $departments_result->fetch_assoc()) {
     .step-indicator.completed {
         background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
     }
+
+    .form-check-input.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .form-check-input.is-invalid:checked {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
 </style>
 
 <section class="page-header bg-gradient-blue text-white py-5 mb-4">
@@ -791,19 +801,31 @@ while ($dept = $departments_result->fetch_assoc()) {
                 </div>
 
                 <div class="card-body">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="" id="accept_terms">
-                        <label class="form-check-label fw-bold" for="accept_terms">
-                            ข้าพเจ้ายอมรับเงื่อนไขและข้อตกลงในการสมัคร
-                        </label>
+                    <div class="border-start border-primary border-4 bg-light p-3 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="accept_terms"
+                                style="width: 20px; height: 20px; cursor: pointer;">
+                            <label class="form-check-label fw-bold"
+                                for="accept_terms"
+                                style="cursor: pointer;">
+                                ข้าพเจ้ายอมรับเงื่อนไขและข้อตกลงในการสมัคร
+                            </label>
+                            <div class="invalid-feedback d-block" id="terms_error" style="display: none !important;">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                กรุณายอมรับเงื่อนไขและข้อตกลงก่อนส่งใบสมัคร
+                            </div>
+                        </div>
                     </div>
+
                     <ul class="small text-muted mb-0 ps-4">
                         <li class="mb-2">ข้าพเจ้ารับรองว่าข้อมูลที่กรอกทั้งหมดเป็นความจริง</li>
                         <li class="mb-2">หากตรวจสอบพบว่าข้อมูลไม่ตรงความจริง ข้าพเจ้ายินยอมให้ยกเลิกการสมัคร</li>
                         <li class="mb-0">ข้าพเจ้ายินยอมให้ประมวลผลข้อมูลส่วนบุคคลตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล</li>
                     </ul>
                 </div>
-
 
                 <div class="card-footer bg-light">
                     <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
@@ -949,17 +971,36 @@ while ($dept = $departments_result->fetch_assoc()) {
         // Form Submit Handler - *** แก้ไขใหม่: เพิ่ม Modal ยืนยันก่อนส่ง ***
         const form = document.getElementById('quotaForm');
         form.addEventListener('submit', function(e) {
-            e.preventDefault(); // 1. หยุดการส่งฟอร์มตามปกติ
+            e.preventDefault();
 
-            // 2. ตรวจสอบ Checkbox ยอมรับเงื่อนไข
-            if (!document.getElementById('accept_terms').checked) {
+            const checkbox = document.getElementById('accept_terms');
+            const errorMsg = document.getElementById('terms_error');
+
+            // ✅ 1. เช็ค Checkbox ยอมรับเงื่อนไข
+            if (!checkbox.checked) {
+                // แสดง Error Message แบบ Bootstrap
+                checkbox.classList.add('is-invalid');
+                errorMsg.style.display = 'block';
+
+                // Scroll ไปที่ Checkbox
+                checkbox.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                // แสดง SweetAlert
                 Swal.fire({
                     icon: 'warning',
                     title: 'ยังไม่ยอมรับเงื่อนไข',
-                    text: 'กรุณากดยอมรับเงื่อนไขและข้อตกลงก่อนส่งใบสมัคร'
+                    text: 'กรุณากดยอมรับเงื่อนไขและข้อตกลงก่อนส่งใบสมัคร',
+                    confirmButtonColor: '#4facfe'
                 });
-                return; // หยุดการทำงานถ้ายังไม่ติ๊ก
+                return;
             }
+
+            // ✅ ถ้ายอมรับแล้ว ลบ Error
+            checkbox.classList.remove('is-invalid');
+            errorMsg.style.display = 'none';
 
             // 3. 🚀 แสดง Modal ยืนยันการส่ง
             Swal.fire({
@@ -1000,6 +1041,14 @@ while ($dept = $departments_result->fetch_assoc()) {
                     }
                 }
             });
+        });
+
+        document.getElementById('accept_terms').addEventListener('change', function() {
+            const errorMsg = document.getElementById('terms_error');
+            if (this.checked) {
+                this.classList.remove('is-invalid');
+                errorMsg.style.display = 'none';
+            }
         });
     });
 </script>
