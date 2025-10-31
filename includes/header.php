@@ -9,7 +9,7 @@ $page_title = get_page_title($current_page);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="ระบบรับสมัครนักเรียนออนไลน์ <?php echo $site_name; ?>">
-    <meta name="keywords" content="รับสมัคร, นักเรียน, อาชีวศึกษา, นครปฐม">
+    <meta name="keywords" content="รับสมัคร, นักเรียน, อาชีวศึกษา, นครปฐม, ncadmission">
     <meta name="author" content="<?php echo $site_name; ?>">
     <title><?php echo $page_title; ?> - <?php echo $site_name; ?></title>
     
