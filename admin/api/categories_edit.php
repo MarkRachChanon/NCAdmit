@@ -1,6 +1,6 @@
 <?php
 /**
- * API: เพิ่มประเภทวิชาใหม่
+ * API: แก้ไขประเภทวิชา
  * NC-Admission - Nakhon Pathom College Admission System
  */
 
@@ -23,7 +23,7 @@ if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_logged_in'])) {
 if (!in_array($_SESSION['admin_role'], ['superadmin', 'admin'])) {
     echo json_encode([
         'success' => false,
-        'message' => 'คุณไม่มีสิทธิ์ในการเพิ่มประเภทวิชา'
+        'message' => 'คุณไม่มีสิทธิ์ในการแก้ไขประเภทวิชา'
     ]);
     exit();
 }
@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // รับข้อมูลจาก POST
+$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $description = isset($_POST['description']) ? trim($_POST['description']) : '';
 $sort_order = isset($_POST['sort_order']) ? intval($_POST['sort_order']) : 0;
@@ -45,6 +46,10 @@ $is_active = isset($_POST['is_active']) ? 1 : 0;
 
 // Validate ข้อมูล
 $errors = [];
+
+if ($id <= 0) {
+    $errors[] = 'ไม่พบรหัสประเภทวิชา';
+}
 
 if (empty($name)) {
     $errors[] = 'กรุณากรอกชื่อประเภทวิชา';
@@ -54,11 +59,27 @@ if ($sort_order < 0) {
     $errors[] = 'ลำดับการแสดงต้องเป็นตัวเลข 0 หรือมากกว่า';
 }
 
-// ตรวจสอบชื่อซ้ำ
-if (!empty($name)) {
-    $check_sql = "SELECT id FROM department_categories WHERE name = ?";
+// ตรวจสอบว่าประเภทวิชานี้มีอยู่ในระบบหรือไม่
+if ($id > 0) {
+    $check_exist_sql = "SELECT id, name, description, sort_order, is_active FROM department_categories WHERE id = ?";
+    $check_exist_stmt = $conn->prepare($check_exist_sql);
+    $check_exist_stmt->bind_param("i", $id);
+    $check_exist_stmt->execute();
+    $check_exist_result = $check_exist_stmt->get_result();
+    
+    if ($check_exist_result->num_rows === 0) {
+        $errors[] = 'ไม่พบประเภทวิชาที่ต้องการแก้ไข';
+    } else {
+        $old_data = $check_exist_result->fetch_assoc();
+    }
+    $check_exist_stmt->close();
+}
+
+// ตรวจสอบชื่อซ้ำ (ยกเว้นตัวเอง)
+if (!empty($name) && $id > 0) {
+    $check_sql = "SELECT id FROM department_categories WHERE name = ? AND id != ?";
     $check_stmt = $conn->prepare($check_sql);
-    $check_stmt->bind_param("s", $name);
+    $check_stmt->bind_param("si", $name, $id);
     $check_stmt->execute();
     $check_result = $check_stmt->get_result();
     
@@ -81,27 +102,36 @@ if (!empty($errors)) {
 $conn->begin_transaction();
 
 try {
-    // Insert ข้อมูล
-    $sql = "INSERT INTO department_categories (name, description, sort_order, is_active, created_at) 
-            VALUES (?, ?, ?, ?, NOW())";
+    // Update ข้อมูล
+    $sql = "UPDATE department_categories 
+            SET name = ?, 
+                description = ?, 
+                sort_order = ?, 
+                is_active = ?,
+                updated_at = NOW()
+            WHERE id = ?";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssii", $name, $description, $sort_order, $is_active);
+    $stmt->bind_param("ssiii", $name, $description, $sort_order, $is_active, $id);
     
     if (!$stmt->execute()) {
         throw new Exception('ไม่สามารถบันทึกข้อมูลได้');
     }
     
-    $new_cat_id = $conn->insert_id;
     $stmt->close();
     
     // บันทึก Activity Log
     log_activity(
         $_SESSION['admin_id'],
-        "เพิ่มประเภทวิชา: $name",
+        "แก้ไขประเภทวิชา: $name",
         'department_categories',
-        $new_cat_id,
-        null,
+        $id,
+        json_encode([
+            'name' => $old_data['name'],
+            'description' => $old_data['description'],
+            'sort_order' => $old_data['sort_order'],
+            'is_active' => $old_data['is_active']
+        ], JSON_UNESCAPED_UNICODE),
         json_encode([
             'name' => $name,
             'description' => $description,
@@ -115,9 +145,9 @@ try {
     
     echo json_encode([
         'success' => true,
-        'message' => 'เพิ่มประเภทวิชาเรียบร้อยแล้ว',
+        'message' => 'แก้ไขประเภทวิชาเรียบร้อยแล้ว',
         'data' => [
-            'id' => $new_cat_id,
+            'id' => $id,
             'name' => $name
         ]
     ]);
