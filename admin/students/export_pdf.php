@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Export PDF - ส่งออกรายชื่อผู้สมัครเป็น PDF
  * NC-Admission - Nakhon Pathom College Admission System
@@ -77,7 +78,7 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                             <h6 class="text-muted mb-2">ทั้งหมด</h6>
                             <h3 class="mb-0 fw-bold"><?php echo number_format($total_all); ?></h3>
                             <small class="text-muted">
-                                โควตา <?php echo number_format($stats['quota_total']); ?> | 
+                                โควตา <?php echo number_format($stats['quota_total']); ?> |
                                 ปกติ <?php echo number_format($stats['regular_total']); ?>
                             </small>
                         </div>
@@ -97,7 +98,7 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                             <h6 class="text-muted mb-2">รอตรวจสอบ</h6>
                             <h3 class="mb-0 fw-bold text-warning"><?php echo number_format($total_pending); ?></h3>
                             <small class="text-muted">
-                                โควตา <?php echo number_format($stats['quota_pending']); ?> | 
+                                โควตา <?php echo number_format($stats['quota_pending']); ?> |
                                 ปกติ <?php echo number_format($stats['regular_pending']); ?>
                             </small>
                         </div>
@@ -117,7 +118,7 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                             <h6 class="text-muted mb-2">อนุมัติแล้ว</h6>
                             <h3 class="mb-0 fw-bold text-success"><?php echo number_format($total_approved); ?></h3>
                             <small class="text-muted">
-                                โควตา <?php echo number_format($stats['quota_approved']); ?> | 
+                                โควตา <?php echo number_format($stats['quota_approved']); ?> |
                                 ปกติ <?php echo number_format($stats['regular_approved']); ?>
                             </small>
                         </div>
@@ -137,7 +138,7 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                             <h6 class="text-muted mb-2">ไม่อนุมัติ</h6>
                             <h3 class="mb-0 fw-bold text-danger"><?php echo number_format($total_rejected); ?></h3>
                             <small class="text-muted">
-                                โควตา <?php echo number_format($stats['quota_rejected']); ?> | 
+                                โควตา <?php echo number_format($stats['quota_rejected']); ?> |
                                 ปกติ <?php echo number_format($stats['regular_rejected']); ?>
                             </small>
                         </div>
@@ -172,15 +173,15 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                                 <select class="form-select" name="type" id="type" required>
                                     <option value="">-- เลือกประเภท --</option>
                                     <?php if (in_array($admin_role, ['superadmin', 'admin', 'quota'])): ?>
-                                    <option value="quota">รอบโควต้า</option>
+                                        <option value="quota">รอบโควต้า</option>
                                     <?php endif; ?>
-                                    
+
                                     <?php if (in_array($admin_role, ['superadmin', 'admin', 'regular'])): ?>
-                                    <option value="regular">รอบปกติ</option>
+                                        <option value="regular">รอบปกติ</option>
                                     <?php endif; ?>
-                                    
+
                                     <?php if (in_array($admin_role, ['superadmin', 'admin'])): ?>
-                                    <option value="all">ทั้งหมด (โควต้า + ปกติ)</option>
+                                        <option value="all">ทั้งหมด (โควต้า + ปกติ)</option>
                                     <?php endif; ?>
                                 </select>
                             </div>
@@ -194,7 +195,7 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                                 <select class="form-select" name="academic_year" required>
                                     <option value="">-- เลือกปีการศึกษา --</option>
                                     <?php foreach ($years as $year): ?>
-                                    <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                                        <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
                                     <?php endforeach; ?>
                                     <option value="all">ทุกปีการศึกษา</option>
                                 </select>
@@ -222,10 +223,10 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                                 </label>
                                 <select class="form-select" name="department_id" id="department">
                                     <option value="">ทุกสาขา</option>
-                                    <?php 
+                                    <?php
                                     $departments->data_seek(0); // Reset pointer
                                     $current_level = '';
-                                    while ($dept = $departments->fetch_assoc()): 
+                                    while ($dept = $departments->fetch_assoc()):
                                         if ($current_level != $dept['level']) {
                                             if ($current_level != '') echo '</optgroup>';
                                             echo '<optgroup label="' . $dept['level'] . '">';
@@ -259,14 +260,13 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                                 </select>
                             </div>
 
-                            <!-- รูปแบบ PDF -->
                             <div class="col-12">
                                 <label class="form-label fw-bold mb-3">
                                     <i class="bi bi-file-pdf text-danger me-2"></i>
                                     รูปแบบ PDF
                                 </label>
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="card border-2 pdf-format-option h-100" data-format="list">
                                             <div class="card-body text-center">
                                                 <i class="bi bi-list-ul display-4 text-primary mb-3"></i>
@@ -275,7 +275,16 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
+                                        <div class="card border-2 pdf-format-option h-100" data-format="summary">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-bar-chart display-4 text-success mb-3"></i>
+                                                <h6 class="mb-2">สรุปจำนวนผู้สมัคร</h6>
+                                                <small class="text-muted">แยกตามสาขาวิชา</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="card border-2 pdf-format-option h-100 opacity-50" data-format="form" style="cursor: not-allowed;">
                                             <div class="card-body text-center">
                                                 <i class="bi bi-file-earmark-person display-4 text-secondary mb-3"></i>
@@ -321,186 +330,227 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
 
 <!-- เพิ่ม CSS สำหรับ info text -->
 <style>
-.pdf-format-option {
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-color: #dee2e6 !important;
-}
+    .pdf-format-option {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-color: #dee2e6 !important;
+    }
 
-.pdf-format-option:hover:not(.opacity-50) {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    border-color: var(--bs-primary) !important;
-}
+    .pdf-format-option:hover:not(.opacity-50) {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border-color: var(--bs-primary) !important;
+    }
 
-.pdf-format-option.active {
-    border-color: var(--bs-primary) !important;
-    background-color: rgba(13, 110, 253, 0.05);
-    box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.2);
-}
+    .pdf-format-option.active {
+        border-color: var(--bs-primary) !important;
+        background-color: rgba(13, 110, 253, 0.05);
+        box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.2);
+    }
 
-.pdf-format-option.active i {
-    color: var(--bs-primary) !important;
-}
+    .pdf-format-option.active i {
+        color: var(--bs-primary) !important;
+    }
 
-.icon-circle {
-    padding: 12px;
-}
+    .icon-circle {
+        padding: 12px;
+    }
 
-#department-level-info {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
-}
+    #department-level-info {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Export PDF Page Loaded');
-    
-    // ==================== Format Selection ====================
-    document.querySelectorAll('.pdf-format-option').forEach(card => {
-        card.addEventListener('click', function() {
-            if (this.classList.contains('opacity-50')) {
-                return;
-            }
-            
-            document.querySelectorAll('.pdf-format-option').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            
-            const format = this.dataset.format;
-            document.getElementById('format').value = format;
-            
-            console.log('Selected format:', format);
-        });
-    });
-    
-    document.querySelector('.pdf-format-option[data-format="list"]').classList.add('active');
-    
-    // ==================== Level & Department Filter - แก้ไขใหม่ ====================
-    const levelSelect = document.getElementById('level');
-    const departmentSelect = document.getElementById('department');
-    const allDepartmentOptions = Array.from(departmentSelect.querySelectorAll('option[data-level]'));
-    
-    /**
-     * ฟังก์ชันกรองสาขาวิชาตามระดับชั้นที่เลือก
-     * - ถ้าเลือก "ทุกระดับ" จะแสดงทุกสาขา
-     * - ถ้าเลือกระดับชั้นเฉพาะ จะแสดงเฉพาะสาขาในระดับนั้น
-     */
-    function filterDepartmentsByLevel() {
-        const selectedLevel = levelSelect.value;
-        
-        console.log('กรองสาขาตามระดับ:', selectedLevel || 'ทุกระดับ');
-        
-        if (selectedLevel === '') {
-            // กรณีเลือก "ทุกระดับ" - แสดงทุกสาขา
-            allDepartmentOptions.forEach(opt => {
-                opt.style.display = '';
-                opt.disabled = false;
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Export PDF Page Loaded');
+
+        // ==================== Format Selection ====================
+        document.querySelectorAll('.pdf-format-option').forEach(card => {
+            card.addEventListener('click', function() {
+                if (this.classList.contains('opacity-50')) {
+                    return;
+                }
+
+                document.querySelectorAll('.pdf-format-option').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+
+                const format = this.dataset.format;
+                document.getElementById('format').value = format;
+
+                console.log('Selected format:', format);
             });
-        } else {
-            // กรณีเลือกระดับเฉพาะ - แสดงเฉพาะสาขาในระดับนั้น
-            allDepartmentOptions.forEach(opt => {
-                if (opt.dataset.level === selectedLevel) {
+        });
+
+        document.querySelector('.pdf-format-option[data-format="list"]').classList.add('active');
+
+        // ==================== Level & Department Filter - แก้ไขใหม่ ====================
+        const levelSelect = document.getElementById('level');
+        const departmentSelect = document.getElementById('department');
+        const allDepartmentOptions = Array.from(departmentSelect.querySelectorAll('option[data-level]'));
+
+        /**
+         * ฟังก์ชันกรองสาขาวิชาตามระดับชั้นที่เลือก
+         * - ถ้าเลือก "ทุกระดับ" จะแสดงทุกสาขา
+         * - ถ้าเลือกระดับชั้นเฉพาะ จะแสดงเฉพาะสาขาในระดับนั้น
+         */
+        function filterDepartmentsByLevel() {
+            const selectedLevel = levelSelect.value;
+
+            console.log('กรองสาขาตามระดับ:', selectedLevel || 'ทุกระดับ');
+
+            if (selectedLevel === '') {
+                // กรณีเลือก "ทุกระดับ" - แสดงทุกสาขา
+                allDepartmentOptions.forEach(opt => {
                     opt.style.display = '';
                     opt.disabled = false;
-                } else {
-                    opt.style.display = 'none';
-                    opt.disabled = true;
+                });
+            } else {
+                // กรณีเลือกระดับเฉพาะ - แสดงเฉพาะสาขาในระดับนั้น
+                allDepartmentOptions.forEach(opt => {
+                    if (opt.dataset.level === selectedLevel) {
+                        opt.style.display = '';
+                        opt.disabled = false;
+                    } else {
+                        opt.style.display = 'none';
+                        opt.disabled = true;
+                    }
+                });
+
+                // ตรวจสอบว่าสาขาที่เลือกอยู่ยังแสดงอยู่หรือไม่
+                const currentDeptOption = departmentSelect.querySelector(`option[value="${departmentSelect.value}"]`);
+                if (currentDeptOption && currentDeptOption.style.display === 'none') {
+                    // ถ้าสาขาที่เลือกอยู่ถูกซ่อน ให้รีเซ็ตเป็น "ทุกสาขา"
+                    departmentSelect.value = '';
+                    console.log('รีเซ็ตการเลือกสาขาเพราะไม่ตรงกับระดับที่เลือก');
+                }
+            }
+
+            updateDepartmentInfo();
+        }
+
+        /**
+         * ฟังก์ชันอัปเดตข้อมูลระดับชั้นตามสาขาที่เลือก
+         * - ถ้าเลือก "ทุกสาขา" ไม่มีผลกับระดับชั้น
+         * - ถ้าเลือกสาขาเฉพาะ จะแสดงข้อมูลระดับของสาขานั้น
+         */
+        function updateDepartmentInfo() {
+            const selectedDeptOption = departmentSelect.querySelector(`option[value="${departmentSelect.value}"]`);
+            const infoElement = document.getElementById('department-level-info');
+
+            if (selectedDeptOption && selectedDeptOption.value !== '') {
+                const deptLevel = selectedDeptOption.dataset.level;
+                console.log('เลือกสาขา:', selectedDeptOption.text, '| ระดับ:', deptLevel);
+
+                if (infoElement) {
+                    infoElement.innerHTML = `<i class="bi bi-info-circle me-1"></i> สาขานี้อยู่ในระดับ: <strong>${deptLevel}</strong>`;
+                    infoElement.className = 'text-primary mt-2';
+                }
+            } else {
+                if (infoElement) {
+                    infoElement.innerHTML = `<i class="bi bi-info-circle me-1"></i> ถ้าเลือกระดับชั้น จะแสดงเฉพาะสาขาในระดับนั้น`;
+                    infoElement.className = 'text-muted';
+                }
+            }
+        }
+
+        // Event: เมื่อเปลี่ยนระดับชั้น
+        levelSelect.addEventListener('change', function() {
+            console.log('=== เปลี่ยนระดับชั้น ===');
+            filterDepartmentsByLevel();
+        });
+
+        // Event: เมื่อเปลี่ยนสาขาวิชา
+        departmentSelect.addEventListener('change', function() {
+            console.log('=== เปลี่ยนสาขาวิชา ===');
+            updateDepartmentInfo();
+        });
+
+        // เพิ่ม info element ใต้ dropdown สาขาวิชา
+        const deptFormGroup = departmentSelect.closest('.col-md-6');
+        const existingSmall = deptFormGroup.querySelector('small');
+        if (existingSmall) {
+            existingSmall.id = 'department-level-info';
+        }
+
+        // ==================== Preview Button ====================
+        document.getElementById('btnPreview').addEventListener('click', function() {
+            const form = document.getElementById('exportPdfForm');
+            const formData = new FormData(form);
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            formData.append('preview', '1');
+
+            const queryString = new URLSearchParams(formData).toString();
+            window.open('api/export_pdf_action.php?' + queryString, '_blank');
+        });
+
+        // ==================== Form Submit ====================
+        document.getElementById('exportPdfForm').addEventListener('submit', function(e) {
+            console.log('Exporting PDF...');
+            console.log('ระดับชั้น:', levelSelect.value || 'ทุกระดับ');
+            console.log('สาขาวิชา:', departmentSelect.value || 'ทุกสาขา');
+
+            Swal.fire({
+                title: 'กำลังสร้าง PDF...',
+                html: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
             });
-            
-            // ตรวจสอบว่าสาขาที่เลือกอยู่ยังแสดงอยู่หรือไม่
-            const currentDeptOption = departmentSelect.querySelector(`option[value="${departmentSelect.value}"]`);
-            if (currentDeptOption && currentDeptOption.style.display === 'none') {
-                // ถ้าสาขาที่เลือกอยู่ถูกซ่อน ให้รีเซ็ตเป็น "ทุกสาขา"
-                departmentSelect.value = '';
-                console.log('รีเซ็ตการเลือกสาขาเพราะไม่ตรงกับระดับที่เลือก');
-            }
-        }
-        
-        updateDepartmentInfo();
-    }
-    
-    /**
-     * ฟังก์ชันอัปเดตข้อมูลระดับชั้นตามสาขาที่เลือก
-     * - ถ้าเลือก "ทุกสาขา" ไม่มีผลกับระดับชั้น
-     * - ถ้าเลือกสาขาเฉพาะ จะแสดงข้อมูลระดับของสาขานั้น
-     */
-    function updateDepartmentInfo() {
-        const selectedDeptOption = departmentSelect.querySelector(`option[value="${departmentSelect.value}"]`);
-        const infoElement = document.getElementById('department-level-info');
-        
-        if (selectedDeptOption && selectedDeptOption.value !== '') {
-            const deptLevel = selectedDeptOption.dataset.level;
-            console.log('เลือกสาขา:', selectedDeptOption.text, '| ระดับ:', deptLevel);
-            
-            if (infoElement) {
-                infoElement.innerHTML = `<i class="bi bi-info-circle me-1"></i> สาขานี้อยู่ในระดับ: <strong>${deptLevel}</strong>`;
-                infoElement.className = 'text-primary mt-2';
-            }
-        } else {
-            if (infoElement) {
-                infoElement.innerHTML = `<i class="bi bi-info-circle me-1"></i> ถ้าเลือกระดับชั้น จะแสดงเฉพาะสาขาในระดับนั้น`;
-                infoElement.className = 'text-muted';
-            }
-        }
-    }
-    
-    // Event: เมื่อเปลี่ยนระดับชั้น
-    levelSelect.addEventListener('change', function() {
-        console.log('=== เปลี่ยนระดับชั้น ===');
-        filterDepartmentsByLevel();
-    });
-    
-    // Event: เมื่อเปลี่ยนสาขาวิชา
-    departmentSelect.addEventListener('change', function() {
-        console.log('=== เปลี่ยนสาขาวิชา ===');
-        updateDepartmentInfo();
-    });
-    
-    // เพิ่ม info element ใต้ dropdown สาขาวิชา
-    const deptFormGroup = departmentSelect.closest('.col-md-6');
-    const existingSmall = deptFormGroup.querySelector('small');
-    if (existingSmall) {
-        existingSmall.id = 'department-level-info';
-    }
-    
-    // ==================== Preview Button ====================
-    document.getElementById('btnPreview').addEventListener('click', function() {
-        const form = document.getElementById('exportPdfForm');
-        const formData = new FormData(form);
-        
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-        
-        formData.append('preview', '1');
-        
-        const queryString = new URLSearchParams(formData).toString();
-        window.open('api/export_pdf_action.php?' + queryString, '_blank');
-    });
-    
-    // ==================== Form Submit ====================
-    document.getElementById('exportPdfForm').addEventListener('submit', function(e) {
-        console.log('Exporting PDF...');
-        console.log('ระดับชั้น:', levelSelect.value || 'ทุกระดับ');
-        console.log('สาขาวิชา:', departmentSelect.value || 'ทุกสาขา');
-        
-        Swal.fire({
-            title: 'กำลังสร้าง PDF...',
-            html: 'กรุณารอสักครู่',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+
+            setTimeout(() => {
+                Swal.close();
+            }, 2000);
         });
-        
-        setTimeout(() => {
-            Swal.close();
-        }, 2000);
+
+        // ==================== Export Summary Button ====================
+        document.getElementById('btnExportSummary').addEventListener('click', function() {
+            const form = document.getElementById('exportPdfForm');
+            const type = document.getElementById('type').value;
+            const academic_year = form.querySelector('[name="academic_year"]').value;
+
+            // Validate
+            if (!type || !academic_year) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'กรุณาเลือกข้อมูล',
+                    text: 'กรุณาเลือกประเภทการสมัครและปีการศึกษา',
+                    confirmButtonText: 'ตรวจสอบ'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'กำลังสร้างรายงานสรุป...',
+                html: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // สร้าง URL สำหรับ Export Summary
+            const params = new URLSearchParams({
+                type: type,
+                academic_year: academic_year,
+                format: 'summary'
+            });
+
+            // Open in new window
+            window.open('api/export_summary_pdf.php?' + params.toString(), '_blank');
+
+            setTimeout(() => {
+                Swal.close();
+            }, 1500);
+        });
     });
-});
 </script>
