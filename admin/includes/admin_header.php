@@ -34,21 +34,21 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 CSS (Local) -->
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Bootstrap Icons (Local) -->
+    <link rel="stylesheet" href="../assets/css/bootstrap-icons.css">
+
+    <!-- DataTables CSS (Local) -->
+    <link rel="stylesheet" href="../assets/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="../assets/css/responsive.bootstrap5.min.css">
+
+    <!-- SweetAlert2 CSS (Local) -->
+    <link rel="stylesheet" href="../assets/css/sweetalert2.min.css">
 
     <!-- Admin Custom CSS -->
     <link rel="stylesheet" href="assets/css/admin.css">
-
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 </head>
 
 <body class="admin-body">

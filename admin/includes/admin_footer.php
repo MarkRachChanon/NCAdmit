@@ -1,16 +1,22 @@
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<!-- jQuery (Local) -->
+<script src="../assets/js/jquery-3.7.0.min.js"></script>
 
+<!-- Bootstrap 5 JS Bundle (Local) -->
 <script src="../assets/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+<!-- DataTables JS (Local) -->
+<script src="../assets/js/jquery.dataTables.min.js"></script>
+<script src="../assets/js/dataTables.bootstrap5.min.js"></script>
+<script src="../assets/js/dataTables.responsive.min.js"></script>
+<script src="../assets/js/responsive.bootstrap5.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- SweetAlert2 JS (Local) -->
+<script src="../assets/js/sweetalert2.all.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Chart.js (Local) -->
+<script src="../assets/js/chart.umd.min.js"></script>
 
+<!-- Admin Custom JS -->
 <script src="assets/js/admin.js"></script>
 
 <script>

@@ -21,14 +21,16 @@ $page_title = get_page_title($current_page);
     <!-- Bootstrap 5 CSS (Local) -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Bootstrap Icons (Local) -->
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
     
-    <!-- AOS Animation CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- AOS Animation CSS (Local) -->
+    <link rel="stylesheet" href="assets/css/aos.css">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/custom.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- SweetAlert2 CSS (Local) -->
+    <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 </head>
 <body>

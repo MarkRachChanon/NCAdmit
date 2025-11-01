@@ -120,11 +120,11 @@ $current_year = date('Y') + 543;
 <!-- Bootstrap 5 JS Bundle (Local) -->
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- SweetAlert2 JS (Local) -->
+<script src="assets/js/sweetalert2.all.min.js"></script>
 
-<!-- AOS Animation JS -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<!-- AOS Animation JS (Local) -->
+<script src="assets/js/aos.js"></script>
 
 <!-- Custom JS -->
 <script src="assets/js/custom.js"></script>

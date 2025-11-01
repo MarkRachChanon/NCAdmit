@@ -619,7 +619,7 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
                             <div class="card-body">
                                 <h6 class="card-title mb-3"><i class="bi bi-calculator me-2"></i>สรุปยอดรวมทั้งระบบ</h6>
                                 <div class="row text-center g-3">
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <div class="p-3 bg-white rounded shadow-sm">
                                             <h6 class="text-muted mb-2">รวมรอบโควตา</h6>
                                             <h3 class="text-primary mb-0">
@@ -634,7 +634,7 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
                                             </h3>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <div class="p-3 bg-white rounded shadow-sm">
                                             <h6 class="text-muted mb-2">รวมรอบปกติ</h6>
                                             <h3 class="text-success mb-0">
@@ -666,6 +666,54 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
                                         </div>
                                     </div>
                                     <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมที่ไม่อนุมัติ</h6>
+                                            <h3 class="text-danger mb-0">
+                                                <?php
+                                                $total_rejected = 0;
+                                                foreach ($departments_by_level as $depts) {
+                                                    $total_rejected += array_sum(array_column($depts, 'quota_rejected'));
+                                                    $total_rejected += array_sum(array_column($depts, 'regular_rejected'));
+                                                }
+                                                echo number_format($total_rejected);
+                                                ?>
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมรอตรวจสอบ</h6>
+                                            <h3 class="text-warning mb-0">
+                                                <?php
+                                                $total_pending = 0;
+                                                foreach ($departments_by_level as $depts) {
+                                                    $total_pending += array_sum(array_column($depts, 'quota_pending'));
+                                                    $total_pending += array_sum(array_column($depts, 'regular_pending'));
+                                                }
+                                                echo number_format($total_pending);
+                                                ?>
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมที่ยกเลิก</h6>
+                                            <h3 class="text-secondary mb-0">
+                                                <?php
+                                                $total_cancelled = 0;
+                                                foreach ($departments_by_level as $depts) {
+                                                    $total_cancelled += array_sum(array_column($depts, 'quota_cancelled'));
+                                                    $total_cancelled += array_sum(array_column($depts, 'regular_cancelled'));
+                                                }
+                                                echo number_format($total_cancelled);
+                                                ?>
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
                                         <div class="p-3 bg-white rounded shadow-sm">
                                             <h6 class="text-muted mb-2">รวมทั้งหมด</h6>
                                             <h3 class="text-dark mb-0">
