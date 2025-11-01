@@ -77,7 +77,14 @@ try {
     }
     $stmt->close();
 
-    $year = isset($data['academic_year']) ? $data['academic_year'] : (date('Y') + 543 + 1);
+    // ดึงปีการศึกษาจาก settings
+    $year_query = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'academic_year' LIMIT 1");
+    if ($year_query && $year_query->num_rows > 0) {
+        $year = $year_query->fetch_assoc()['setting_value'];
+    } else {
+        $year = (date('Y') + 543 + 1); // fallback
+    }
+    error_log("📅 Using academic_year from settings: $year");
 
     $uploads = isset($data['uploaded_files']) ? $data['uploaded_files'] : [];
     $academic_year_val = (string)$year;
@@ -189,7 +196,7 @@ try {
     $year_suffix = substr($year, -2);
     $id_part = str_pad($inserted_id, 5, '0', STR_PAD_LEFT);
     $application_no = 'Q' . $year_suffix . $id_part;
-    
+
     error_log("✅ Generated application_no from ID: '$application_no' (ID: $inserted_id)");
 
     // ✅ UPDATE application_no
@@ -197,7 +204,7 @@ try {
     if (!$update_stmt) {
         throw new Exception('Update prepare failed: ' . $conn->error);
     }
-    
+
     $update_stmt->bind_param("si", $application_no, $inserted_id);
     if (!$update_stmt->execute()) {
         throw new Exception('Update execute failed: ' . $update_stmt->error);

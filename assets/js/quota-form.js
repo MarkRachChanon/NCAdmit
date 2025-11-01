@@ -941,7 +941,7 @@ async function uploadFile(file, type, academicYear) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
-    formData.append('academic_year', academicYear);
+    // formData.append('academic_year', academicYear);
 
     try {
         const response = await fetch('includes/upload_handler.php', {
@@ -1115,7 +1115,7 @@ function getFormData() {
         department_name: document.getElementById('selected_dept_name')?.textContent || '',
         uploaded_files: JSON.parse(sessionStorage.getItem('quotaFormUploads')) || {},
         form_type: 'quota',
-        academic_year: (new Date().getFullYear() + 543 + 1).toString()
+        // academic_year: (new Date().getFullYear() + 543 + 1).toString()
     };
 
     return formData;

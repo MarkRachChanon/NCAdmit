@@ -6,7 +6,7 @@
  */
 
 // ดึงข้อมูลสถิติ
-$current_year = date('Y') + 543 + 1;
+$current_year = get_setting('academic_year');
 
 // นับจำนวนผู้สมัครรอบโควตา
 $sql_quota = "SELECT 
@@ -102,15 +102,28 @@ if (!$dept_stats || $dept_stats->num_rows == 0) {
     $dept_stats = $conn->query($sql_dept_stats);
 }
 
-// ข้อมูลสำหรับแสดงรายละเอียดทุกสาขา (สำหรับ Modal)
+// ข้อมูลสำหรับแสดงรายละเอียดทุกสาขา (สำหรับ Modal) - แยกตามสถานะ
 $sql_all_departments = "SELECT 
     d.id,
     d.code,
     d.name_th,
     d.level,
+    -- รอบโควตา
+    COALESCE(COUNT(DISTINCT CASE WHEN sq.status = 'approved' THEN sq.id END), 0) as quota_approved,
+    COALESCE(COUNT(DISTINCT CASE WHEN sq.status = 'pending' THEN sq.id END), 0) as quota_pending,
+    COALESCE(COUNT(DISTINCT CASE WHEN sq.status = 'rejected' THEN sq.id END), 0) as quota_rejected,
+    COALESCE(COUNT(DISTINCT CASE WHEN sq.status = 'cancelled' THEN sq.id END), 0) as quota_cancelled,
     COALESCE(COUNT(DISTINCT sq.id), 0) as quota_count,
+    -- รอบปกติ
+    COALESCE(COUNT(DISTINCT CASE WHEN sr.status = 'approved' THEN sr.id END), 0) as regular_approved,
+    COALESCE(COUNT(DISTINCT CASE WHEN sr.status = 'pending' THEN sr.id END), 0) as regular_pending,
+    COALESCE(COUNT(DISTINCT CASE WHEN sr.status = 'rejected' THEN sr.id END), 0) as regular_rejected,
+    COALESCE(COUNT(DISTINCT CASE WHEN sr.status = 'cancelled' THEN sr.id END), 0) as regular_cancelled,
     COALESCE(COUNT(DISTINCT sr.id), 0) as regular_count,
-    COALESCE(COUNT(DISTINCT sq.id), 0) + COALESCE(COUNT(DISTINCT sr.id), 0) as total_count
+    -- รวมทั้งหมด
+    COALESCE(COUNT(DISTINCT sq.id), 0) + COALESCE(COUNT(DISTINCT sr.id), 0) as total_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN sq.status = 'approved' THEN sq.id END), 0) + 
+    COALESCE(COUNT(DISTINCT CASE WHEN sr.status = 'approved' THEN sr.id END), 0) as total_approved
 FROM departments d
 LEFT JOIN students_quota sq ON d.id = sq.department_id AND sq.academic_year = '$current_year'
 LEFT JOIN students_regular sr ON d.id = sr.department_id AND sr.academic_year = '$current_year'
@@ -132,6 +145,31 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
     }
 }
 ?>
+
+<style>
+    /* เพิ่ม CSS สำหรับ Tab ให้มองเห็นชัดเจน */
+    #departmentTabs .nav-link {
+        color: #495057 !important;
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        margin-right: 5px;
+    }
+
+    #departmentTabs .nav-link:hover {
+        color: #0056b3 !important;
+        background-color: #e9ecef;
+    }
+
+    #departmentTabs .nav-link.active {
+        color: #fff !important;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .modal-header-gradient {
+        background: linear-gradient(135deg, #0061ff 0%, #764ba2 100%);
+    }
+</style>
 
 <div class="container-fluid py-4">
     <!-- Page Header -->
@@ -429,12 +467,11 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
     </div>
 </div>
 
-
 <!-- Modal: แสดงข้อมูลทุกสาขาวิชา -->
 <div class="modal fade" id="allDepartmentsModal" tabindex="-1" aria-labelledby="allDepartmentsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 95%;">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
+            <div class="modal-header text-white modal-header-gradient">
                 <h5 class="modal-title" id="allDepartmentsModalLabel">
                     <i class="bi bi-list-ul me-2"></i>ข้อมูลจำนวนผู้สมัครทุกสาขาวิชา
                 </h5>
@@ -444,137 +481,257 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle me-2"></i>
                     <strong>ข้อมูล ณ ปีการศึกษา <?php echo $current_year; ?></strong>
-                    <span class="ms-2">แสดงจำนวนผู้สมัครแยกตามระดับชั้นและรอบการสมัคร</span>
+                    <span class="ms-2">แสดงจำนวนผู้สมัครแยกตามระดับชั้น รอบการสมัคร และสถานะ</span>
                 </div>
 
-                <?php foreach ($departments_by_level as $level => $departments): ?>
-                    <?php if (!empty($departments)): ?>
-                        <div class="mb-4">
-                            <h5 class="border-bottom pb-2 mb-3">
-                                <i class="bi bi-mortarboard-fill text-primary me-2"></i>
-                                ระดับ <?php echo $level; ?>
-                                <span class="badge bg-primary ms-2"><?php echo count($departments); ?> สาขา</span>
-                            </h5>
-                            
-                            <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th width="10%" class="text-center">#</th>
-                                            <th width="15%">รหัสสาขา</th>
-                                            <th width="35%">ชื่อสาขาวิชา</th>
-                                            <th width="13%" class="text-center">รอบโควตา</th>
-                                            <th width="13%" class="text-center">รอบปกติ</th>
-                                            <th width="14%" class="text-center">รวมทั้งหมด</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                                        $no = 1;
-                                        foreach ($departments as $dept): 
-                                        ?>
-                                            <tr>
-                                                <td class="text-center"><?php echo $no++; ?></td>
-                                                <td><code><?php echo htmlspecialchars($dept['code']); ?></code></td>
-                                                <td><?php echo htmlspecialchars($dept['name_th']); ?></td>
-                                                <td class="text-center">
-                                                    <?php if ($dept['quota_count'] > 0): ?>
-                                                        <span class="badge bg-primary fs-6">
-                                                            <?php echo number_format($dept['quota_count']); ?> คน
-                                                        </span>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">-</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="text-center">
-                                                    <?php if ($dept['regular_count'] > 0): ?>
-                                                        <span class="badge bg-success fs-6">
-                                                            <?php echo number_format($dept['regular_count']); ?> คน
-                                                        </span>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">-</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="text-center">
-                                                    <?php if ($dept['total_count'] > 0): ?>
-                                                        <span class="badge bg-dark fs-6">
-                                                            <?php echo number_format($dept['total_count']); ?> คน
-                                                        </span>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">ยังไม่มี</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                        
-                                        <!-- แถวสรุปยอดรวมในแต่ละระดับ -->
-                                        <tr class="table-secondary fw-bold">
-                                            <td colspan="3" class="text-end">รวม <?php echo $level; ?>:</td>
-                                            <td class="text-center">
-                                                <?php 
-                                                $quota_total = array_sum(array_column($departments, 'quota_count'));
-                                                echo number_format($quota_total) . ' คน';
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs mb-3" id="departmentTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-view" type="button" role="tab">
+                            <i class="bi bi-table me-1"></i> ตารางข้อมูล
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="chart-tab" data-bs-toggle="tab" data-bs-target="#chart-view" type="button" role="tab">
+                            <i class="bi bi-bar-chart-fill me-1"></i> กราฟแสดงผล
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="departmentTabContent">
+
+                    <!-- Tab 1: ตารางข้อมูล -->
+                    <div class="tab-pane fade show active" id="table-view" role="tabpanel">
+                        <?php foreach ($departments_by_level as $level => $departments): ?>
+                            <?php if (!empty($departments)): ?>
+                                <div class="mb-4">
+                                    <h5 class="border-bottom pb-2 mb-3">
+                                        <i class="bi bi-mortarboard-fill text-primary me-2"></i>
+                                        ระดับ <?php echo $level; ?>
+                                        <span class="badge bg-primary ms-2"><?php echo count($departments); ?> สาขา</span>
+                                    </h5>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-bordered table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th width="5%" class="text-center align-middle" rowspan="2">#</th>
+                                                    <th width="12%" class="align-middle" rowspan="2">รหัสสาขา</th>
+                                                    <th width="23%" class="align-middle" rowspan="2">ชื่อสาขาวิชา</th>
+                                                    <th colspan="5" class="text-center bg-primary text-white">รอบโควตา</th>
+                                                    <th colspan="5" class="text-center bg-success text-white">รอบปกติ</th>
+                                                    <th width="8%" class="text-center align-middle" rowspan="2">รวมทั้งหมด</th>
+                                                </tr>
+                                                <tr>
+                                                    <!-- รอบโควตา -->
+                                                    <th width="5%" class="text-center bg-success text-white">อนุมัติ</th>
+                                                    <th width="5%" class="text-center bg-warning">รอตรวจ</th>
+                                                    <th width="5%" class="text-center bg-danger text-white">ไม่อนุมัติ</th>
+                                                    <th width="5%" class="text-center bg-secondary text-white">ยกเลิก</th>
+                                                    <th width="5%" class="text-center bg-primary text-white">รวม</th>
+                                                    <!-- รอบปกติ -->
+                                                    <th width="5%" class="text-center bg-success text-white">อนุมัติ</th>
+                                                    <th width="5%" class="text-center bg-warning">รอตรวจ</th>
+                                                    <th width="5%" class="text-center bg-danger text-white">ไม่อนุมัติ</th>
+                                                    <th width="5%" class="text-center bg-secondary text-white">ยกเลิก</th>
+                                                    <th width="5%" class="text-center bg-success text-white">รวม</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                $no = 1;
+                                                foreach ($departments as $dept):
                                                 ?>
-                                            </td>
-                                            <td class="text-center">
-                                                <?php 
-                                                $regular_total = array_sum(array_column($departments, 'regular_count'));
-                                                echo number_format($regular_total) . ' คน';
+                                                    <tr>
+                                                        <td class="text-center"><?php echo $no++; ?></td>
+                                                        <td><code class="text-primary"><?php echo htmlspecialchars($dept['code']); ?></code></td>
+                                                        <td><?php echo htmlspecialchars($dept['name_th']); ?></td>
+
+                                                        <!-- รอบโควตา -->
+                                                        <td class="text-center">
+                                                            <?php echo $dept['quota_approved'] > 0 ? '<span class="badge bg-success">' . $dept['quota_approved'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo $dept['quota_pending'] > 0 ? '<span class="badge bg-warning text-dark">' . $dept['quota_pending'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo $dept['quota_rejected'] > 0 ? '<span class="badge bg-danger">' . $dept['quota_rejected'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo $dept['quota_cancelled'] > 0 ? '<span class="badge bg-secondary">' . $dept['quota_cancelled'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center fw-bold">
+                                                            <?php echo $dept['quota_count'] > 0 ? '<span class="badge bg-primary">' . $dept['quota_count'] . '</span>' : '-'; ?>
+                                                        </td>
+
+                                                        <!-- รอบปกติ -->
+                                                        <td class="text-center">
+                                                            <?php echo $dept['regular_approved'] > 0 ? '<span class="badge bg-success">' . $dept['regular_approved'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo $dept['regular_pending'] > 0 ? '<span class="badge bg-warning text-dark">' . $dept['regular_pending'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo $dept['regular_rejected'] > 0 ? '<span class="badge bg-danger">' . $dept['regular_rejected'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo $dept['regular_cancelled'] > 0 ? '<span class="badge bg-secondary">' . $dept['regular_cancelled'] . '</span>' : '-'; ?>
+                                                        </td>
+                                                        <td class="text-center fw-bold">
+                                                            <?php echo $dept['regular_count'] > 0 ? '<span class="badge bg-success">' . $dept['regular_count'] . '</span>' : '-'; ?>
+                                                        </td>
+
+                                                        <!-- รวมทั้งหมด -->
+                                                        <td class="text-center fw-bold">
+                                                            <?php echo $dept['total_count'] > 0 ? '<span class="badge bg-dark fs-6">' . $dept['total_count'] . '</span>' : '<span class="text-muted">-</span>'; ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+
+                                                <!-- แถวสรุปยอดรวมในแต่ละระดับ -->
+                                                <tr class="table-info fw-bold">
+                                                    <td colspan="3" class="text-end">รวม <?php echo $level; ?>:</td>
+                                                    <!-- โควตา -->
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'quota_approved'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'quota_pending'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'quota_rejected'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'quota_cancelled'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'quota_count'))); ?></td>
+                                                    <!-- ปกติ -->
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'regular_approved'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'regular_pending'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'regular_rejected'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'regular_cancelled'))); ?></td>
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'regular_count'))); ?></td>
+                                                    <!-- รวม -->
+                                                    <td class="text-center"><?php echo number_format(array_sum(array_column($departments, 'total_count'))); ?></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+
+                        <!-- สรุปยอดรวมทั้งหมด -->
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title mb-3"><i class="bi bi-calculator me-2"></i>สรุปยอดรวมทั้งระบบ</h6>
+                                <div class="row text-center g-3">
+                                    <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมรอบโควตา</h6>
+                                            <h3 class="text-primary mb-0">
+                                                <?php
+                                                $total_quota = 0;
+                                                foreach ($departments_by_level as $depts) {
+                                                    $total_quota += array_sum(array_column($depts, 'quota_count'));
+                                                }
+                                                echo number_format($total_quota);
                                                 ?>
-                                            </td>
-                                            <td class="text-center">
-                                                <?php 
-                                                $level_total = array_sum(array_column($departments, 'total_count'));
-                                                echo number_format($level_total) . ' คน';
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมรอบปกติ</h6>
+                                            <h3 class="text-success mb-0">
+                                                <?php
+                                                $total_regular = 0;
+                                                foreach ($departments_by_level as $depts) {
+                                                    $total_regular += array_sum(array_column($depts, 'regular_count'));
+                                                }
+                                                echo number_format($total_regular);
                                                 ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-                
-                <!-- สรุปยอดรวมทั้งหมด -->
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-md-4">
-                                <h6 class="text-muted mb-2">รวมรอบโควตา</h6>
-                                <h3 class="text-primary mb-0">
-                                    <?php 
-                                    $total_quota = 0;
-                                    foreach ($departments_by_level as $depts) {
-                                        $total_quota += array_sum(array_column($depts, 'quota_count'));
-                                    }
-                                    echo number_format($total_quota);
-                                    ?>
-                                    <small class="text-muted">คน</small>
-                                </h3>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="text-muted mb-2">รวมรอบปกติ</h6>
-                                <h3 class="text-success mb-0">
-                                    <?php 
-                                    $total_regular = 0;
-                                    foreach ($departments_by_level as $depts) {
-                                        $total_regular += array_sum(array_column($depts, 'regular_count'));
-                                    }
-                                    echo number_format($total_regular);
-                                    ?>
-                                    <small class="text-muted">คน</small>
-                                </h3>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="text-muted mb-2">รวมทั้งหมด</h6>
-                                <h3 class="text-dark mb-0">
-                                    <?php echo number_format($total_quota + $total_regular); ?>
-                                    <small class="text-muted">คน</small>
-                                </h3>
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมที่อนุมัติ</h6>
+                                            <h3 class="text-success mb-0">
+                                                <?php
+                                                $total_approved = 0;
+                                                foreach ($departments_by_level as $depts) {
+                                                    $total_approved += array_sum(array_column($depts, 'quota_approved'));
+                                                    $total_approved += array_sum(array_column($depts, 'regular_approved'));
+                                                }
+                                                echo number_format($total_approved);
+                                                ?>
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="p-3 bg-white rounded shadow-sm">
+                                            <h6 class="text-muted mb-2">รวมทั้งหมด</h6>
+                                            <h3 class="text-dark mb-0">
+                                                <?php echo number_format($total_quota + $total_regular); ?>
+                                                <small class="text-muted">คน</small>
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Tab 2: กราฟแสดงผล -->
+                    <div class="tab-pane fade" id="chart-view" role="tabpanel">
+                        <div class="row g-3">
+                            <!-- กราฟแท่งเปรียบเทียบ -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h6 class="mb-0"><i class="bi bi-bar-chart-fill text-primary me-2"></i>เปรียบเทียบจำนวนผู้สมัครแต่ละระดับ</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="levelComparisonChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- กราฟวงกลมสถานะ -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h6 class="mb-0"><i class="bi bi-pie-chart-fill text-success me-2"></i>สัดส่วนสถานะการสมัคร</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="statusPieChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- กราฟแท่งแนวนอน Top 10 -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h6 class="mb-0"><i class="bi bi-bar-chart-line-fill text-warning me-2"></i>10 สาขาที่มีผู้สมัครมากที่สุด</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="top10DepartmentChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- กราฟเส้น Stacked -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-white">
+                                        <h6 class="mb-0"><i class="bi bi-graph-up text-info me-2"></i>สัดส่วนรอบโควตา vs รอบปกติ แยกตามระดับ</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="roundComparisonChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -692,6 +849,274 @@ if ($all_departments_result && $all_departments_result->num_rows > 0) {
                     }
                 }
             });
+        }
+
+        // ================== กราฟใน Modal ==================
+
+        // เตรียมข้อมูล PHP สำหรับ JavaScript
+        const departmentsData = <?php
+                                $all_data = [];
+                                foreach ($departments_by_level as $level => $depts) {
+                                    $all_data[$level] = $depts;
+                                }
+                                echo json_encode($all_data, JSON_UNESCAPED_UNICODE);
+                                ?>;
+
+        // เมื่อเปิด Modal ให้สร้างกราฟ
+        const modalElement = document.getElementById('allDepartmentsModal');
+        if (modalElement) {
+            modalElement.addEventListener('shown.bs.modal', function() {
+                initializeModalCharts();
+            });
+        }
+
+        function initializeModalCharts() {
+            // 1. กราฟเปรียบเทียบระดับชั้น
+            const levelCtx = document.getElementById('levelComparisonChart');
+            if (levelCtx) {
+                const levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
+                const quotaData = [];
+                const regularData = [];
+
+                levels.forEach(level => {
+                    const depts = departmentsData[level] || [];
+                    quotaData.push(depts.reduce((sum, d) => sum + parseInt(d.quota_count), 0));
+                    regularData.push(depts.reduce((sum, d) => sum + parseInt(d.regular_count), 0));
+                });
+
+                new Chart(levelCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: levels,
+                        datasets: [{
+                                label: 'รอบโควตา',
+                                data: quotaData,
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'รอบปกติ',
+                                data: regularData,
+                                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.y + ' คน';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. กราฟวงกลมสถานะ
+            const statusCtx = document.getElementById('statusPieChart');
+            if (statusCtx) {
+                let totalApproved = 0,
+                    totalPending = 0,
+                    totalRejected = 0,
+                    totalCancelled = 0;
+
+                Object.values(departmentsData).forEach(levelDepts => {
+                    levelDepts.forEach(d => {
+                        totalApproved += parseInt(d.quota_approved) + parseInt(d.regular_approved);
+                        totalPending += parseInt(d.quota_pending) + parseInt(d.regular_pending);
+                        totalRejected += parseInt(d.quota_rejected) + parseInt(d.regular_rejected);
+                        totalCancelled += parseInt(d.quota_cancelled) + parseInt(d.regular_cancelled);
+                    });
+                });
+
+                new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['อนุมัติ', 'รอตรวจสอบ', 'ไม่อนุมัติ', 'ยกเลิก'],
+                        datasets: [{
+                            data: [totalApproved, totalPending, totalRejected, totalCancelled],
+                            backgroundColor: [
+                                'rgba(40, 167, 69, 0.8)',
+                                'rgba(255, 193, 7, 0.8)',
+                                'rgba(220, 53, 69, 0.8)',
+                                'rgba(108, 117, 125, 0.8)'
+                            ],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return context.label + ': ' + context.parsed + ' คน (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. กราฟ Top 10 สาขา
+            const top10Ctx = document.getElementById('top10DepartmentChart');
+            if (top10Ctx) {
+                const allDepts = [];
+                Object.values(departmentsData).forEach(levelDepts => {
+                    levelDepts.forEach(d => {
+                        allDepts.push({
+                            name: d.name_th,
+                            total: parseInt(d.total_count),
+                            quota: parseInt(d.quota_count),
+                            regular: parseInt(d.regular_count)
+                        });
+                    });
+                });
+
+                // เรียงและเอา 10 อันดับแรก
+                allDepts.sort((a, b) => b.total - a.total);
+                const top10 = allDepts.slice(0, 10);
+
+                new Chart(top10Ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: top10.map(d => d.name),
+                        datasets: [{
+                                label: 'รอบโควตา',
+                                data: top10.map(d => d.quota),
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'รอบปกติ',
+                                data: top10.map(d => d.regular),
+                                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                stacked: true
+                            },
+                            y: {
+                                stacked: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.x + ' คน';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // ปรับความสูงของ canvas ตามจำนวนข้อมูล
+                top10Ctx.style.height = (top10.length * 60) + 'px';
+            }
+
+            // 4. กราฟเปรียบเทียบรอบ
+            const roundCtx = document.getElementById('roundComparisonChart');
+            if (roundCtx) {
+                const levels = ['ปวช.', 'ปวส.', 'ปริญญาตรี'];
+                const quotaData = [];
+                const regularData = [];
+
+                levels.forEach(level => {
+                    const depts = departmentsData[level] || [];
+                    quotaData.push(depts.reduce((sum, d) => sum + parseInt(d.quota_count), 0));
+                    regularData.push(depts.reduce((sum, d) => sum + parseInt(d.regular_count), 0));
+                });
+
+                new Chart(roundCtx, {
+                    type: 'line',
+                    data: {
+                        labels: levels,
+                        datasets: [{
+                                label: 'รอบโควตา',
+                                data: quotaData,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'รอบปกติ',
+                                data: regularData,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.y + ' คน';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
     });
 </script>

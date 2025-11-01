@@ -1,17 +1,18 @@
 <?php
-@ob_start(); 
+@ob_start();
 @ini_set('display_errors', 'Off');
 @ini_set('log_errors', 'On');
-@error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING); 
+@error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 @header('Content-Type: application/json; charset=utf-8');
 
-function sendJSON($data) {
-    @ob_clean(); 
+function sendJSON($data)
+{
+    @ob_clean();
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-register_shutdown_function(function() {
+register_shutdown_function(function () {
     $error = error_get_last();
     if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_RECOVERABLE_ERROR])) {
         @ob_clean();
@@ -33,12 +34,12 @@ try {
         throw new Exception('ไม่พบไฟล์ config/database.php');
     }
     @require_once $config_file;
-    @require_once __DIR__ . '/../includes/functions.php'; 
+    @require_once __DIR__ . '/../includes/functions.php';
 
     if (!isset($conn) || $conn->connect_error) {
         throw new Exception('Database Error: เชื่อมต่อ Database ไม่ได้');
     }
-    
+
     $json = @file_get_contents('php://input');
     if (!$json) {
         throw new Exception('ไม่ได้รับข้อมูล JSON');
@@ -47,18 +48,18 @@ try {
     if (!$data) {
         throw new Exception('JSON ไม่ถูกต้อง: ' . json_last_error_msg());
     }
-    
+
     error_log("========== REGULAR FORM DATA ==========");
     error_log(print_r($data, true));
     error_log("=======================================");
-    
+
     $conn->begin_transaction();
-    
+
     $id_card = isset($data['id_card']) ? trim($data['id_card']) : '';
     if (empty($id_card)) {
         throw new Exception('กรุณากรอกเลขบัตรประชาชน');
     }
-    
+
     // ตรวจสอบซ้ำ
     $stmt = $conn->prepare("SELECT application_no FROM students_regular WHERE id_card = ? LIMIT 1");
     $stmt->bind_param("s", $id_card);
@@ -68,35 +69,42 @@ try {
         $stmt->close();
         $conn->rollback();
         sendJSON([
-            'success' => false, 
+            'success' => false,
             'message' => 'เลขบัตรประชาชนนี้เคยสมัครแล้ว'
         ]);
     }
     $stmt->close();
-    
-    $year = isset($data['academic_year']) ? $data['academic_year'] : (date('Y') + 543 + 1);
+
+    // ดึงปีการศึกษาจาก settings
+    $year_query = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'academic_year' LIMIT 1");
+    if ($year_query && $year_query->num_rows > 0) {
+        $year = $year_query->fetch_assoc()['setting_value'];
+    } else {
+        $year = (date('Y') + 543 + 1); // fallback
+    }
+    error_log("📅 Using academic_year from settings: $year");
 
     $uploads = isset($data['uploaded_files']) ? $data['uploaded_files'] : [];
-    
+
     $photo_path = isset($uploads['photo']['path']) ? $uploads['photo']['path'] : null;
     $transcript_path = isset($uploads['transcript']['path']) ? $uploads['transcript']['path'] : null;
-    
+
     // 🔧 ปรับ Type Casting ให้ถูกต้อง
     $age = (isset($data['age']) && is_numeric($data['age']) && (int)$data['age'] > 0) ? (int)$data['age'] : null;
     $height = (isset($data['height']) && is_numeric($data['height']) && (int)$data['height'] > 0) ? (int)$data['height'] : null;
     $weight = (isset($data['weight']) && is_numeric($data['weight']) && (int)$data['weight'] > 0) ? (int)$data['weight'] : null;
-    
+
     $father_income = (isset($data['father_income']) && is_numeric($data['father_income']) && (float)$data['father_income'] >= 0) ? (float)$data['father_income'] : null;
     $mother_income = (isset($data['mother_income']) && is_numeric($data['mother_income']) && (float)$data['mother_income'] >= 0) ? (float)$data['mother_income'] : null;
     $guardian_income = (isset($data['guardian_income']) && is_numeric($data['guardian_income']) && (float)$data['guardian_income'] >= 0) ? (float)$data['guardian_income'] : null;
-    
+
     $gpa = (isset($data['gpa']) && is_numeric($data['gpa']) && (float)$data['gpa'] >= 0) ? (float)$data['gpa'] : null;
-    
+
     $department_id = (isset($data['department_id']) && is_numeric($data['department_id']) && (int)$data['department_id'] > 0) ? (int)$data['department_id'] : null;
-    
+
     $graduation_year = $data['graduation_year'] ?? (string)$year;
     $apply_level = $data['education_level_apply'] ?? null;
-    
+
     $sql = "INSERT INTO students_regular (
         application_no, academic_year, prefix, firstname_th, lastname_th, nickname, 
         birth_date, birth_province, age, height, weight, nationality, ethnicity, 
@@ -116,10 +124,10 @@ try {
     ) VALUES (
         ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
     )";
-    
+
     // 🎯 FIX: Bind string ที่ถูกต้อง 100%
     // s=string, i=integer, d=double(decimal)
-    $bind_string = 
+    $bind_string =
         "ss"      . // 1-2: application_no, academic_year
         "ssss"    . // 3-6: prefix, firstname_th, lastname_th, nickname
         "ss"      . // 7-8: birth_date, birth_province
@@ -149,7 +157,7 @@ try {
         "ss"      . // 64-65: graduation_year, apply_level
         "i"       . // 66: department_id (integer)
         "ssss";     // 67-70: photo_path, transcript_path, status, status_note
-    
+
     $variables = [
         null,                                   // ✅ 1 - application_no จะ UPDATE ทีหลัง
         (string)$year,                          // 2
@@ -191,7 +199,7 @@ try {
         $data['father_phone'] ?? null,          // 38
         $data['father_status'] ?? 'มีชีวิต',    // 39
         $data['father_disability'] ?? 'ไม่มี',  // 40
-        $data['father_disability_type'] ?? null,// 41
+        $data['father_disability_type'] ?? null, // 41
         $data['mother_prefix'] ?? null,         // 42
         $data['mother_firstname'] ?? null,      // 43
         $data['mother_lastname'] ?? null,       // 44
@@ -200,7 +208,7 @@ try {
         $data['mother_phone'] ?? null,          // 47
         $data['mother_status'] ?? 'มีชีวิต',    // 48
         $data['mother_disability'] ?? 'ไม่มี',  // 49
-        $data['mother_disability_type'] ?? null,// 50
+        $data['mother_disability_type'] ?? null, // 50
         $data['parents_status'] ?? null,        // 51
         $data['guardian_prefix'] ?? null,       // 52
         $data['guardian_firstname'] ?? null,    // 53
@@ -222,7 +230,7 @@ try {
         'pending',                              // 69
         null                                    // 70
     ];
-    
+
     if (strlen($bind_string) !== count($variables)) {
         throw new Exception("Bind error: " . strlen($bind_string) . " types vs " . count($variables) . " values");
     }
@@ -236,15 +244,15 @@ try {
     foreach ($variables as &$value) {
         $bind_args[] = &$value;
     }
-    
+
     if (!call_user_func_array([$stmt, 'bind_param'], $bind_args)) {
         throw new Exception('Bind failed: ' . $stmt->error);
     }
-    
+
     if (!$stmt->execute()) {
         throw new Exception('Execute failed: ' . $stmt->error);
     }
-    
+
     // ✅ ดึง ID ที่เพิ่งสร้าง
     $inserted_id = $conn->insert_id;
     $stmt->close();
@@ -253,7 +261,7 @@ try {
     $year_suffix = substr($year, -2);
     $id_part = str_pad($inserted_id, 5, '0', STR_PAD_LEFT);
     $application_no = 'R' . $year_suffix . $id_part;
-    
+
     error_log("✅ Generated application_no from ID: '$application_no' (ID: $inserted_id)");
 
     // ✅ UPDATE application_no
@@ -261,30 +269,29 @@ try {
     if (!$update_stmt) {
         throw new Exception('Update prepare failed: ' . $conn->error);
     }
-    
+
     $update_stmt->bind_param("si", $application_no, $inserted_id);
     if (!$update_stmt->execute()) {
         throw new Exception('Update execute failed: ' . $update_stmt->error);
     }
     $update_stmt->close();
-    
+
     $conn->commit();
-    
+
     error_log("✅ SUCCESS - ID: $inserted_id, Application: $application_no");
-    
+
     sendJSON([
         'success' => true,
         'application_no' => $application_no,
         'name' => trim(($data['firstname_th'] ?? '') . ' ' . ($data['lastname_th'] ?? ''))
     ]);
-    
 } catch (Exception $e) {
     if (isset($conn) && property_exists($conn, 'in_transaction') && $conn->in_transaction) {
         $conn->rollback();
     }
-    
+
     error_log("❌ ERROR: " . $e->getMessage());
-    
+
     sendJSON([
         'success' => false,
         'message' => $e->getMessage(),
@@ -296,4 +303,3 @@ try {
 if (isset($conn)) {
     $conn->close();
 }
-?>

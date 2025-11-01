@@ -197,7 +197,7 @@ $departments_result = $conn->query($departments_sql);
                     </select>
                 </div>
                 
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <label class="form-label fw-bold">
                         <i class="bi bi-funnel"></i> สถานะ
                     </label>
@@ -208,9 +208,9 @@ $departments_result = $conn->query($departments_sql);
                     </select>
                 </div>
                 
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters" title="ล้างตัวกรอง">
-                        <i class="bi bi-x-circle"></i>
+                        <i class="bi bi-x-circle me-2"></i>ล้างตัวกรอง
                     </button>
                 </div>
             </div>

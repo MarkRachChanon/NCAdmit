@@ -94,6 +94,8 @@ try {
 
 function createRegularApplicationImage($data)
 {
+    global $conn;
+
     // ขนาด A4 ที่ 200 DPI
     $width = 1654;
     $height = 2339;
@@ -116,8 +118,11 @@ function createRegularApplicationImage($data)
     if (!file_exists($font)) {
         $font = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf';
     }
-
     $y = 80;
+
+    $academic_year_query = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'academic_year' LIMIT 1");
+    $academic_year_setting = $academic_year_query->fetch_assoc();
+    $academic_year = $academic_year_setting['setting_value'];
 
     // ===== โลโก้ =====
     $logo_path = __DIR__ . '/../assets/images/logo.png';
@@ -155,7 +160,7 @@ function createRegularApplicationImage($data)
     $y += 50;
 
     // ===== หัวข้อ =====
-    $text = 'ใบสมัครเข้าศึกษาต่อวิทยาลัยอาชีวศึกษานครปฐม (Online)';
+    $text = 'ใบสมัครเข้าศึกษาต่อวิทยาลัยอาชีวศึกษานครปฐม ปีการศึกษา ' .$academic_year. ' (Online)';
     $bbox = imagettfbbox(32, 0, $fontBold, $text);
     $text_width = $bbox[2] - $bbox[0];
     $x_center = ($width - $text_width) / 2;

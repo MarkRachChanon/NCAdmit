@@ -64,6 +64,7 @@ try {
         // การรับสมัคร
         'quota_open' => ['type' => 'boolean', 'required' => false],
         'regular_open' => ['type' => 'boolean', 'required' => false],
+        'academic_year' => ['type' => 'text', 'required' => true],
 
         // กำหนดการรับสมัคร - รอบโควต้า
         'quota_start_date' => ['type' => 'date', 'required' => false],

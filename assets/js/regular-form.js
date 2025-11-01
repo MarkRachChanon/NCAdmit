@@ -970,7 +970,7 @@ async function uploadFile(file, type, academicYear) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
-    formData.append('academic_year', academicYear);
+    // formData.append('academic_year', academicYear);
 
     try {
         const response = await fetch('includes/upload_handler.php', {
@@ -1190,7 +1190,7 @@ function getFormData() {
         // ไฟล์
         uploaded_files: JSON.parse(sessionStorage.getItem('regularFormUploads')) || {},
         form_type: 'regular',
-        academic_year: (new Date().getFullYear() + 543 + 1).toString()
+        // academic_year: (new Date().getFullYear() + 543 + 1).toString()
     };
 
     return formData;

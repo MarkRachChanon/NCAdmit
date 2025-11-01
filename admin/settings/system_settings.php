@@ -294,6 +294,65 @@ if ($settings_result && $settings_result->num_rows > 0) {
                                 </div>
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-calendar3 me-2"></i>
+                                            ปีการศึกษา (พ.ศ.)
+                                        </h6>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-calendar-event"></i>
+                                            </span>
+                                            <input type="number"
+                                                class="form-control"
+                                                id="academic_year"
+                                                name="academic_year"
+                                                value="<?php echo htmlspecialchars($settings['academic_year']['setting_value'] ?? (date('Y') + 543 + 1)); ?>"
+                                                min="2560"
+                                                max="2600"
+                                                placeholder="เช่น 2569"
+                                                required>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            ปีการศึกษาที่เปิดรับสมัคร (ค.ศ. = พ.ศ. - 543)
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-secondary bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-muted">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            ข้อมูลปีการศึกษา
+                                        </h6>
+                                        <table class="table table-sm table-borderless mb-0">
+                                            <tr>
+                                                <td class="text-muted">ปีปัจจุบัน (พ.ศ.):</td>
+                                                <td><strong><?php echo date('Y') + 543; ?></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">ปีการศึกษาถัดไป:</td>
+                                                <td><strong><?php echo date('Y') + 543 + 1; ?></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">ปีที่ตั้งค่าไว้:</td>
+                                                <td>
+                                                    <span class="badge bg-primary" id="current_academic_year_display">
+                                                        <?php echo $settings['academic_year']['setting_value'] ?? (date('Y') + 543 + 1); ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1202,5 +1261,14 @@ if ($settings_result && $settings_result->num_rows > 0) {
             width: 700,
             confirmButtonText: 'ปิด'
         });
+    });
+
+    // Update Academic Year Display
+    document.getElementById('academic_year')?.addEventListener('input', function() {
+        const yearValue = this.value;
+        const displayBadge = document.getElementById('current_academic_year_display');
+        if (displayBadge) {
+            displayBadge.textContent = yearValue;
+        }
     });
 </script>

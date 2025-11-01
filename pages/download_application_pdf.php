@@ -96,6 +96,8 @@ try {
 
 function createApplicationImage($data, $form_type)
 {
+    global $conn;
+
     // เพิ่มความคมชัดเป็น 200 DPI = 1654 x 2339 pixels
     $width = 1654;
     $height = 2339;
@@ -122,7 +124,9 @@ function createApplicationImage($data, $form_type)
     }
 
     $y = 65; // ตำแหน่ง Y เริ่มต้น
-    $academic_year = $data['academic_year'] ?? (date('Y') + 543 + 1);
+    $academic_year_query = $conn->query("SELECT setting_value FROM settings WHERE setting_key = 'academic_year' LIMIT 1");
+    $academic_year_setting = $academic_year_query->fetch_assoc();
+    $academic_year = $academic_year_setting['setting_value'];
 
     // ===== HEADER =====
     $x = $margin_left + 50;
@@ -137,7 +141,7 @@ function createApplicationImage($data, $form_type)
     // ตรวจสอบว่าไฟล์โลโก้มีอยู่จริงหรือไม่
     if (file_exists($logo_path)) {
         $logo = imagecreatefrompng($logo_path);
-        
+
         // ตรวจสอบว่าการโหลดภาพสำเร็จหรือไม่
         if ($logo !== false) {
             $logo_original_width = imagesx($logo);
@@ -145,7 +149,7 @@ function createApplicationImage($data, $form_type)
 
             // กำหนดขนาดโลโก้ที่ต้องการแสดง (เช่น 400x400 พิกเซล สำหรับความละเอียด 450 DPI)
             $logo_target_width = 200;
-            $logo_target_height = 200; 
+            $logo_target_height = 200;
 
             // คำนวณตำแหน่ง X เพื่อจัดกึ่งกลาง
             $x_logo_center = ($width - $logo_target_width) / 2;
@@ -156,7 +160,8 @@ function createApplicationImage($data, $form_type)
                 $logo,
                 $x_logo_center,
                 $y,
-                0, 0,
+                0,
+                0,
                 $logo_target_width,
                 $logo_target_height,
                 $logo_original_width,
@@ -224,7 +229,7 @@ function createApplicationImage($data, $form_type)
     imagettftext($image, 27, 0, $x_pos, $y, $black, $font, $name_data);
 
     // นามสกุล
-    $x_pos2 = $x_pos + 390; 
+    $x_pos2 = $x_pos + 390;
     imagettftext($image, 27, 0, $x_pos2, $y, $black, $font, 'นามสกุล');
 
     $x_pos3 = $x_pos2 + 95;
@@ -439,8 +444,16 @@ function createApplicationImage($data, $form_type)
     // Checkbox สำหรับ ปวช.
     $pvs_checked = (strpos($apply_level, 'ปวช.') !== false);
     drawCheckbox($image, $margin_left + 30, $y - 24, $pvs_checked, $black);
-    imagettftext($image, 27, 0, $margin_left + 65, $y, $black, $font, 
-        'ระดับประกาศนียบัตรวิชาชีพ (ปวช.) ณ วิทยาลัยอาชีวศึกษานครปฐม');
+    imagettftext(
+        $image,
+        27,
+        0,
+        $margin_left + 65,
+        $y,
+        $black,
+        $font,
+        'ระดับประกาศนียบัตรวิชาชีพ (ปวช.) ณ วิทยาลัยอาชีวศึกษานครปฐม'
+    );
     $y += 46;
 
     $x = $margin_left + 65;
@@ -457,8 +470,16 @@ function createApplicationImage($data, $form_type)
     // Checkbox สำหรับ ปวส.
     $pvc_checked = (strpos($apply_level, 'ปวส.') !== false);
     drawCheckbox($image, $margin_left + 30, $y - 24, $pvc_checked, $black);
-    imagettftext($image, 27, 0, $margin_left + 65, $y, $black, $font, 
-        'ระดับประกาศนียบัตรวิชาชีพชั้นสูง (ปวส.) ณ วิทยาลัยอาชีวศึกษานครปฐม');
+    imagettftext(
+        $image,
+        27,
+        0,
+        $margin_left + 65,
+        $y,
+        $black,
+        $font,
+        'ระดับประกาศนียบัตรวิชาชีพชั้นสูง (ปวส.) ณ วิทยาลัยอาชีวศึกษานครปฐม'
+    );
     $y += 46;
 
     $x = $margin_left + 65;
@@ -475,8 +496,16 @@ function createApplicationImage($data, $form_type)
     // Checkbox สำหรับ ปริญญาตรี
     $degree_checked = (strpos($apply_level, 'ปริญญาตรี') !== false);
     drawCheckbox($image, $margin_left + 30, $y - 24, $degree_checked, $black);
-    imagettftext($image, 27, 0, $margin_left + 65, $y, $black, $font, 
-        'ปริญญาตรีสายเทคโนโลยีหรือสายปฏิบัติการ (ทล.บ.) ณ สถาบันการอาชีวศึกษาภาคกลาง ๔');
+    imagettftext(
+        $image,
+        27,
+        0,
+        $margin_left + 65,
+        $y,
+        $black,
+        $font,
+        'ปริญญาตรีสายเทคโนโลยีหรือสายปฏิบัติการ (ทล.บ.) ณ สถาบันการอาชีวศึกษาภาคกลาง ๔'
+    );
     $y += 40;
     imagettftext($image, 27, 0, $margin_left + 65, $y, $black, $font, '(วิทยาลัยอาชีวศึกษานครปฐม)');
     $y += 46;
@@ -496,7 +525,7 @@ function createApplicationImage($data, $form_type)
     $x_signature_start = $width - 650;
     imagettftext($image, 27, 0, $x_signature_start, $y, $black, $font, $signature_line_text);
     $y += 46;
-    $full_name_in_parens = '( '. $prefix . $firstname . '  ' . $lastname .' )';
+    $full_name_in_parens = '( ' . $prefix . $firstname . '  ' . $lastname . ' )';
     $bbox_name = imagettfbbox(27, 0, $font, $full_name_in_parens);
     $name_width = $bbox_name[2] - $bbox_name[0];
     $bbox_sign = imagettfbbox(27, 0, $font, $signature_line_text);
@@ -528,12 +557,18 @@ function createApplicationImage($data, $form_type)
     $box_height = 65;
     imagesetthickness($image, 1);
     imagerectangle($image, $margin_left, $y, $width - $margin_right, $y + $box_height, $black);
-    imagefilledrectangle($image, $margin_left + 1, $y + 1, $width - $margin_right - 1, $y + $box_height - 1, 
-        imagecolorallocate($image, 245, 245, 245));
+    imagefilledrectangle(
+        $image,
+        $margin_left + 1,
+        $y + 1,
+        $width - $margin_right - 1,
+        $y + $box_height - 1,
+        imagecolorallocate($image, 245, 245, 245)
+    );
 
-    $info_text = 'ข้อมูลการบันทึก: หมายเลขใบสมัคร ' . $data['application_no'] . 
-                 ' | วันที่สมัคร: ' . formatDateThai($data['created_at']) . 
-                 ' | พิมพ์เมื่อ: ' . date('d/m/Y H:i') . ' น.';
+    $info_text = 'ข้อมูลการบันทึก: หมายเลขใบสมัคร ' . $data['application_no'] .
+        ' | วันที่สมัคร: ' . formatDateThai($data['created_at']) .
+        ' | พิมพ์เมื่อ: ' . date('d/m/Y H:i') . ' น.';
     imagettftext($image, 21, 0, $margin_left + 13, $y + 42, $black, $font, $info_text);
 
     // บันทึกเป็นไฟล์ชั่วคราว
@@ -575,8 +610,19 @@ function formatDateThaiFull($date)
 
     $timestamp = strtotime($date);
     $thai_months_full = [
-        '', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        '',
+        'มกราคม',
+        'กุมภาพันธ์',
+        'มีนาคม',
+        'เมษายน',
+        'พฤษภาคม',
+        'มิถุนายน',
+        'กรกฎาคม',
+        'สิงหาคม',
+        'กันยายน',
+        'ตุลาคม',
+        'พฤศจิกายน',
+        'ธันวาคม'
     ];
 
     $day = (int)date('j', $timestamp);
@@ -592,8 +638,19 @@ function formatDateThai($date)
 
     $timestamp = strtotime($date);
     $thai_months = [
-        '', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+        '',
+        'ม.ค.',
+        'ก.พ.',
+        'มี.ค.',
+        'เม.ย.',
+        'พ.ค.',
+        'มิ.ย.',
+        'ก.ค.',
+        'ส.ค.',
+        'ก.ย.',
+        'ต.ค.',
+        'พ.ย.',
+        'ธ.ค.'
     ];
 
     $day = date('j', $timestamp);
@@ -618,4 +675,3 @@ function getAwards($data)
     }
     return '';
 }
-?>

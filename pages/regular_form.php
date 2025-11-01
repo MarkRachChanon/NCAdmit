@@ -166,7 +166,7 @@ while ($dept = $departments_result->fetch_assoc()) {
                     <i class="bi bi-file-earmark-text me-2"></i>
                     สมัครเข้าศึกษาต่อ รอบปกติ (วิทยาลัยอาชีวศึกษานครปฐม)
                 </h2>
-                <p class="mb-0 opacity-75">ปีการศึกษา <?php echo (date('Y') + 543 + 1); ?></p>
+                <p class="mb-0 opacity-75">ปีการศึกษา <?php echo get_setting('academic_year'); ?></p>
             </div>
             <div class="col-md-4 text-md-end">
                 <div class="bg-primary bg-opacity-50 rounded px-3 py-2 d-inline-block">

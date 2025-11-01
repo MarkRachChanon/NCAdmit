@@ -160,7 +160,7 @@ $stats = $stats_result->fetch_assoc();
 
                 <div class="col-md-2">
                     <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters">
-                        <i class="bi bi-x-circle me-2"></i>ล้าง
+                        <i class="bi bi-x-circle me-2"></i>ล้างตัวกรอง
                     </button>
                 </div>
             </div>

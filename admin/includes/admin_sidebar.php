@@ -102,6 +102,29 @@ require_once __DIR__ . '/permissions.php';
                 </a>
             </li>
             <?php endif; ?>
+
+            <!-- ข้อความติดต่อ -->
+            <?php if (can_show_menu('contact_messages', $admin_role)): ?>
+            <li class="nav-item">
+                <a href="index.php?page=contact_messages" class="nav-link <?php echo ($current_page == 'contact_messages') ? 'active' : ''; ?>">
+                    <i class="bi bi-envelope-open"></i>
+                    <span>ข้อความติดต่อ</span>
+                    <?php
+                    // นับข้อความที่ยังไม่ได้อ่าน
+                    $unread_sql = "SELECT COUNT(*) as unread_count FROM contact_messages WHERE is_read = 0";
+                    $unread_result = $conn->query($unread_sql);
+                    $unread_count = 0;
+                    if ($unread_result && $unread_result->num_rows > 0) {
+                        $unread_row = $unread_result->fetch_assoc();
+                        $unread_count = $unread_row['unread_count'];
+                    }
+                    if ($unread_count > 0):
+                    ?>
+                        <span class="badge bg-danger ms-auto"><?php echo $unread_count; ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
+            <?php endif; ?>
             
             <!-- สาขาวิชา -->
             <?php if (can_show_menu('departments_manage', $admin_role)): ?>

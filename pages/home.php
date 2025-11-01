@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Home Page
  */
@@ -18,11 +19,10 @@ $news_result = $conn->query($sql_news);
                         <?php echo $site_name; ?>
                     </h1>
                     <h2 class="hero-subtitle text-white mb-4">
-                        ระบบรับสมัครนักเรียนออนไลน์ ปีการศึกษา <?php echo (date('Y') + 543 + 1); ?><br class="d-none d-md-inline"> 
-                        วิทยาลัยอาชีวศึกษานครปฐม
+                        <?php echo get_setting('site_description'); ?> <br class="d-none d-md-inline">วิทยาลัยอาชีวศึกษานครปฐม <br class="d-none d-md-inline">ปีการศึกษา <?php echo get_setting('academic_year'); ?>
                     </h2>
                     <p class="hero-text text-white mb-5">
-                        สะดวก รวดเร็ว ปลอดภัย<br class="d-none d-md-inline"> 
+                        สะดวก รวดเร็ว ปลอดภัย<br class="d-none d-md-inline">
                         ตลอด 24 ชั่วโมง
                     </p>
                     <div class="hero-buttons d-flex flex-column flex-md-row gap-3">
@@ -35,7 +35,7 @@ $news_result = $conn->query($sql_news);
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-delay="200">
                 <div class="hero-image">
                     <img src="https://cdn-icons-png.flaticon.com/512/3976/3976625.png" alt="Education" class="img-fluid" style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
@@ -74,7 +74,7 @@ $news_result = $conn->query($sql_news);
                     </div>
                 </div>
             </div>
-            
+
             <!-- Card 2: ตรวจสอบสถานะ -->
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card h-100">
@@ -93,7 +93,7 @@ $news_result = $conn->query($sql_news);
                     </div>
                 </div>
             </div>
-            
+
             <!-- Card 3: ติดต่อสอบถาม -->
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="card h-100">
@@ -113,7 +113,7 @@ $news_result = $conn->query($sql_news);
                 </div>
             </div>
         </div>
-        
+
     </div>
 </section>
 
@@ -126,7 +126,7 @@ $news_result = $conn->query($sql_news);
                 <p class="section-subtitle">ติดตามข่าวสารและกิจกรรมของเรา</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
             <?php if ($news_result && $news_result->num_rows > 0): ?>
                 <?php $delay = 100; ?>
@@ -134,17 +134,17 @@ $news_result = $conn->query($sql_news);
                     <div class="col-md-4" data-aos="fade-up" data-aos-delay="<?php echo $delay; ?>">
                         <div class="card h-100">
                             <?php if ($news['featured_image']): ?>
-                                <img src="<?php echo $news['featured_image']; ?>" 
-                                     class="card-img-top" 
-                                     alt="<?php echo htmlspecialchars($news['title']); ?>"
-                                     style="height: 200px; object-fit: cover;">
+                                <img src="<?php echo $news['featured_image']; ?>"
+                                    class="card-img-top"
+                                    alt="<?php echo htmlspecialchars($news['title']); ?>"
+                                    style="height: 200px; object-fit: cover;">
                             <?php else: ?>
-                                <div class="bg-gradient-primary text-white d-flex align-items-center justify-content-center" 
-                                     style="height: 200px;">
+                                <div class="bg-gradient-primary text-white d-flex align-items-center justify-content-center"
+                                    style="height: 200px;">
                                     <i class="bi bi-image display-1"></i>
                                 </div>
                             <?php endif; ?>
-                            
+
                             <div class="card-body d-flex flex-column">
                                 <div class="text-muted small mb-2">
                                     <i class="bi bi-calendar3 me-1"></i>
@@ -156,8 +156,8 @@ $news_result = $conn->query($sql_news);
                                 <p class="card-text text-muted flex-grow-1">
                                     <?php echo mb_substr(strip_tags($news['excerpt']), 0, 100, 'UTF-8'); ?>...
                                 </p>
-                                <a href="index.php?page=news_detail&id=<?php echo $news['id']; ?>" 
-                                   class="btn btn-gradient btn-sm mt-3">
+                                <a href="index.php?page=news_detail&id=<?php echo $news['id']; ?>"
+                                    class="btn btn-gradient btn-sm mt-3">
                                     อ่านเพิ่มเติม <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
@@ -172,13 +172,13 @@ $news_result = $conn->query($sql_news);
                 </div>
             <?php endif; ?>
         </div>
-        
+
         <?php if ($news_result && $news_result->num_rows > 0): ?>
-        <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
-            <a href="index.php?page=news" class="btn btn-gradient btn-lg px-5">
-                ดูข่าวสารทั้งหมด <i class="bi bi-arrow-right ms-2"></i>
-            </a>
-        </div>
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
+                <a href="index.php?page=news" class="btn btn-gradient btn-lg px-5">
+                    ดูข่าวสารทั้งหมด <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
         <?php endif; ?>
     </div>
 </section>

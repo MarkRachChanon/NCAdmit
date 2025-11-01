@@ -135,6 +135,16 @@ include 'includes/admin_sidebar.php';
             }
             break;
 
+        // ==================== Contact Messages ====================
+        case 'contact_messages':
+            if (can_show_menu('contact_messages', $admin_role)) {
+                include 'cms/contact_messages.php';
+            } else {
+                include 'includes/403.php';
+            }
+            break;
+
+        // ==================== Departments Management ====================
         case 'departments_add':
             if (can_show_menu('departments_add', $admin_role)) {
                 include 'cms/departments_add.php';

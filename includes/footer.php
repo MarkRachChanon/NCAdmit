@@ -23,7 +23,7 @@ $current_year = date('Y') + 543;
                     </div>
                 </div>
                 <p class="text-white-50">
-                    <?php echo nl2br($site_description); ?>
+                    <?php echo nl2br($site_description); ?><br class="d-none d-md-inline">วิทยาลัยอาชีวศึกษานครปฐม <br class="d-none d-md-inline">ปีการศึกษา <?php echo get_setting('academic_year'); ?>
                 </p>
                 <div class="social-links mt-3">
                     <a href="<?php echo $facebook_url; ?>" class="text-white me-3 text-decoration-none" title="Facebook" 
