@@ -38,7 +38,7 @@ $news_result = $conn->query($sql_news);
 
             <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-delay="200">
                 <div class="hero-image">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3976/3976625.png" alt="Education" class="img-fluid" style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
+                    <img src="/ncadmission/assets/images/graduation.png" alt="Education" class="img-fluid" style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));">
                 </div>
             </div>
         </div>
