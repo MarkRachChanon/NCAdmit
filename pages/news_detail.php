@@ -116,13 +116,13 @@ $latest_result = $latest_stmt->get_result();
                             <?php echo htmlspecialchars($news['title']); ?>
                         </h1>
 
-                        <!-- Featured Image -->
+                        <!-- Featured Image - แสดงภาพเต็มตามขนาดจริง -->
                         <?php if ($news['featured_image']): ?>
-                            <div class="mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="mb-4 text-center" data-aos="fade-up" data-aos-delay="100">
                                 <img src="<?php echo htmlspecialchars($news['featured_image']); ?>" 
                                      alt="<?php echo htmlspecialchars($news['title']); ?>"
-                                     class="img-fluid rounded-3 shadow-sm w-100"
-                                     style="max-height: 500px; object-fit: cover;">
+                                     class="img-fluid rounded-3 shadow-sm news-featured-image"
+                                     onclick="openImageModal(this.src)">
                             </div>
                         <?php endif; ?>
 
@@ -273,7 +273,34 @@ $latest_result = $latest_stmt->get_result();
     </div>
 </article>
 
+<!-- Image Modal สำหรับดูภาพขยาย -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0 position-relative">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" 
+                        data-bs-dismiss="modal" aria-label="Close" style="z-index: 1051;"></button>
+                <img src="" id="modalImage" class="img-fluid rounded" alt="News Image">
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
+/* Featured Image - แสดงภาพเต็มตามขนาดจริง */
+.news-featured-image {
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-featured-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+}
+
+/* News Content - รูปภาพในเนื้อหา */
 .news-content {
     font-size: 1.1rem;
     line-height: 1.8;
@@ -287,8 +314,17 @@ $latest_result = $latest_stmt->get_result();
 .news-content img {
     max-width: 100%;
     height: auto;
+    display: block;
+    margin: 2rem auto;
     border-radius: 8px;
-    margin: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-content img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 .news-content h2,
@@ -325,4 +361,71 @@ $latest_result = $latest_stmt->get_result();
 .news-content a:hover {
     color: #0061ff;
 }
+
+/* Image Modal */
+#imageModal .modal-dialog {
+    max-width: 90%;
+}
+
+#imageModal #modalImage {
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+#imageModal .modal-content {
+    background: rgba(0,0,0,0.9) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .news-content {
+        font-size: 1rem;
+    }
+    
+    .news-content img {
+        margin: 1.5rem auto;
+    }
+}
 </style>
+
+<script>
+// ฟังก์ชันคัดลอกลิงก์
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'คัดลอกสำเร็จ!',
+            text: 'ลิงก์ถูกคัดลอกไปยังคลิปบอร์ดแล้ว',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }).catch(function(err) {
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถคัดลอกลิงก์ได้'
+        });
+    });
+}
+
+// ฟังก์ชันเปิด Modal แสดงภาพขยาย
+function openImageModal(imageSrc) {
+    const modalImage = document.getElementById('modalImage');
+    modalImage.src = imageSrc;
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    imageModal.show();
+}
+
+// เพิ่มความสามารถคลิกขยายภาพในเนื้อหาข่าว
+document.addEventListener('DOMContentLoaded', function() {
+    const contentImages = document.querySelectorAll('.news-content img');
+    contentImages.forEach(img => {
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', function() {
+            openImageModal(this.src);
+        });
+    });
+});
+</script>
