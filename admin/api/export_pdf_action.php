@@ -2,6 +2,11 @@
 /**
  * Export PDF Action - ประมวลผลและสร้างไฟล์ PDF
  * NC-Admission - Nakhon Pathom College Admission System
+ * 
+ * การแก้ไข:
+ * 1. แยกการทำงานของระดับชั้นและสาขาวิชาให้ชัดเจน
+ * 2. เพิ่มคอลัมน์ประเภทการสมัครใน PDF
+ * 3. เรียงลำดับ: โควตา (ปวช. -> ปวส. -> ปริญญาตรี) ก่อน ปกติ (ปวช. -> ปวส. -> ปริญญาตรี)
  */
 
 session_start();
@@ -29,33 +34,41 @@ if (empty($type) || empty($academic_year)) {
 }
 
 // ==================== Build SQL Query ====================
+/**
+ * สร้าง SQL Query สำหรับดึงข้อมูลผู้สมัคร
+ * 
+ * ลอจิกการทำงาน:
+ * 1. ถ้าเลือกสาขาเฉพาะ → ใช้ department_id (ไม่สนใจ level)
+ * 2. ถ้าไม่เลือกสาขา แต่เลือกระดับ → ใช้ level
+ * 3. ถ้าไม่เลือกทั้ง 2 → แสดงทั้งหมด
+ * 4. เพิ่ม level_order สำหรับการเรียงลำดับ (ปวช.=1, ปวส.=2, ปริญญาตรี=3)
+ */
 function buildQuery($type, $academic_year, $level, $department_id, $status, $conn) {
     $conditions = [];
     $params = [];
     $types = '';
     
-    // Academic Year
+    // 1. ปีการศึกษา
     if ($academic_year !== 'all') {
         $conditions[] = "academic_year = ?";
         $params[] = $academic_year;
         $types .= 's';
     }
     
-    // Level - กรองตามระดับชั้น
-    if (!empty($level)) {
+    // 2. ลอจิกการกรองตามสาขาและระดับ
+    if (!empty($department_id)) {
+        // เลือกสาขาเฉพาะ → ใช้ department_id
+        $conditions[] = "department_id = ?";
+        $params[] = $department_id;
+        $types .= 'i';
+    } else if (!empty($level)) {
+        // ไม่เลือกสาขา แต่เลือกระดับ → กรองตามระดับ
         $conditions[] = "d.level = ?";
         $params[] = $level;
         $types .= 's';
     }
     
-    // Department
-    if (!empty($department_id)) {
-        $conditions[] = "department_id = ?";
-        $params[] = $department_id;
-        $types .= 'i';
-    }
-    
-    // Status
+    // 3. สถานะ
     if (!empty($status)) {
         $conditions[] = "status = ?";
         $params[] = $status;
@@ -66,34 +79,46 @@ function buildQuery($type, $academic_year, $level, $department_id, $status, $con
     
     $queries = [];
     
-    // Query for Quota
+    // Query for Quota (รอบโควตา)
     if ($type === 'quota' || $type === 'all') {
         $sql = "SELECT 
                     sq.*,
                     d.code as dept_code,
                     d.name_th as dept_name,
                     d.level as dept_level,
-                    'quota' as student_type
+                    'quota' as student_type,
+                    CASE 
+                        WHEN d.level = 'ปวช.' THEN 1
+                        WHEN d.level = 'ปวส.' THEN 2
+                        WHEN d.level = 'ปริญญาตรี' THEN 3
+                        ELSE 4
+                    END as level_order
                 FROM students_quota sq
                 LEFT JOIN departments d ON sq.department_id = d.id
                 {$where}
-                ORDER BY d.level, d.name_th, sq.application_no";
+                ORDER BY level_order, d.name_th, sq.application_no";
         
         $queries[] = ['sql' => $sql, 'params' => $params, 'types' => $types];
     }
     
-    // Query for Regular
+    // Query for Regular (รอบปกติ)
     if ($type === 'regular' || $type === 'all') {
         $sql = "SELECT 
                     sr.*,
                     d.code as dept_code,
                     d.name_th as dept_name,
                     d.level as dept_level,
-                    'regular' as student_type
+                    'regular' as student_type,
+                    CASE 
+                        WHEN d.level = 'ปวช.' THEN 1
+                        WHEN d.level = 'ปวส.' THEN 2
+                        WHEN d.level = 'ปริญญาตรี' THEN 3
+                        ELSE 4
+                    END as level_order
                 FROM students_regular sr
                 LEFT JOIN departments d ON sr.department_id = d.id
                 {$where}
-                ORDER BY d.level, d.name_th, sr.application_no";
+                ORDER BY level_order, d.name_th, sr.application_no";
         
         $queries[] = ['sql' => $sql, 'params' => $params, 'types' => $types];
     }
@@ -105,11 +130,23 @@ function buildQuery($type, $academic_year, $level, $department_id, $status, $con
 $all_students = [];
 $queries = buildQuery($type, $academic_year, $level, $department_id, $status, $conn);
 
-foreach ($queries as $query) {
+// Debug Log
+error_log("=== Export PDF Debug ===");
+error_log("Type: $type");
+error_log("Academic Year: $academic_year");
+error_log("Level: " . ($level ?: 'ทุกระดับ'));
+error_log("Department ID: " . ($department_id ?: 'ทุกสาขา'));
+error_log("Status: " . ($status ?: 'ทุกสถานะ'));
+error_log("Total Queries: " . count($queries));
+
+foreach ($queries as $index => $query) {
+    error_log("Query " . ($index + 1) . ": " . $query['sql']);
+    
     $stmt = $conn->prepare($query['sql']);
     
     if (!empty($query['params'])) {
         $stmt->bind_param($query['types'], ...$query['params']);
+        error_log("Params: " . json_encode($query['params']));
     }
     
     $stmt->execute();
@@ -118,6 +155,41 @@ foreach ($queries as $query) {
     while ($row = $result->fetch_assoc()) {
         $all_students[] = $row;
     }
+    
+    error_log("Records from query " . ($index + 1) . ": " . $result->num_rows);
+}
+
+// ==================== Sort All Students ====================
+// เมื่อเลือก "ทั้งหมด" ให้เรียงลำดับ: โควตา (ปวช. -> ปวส. -> ปริญญาตรี) -> ปกติ (ปวช. -> ปวส. -> ปริญญาตรี)
+if ($type === 'all') {
+    usort($all_students, function($a, $b) {
+        // 1. เรียงตามประเภท (quota ก่อน regular)
+        $type_order = ['quota' => 1, 'regular' => 2];
+        $type_compare = $type_order[$a['student_type']] - $type_order[$b['student_type']];
+        if ($type_compare !== 0) return $type_compare;
+        
+        // 2. เรียงตามระดับชั้น (ปวช. -> ปวส. -> ปริญญาตรี)
+        if ($a['level_order'] !== $b['level_order']) {
+            return $a['level_order'] - $b['level_order'];
+        }
+        
+        // 3. เรียงตามชื่อสาขา
+        $dept_compare = strcmp($a['dept_name'], $b['dept_name']);
+        if ($dept_compare !== 0) return $dept_compare;
+        
+        // 4. เรียงตามเลขที่สมัคร
+        return strcmp($a['application_no'], $b['application_no']);
+    });
+    
+    error_log("Sorted " . count($all_students) . " students by type and level");
+}
+
+error_log("Total students: " . count($all_students));
+error_log("======================");
+
+// ตรวจสอบว่ามีข้อมูลหรือไม่
+if (empty($all_students)) {
+    die('ไม่พบข้อมูลตามเงื่อนไขที่เลือก');
 }
 
 // ==================== Generate PDF ====================
@@ -158,17 +230,18 @@ try {
     $mpdf->SetAuthor('NC-Admission System');
     $mpdf->SetCreator('NC-Admission System');
     
-    // ==================== Generate Content by Format ====================
+    // ==================== Generate Content ====================
     if ($format === 'list') {
-        $html = generateListFormat($mpdf, $all_students, $type, $academic_year);
+        $html = generateListFormat($mpdf, $all_students, $type, $academic_year, $level, $department_id);
         $mpdf->WriteHTML($html);
     } else {
-        $html = generateListFormat($mpdf, $all_students, $type, $academic_year);
+        $html = generateListFormat($mpdf, $all_students, $type, $academic_year, $level, $department_id);
         $mpdf->WriteHTML($html);
     }
     
     // ==================== Output PDF ====================
-    $filename = 'รายชื่อผู้สมัคร_' . ($type === 'all' ? 'ทั้งหมด' : ($type === 'quota' ? 'โควตา' : 'ปกติ')) . '_' . date('Y-m-d_His') . '.pdf';
+    $type_text = ($type === 'all' ? 'ทั้งหมด' : ($type === 'quota' ? 'โควตา' : 'ปกติ'));
+    $filename = 'รายชื่อผู้สมัคร_' . $type_text . '_' . date('Y-m-d_His') . '.pdf';
     
     if ($is_preview) {
         $mpdf->Output($filename, 'I'); // Display in browser
@@ -176,31 +249,73 @@ try {
         $mpdf->Output($filename, 'D'); // Download
         
         // Log Activity
+        $filter_info = [];
+        $filter_info[] = "ประเภท: $type_text";
+        $filter_info[] = "ปีการศึกษา: " . ($academic_year === 'all' ? 'ทั้งหมด' : $academic_year);
+        if (!empty($level)) $filter_info[] = "ระดับ: $level";
+        if (!empty($department_id)) {
+            $dept_sql = "SELECT name_th FROM departments WHERE id = ?";
+            $dept_stmt = $conn->prepare($dept_sql);
+            $dept_stmt->bind_param('i', $department_id);
+            $dept_stmt->execute();
+            $dept_result = $dept_stmt->get_result();
+            if ($dept_row = $dept_result->fetch_assoc()) {
+                $filter_info[] = "สาขา: " . $dept_row['name_th'];
+            }
+        }
+        if (!empty($status)) $filter_info[] = "สถานะ: $status";
+        
         log_activity(
             $_SESSION['admin_id'],
-            "Export PDF รายชื่อผู้สมัคร ({$type}) - {$academic_year}",
+            "Export PDF รายชื่อผู้สมัคร",
             null,
             null,
-            null,
+            implode(', ', $filter_info),
             null
         );
     }
     
 } catch (Exception $e) {
-    die('Error: ' . $e->getMessage());
+    error_log("PDF Generation Error: " . $e->getMessage());
+    die('เกิดข้อผิดพลาด: ' . $e->getMessage());
 }
 
 // ==================== Format Functions ====================
 
 /**
  * สร้าง PDF แบบรายชื่อตาราง พร้อมเลขหน้า
+ * เพิ่มคอลัมน์ประเภทการสมัคร (โควตา/ปกติ)
  */
-function generateListFormat($mpdf, $students, $type, $academic_year) {
+function generateListFormat($mpdf, $students, $type, $academic_year, $level = '', $department_id = '') {
+    global $conn;
+    
     $total = count($students);
     $type_text = ($type === 'all' ? 'ทั้งหมด' : ($type === 'quota' ? 'รอบโควตา' : 'รอบปกติ'));
     $year_text = ($academic_year === 'all' ? 'ทุกปีการศึกษา' : 'ปีการศึกษา ' . $academic_year);
     
-    // ==================== Set mPDF Footer เท่านั้น (แสดงเลขหน้า) ====================
+    // สร้างข้อความสำหรับระดับและสาขา
+    $level_text = '';
+    if (!empty($level)) {
+        $level_text = " | <strong>ระดับ:</strong> $level";
+    }
+    
+    $dept_text = '';
+    if (!empty($department_id)) {
+        $dept_sql = "SELECT code, name_th FROM departments WHERE id = ?";
+        $dept_stmt = $conn->prepare($dept_sql);
+        $dept_stmt->bind_param('i', $department_id);
+        $dept_stmt->execute();
+        $dept_result = $dept_stmt->get_result();
+        if ($dept_row = $dept_result->fetch_assoc()) {
+            $dept_text = " | <strong>สาขา:</strong> " . $dept_row['code'] . ' - ' . $dept_row['name_th'];
+        }
+    }
+    
+    // กำหนดจำนวนคอลัมน์ตามประเภทที่เลือก
+    $show_type_column = ($type === 'all'); // แสดงคอลัมน์ประเภทเมื่อเลือก "ทั้งหมด"
+    $colspan = $show_type_column ? 8 : 7;
+    
+    // ==================== Set mPDF Footer ====================
     $mpdf->SetHTMLFooter('
     <table width="100%" style="font-family: thsarabun; font-size: 13px; color: #666; border-top: 1px solid #ddd; padding-top: 5px;">
         <tr>
@@ -214,22 +329,37 @@ function generateListFormat($mpdf, $students, $type, $academic_year) {
     </table>
     ');
     
-    // ==================== HTML Header (แสดงเฉพาะหน้าแรก) ====================
+    // ==================== HTML Header ====================
     $header_html = '
     <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid #333; padding-bottom: 10px;">
         <h1 style="font-size: 22px; margin: 5px 0; color: #2c3e50; font-weight: bold;">รายชื่อผู้สมัครเข้าเรียน</h1>
         <h2 style="font-size: 18px; margin: 5px 0; color: #555;">วิทยาลัยอาชีวศึกษานครปฐม ' . $year_text . '</h2>
     </div>';
     
-    // ==================== Info Bar (จะซ้ำทุกหน้าผ่าน thead) ====================
+    // ==================== Info Bar ====================
     $info_bar = '
     <tr>
-        <td colspan="7" style="background-color: #f8f9fa; padding: 10px; border: 1px solid #ddd; font-size: 14px; color: #333;">
+        <td colspan="' . $colspan . '" style="background-color: #f8f9fa; padding: 10px; border: 1px solid #ddd; font-size: 14px; color: #333;">
             <strong>ประเภท:</strong> ' . $type_text . ' | 
-            <strong>ปีการศึกษา:</strong> ' . $year_text . ' | 
+            <strong>ปีการศึกษา:</strong> ' . $year_text . 
+            $level_text . 
+            $dept_text . ' | 
             <strong>จำนวนทั้งหมด:</strong> ' . number_format($total) . ' คน | 
             <strong>วันที่พิมพ์:</strong> ' . date('d/m/Y H:i:s') . '
         </td>
+    </tr>';
+    
+    // ==================== Table Header ====================
+    $table_header = '
+    <tr>
+        <th width="4%">ลำดับ</th>' .
+        ($show_type_column ? '<th width="8%">ประเภท</th>' : '') . '
+        <th width="10%">เลขที่สมัคร</th>
+        <th width="' . ($show_type_column ? '20%' : '23%') . '">ชื่อ-สกุล</th>
+        <th width="8%">ระดับ</th>
+        <th width="' . ($show_type_column ? '23%' : '25%') . '">สาขาวิชา</th>
+        <th width="8%">เกรด</th>
+        <th width="12%">สถานะ</th>
     </tr>';
     
     // ==================== Main Content ====================
@@ -268,6 +398,15 @@ function generateListFormat($mpdf, $students, $type, $academic_year) {
             }
             .text-center { text-align: center; }
             .text-right { text-align: right; }
+            .type-badge {
+                padding: 3px 8px;
+                border-radius: 3px;
+                font-size: 11px;
+                font-weight: bold;
+                display: inline-block;
+            }
+            .type-quota { background-color: #e3f2fd; color: #1565c0; }
+            .type-regular { background-color: #f3e5f5; color: #6a1b9a; }
             .status-badge {
                 padding: 4px 10px;
                 border-radius: 4px;
@@ -283,50 +422,63 @@ function generateListFormat($mpdf, $students, $type, $academic_year) {
     </head>
     <body>';
     
-    // เพิ่ม Header เฉพาะหน้าแรก
+    // เพิ่ม Header
     $html .= $header_html;
     
-    // เริ่มตาราง - ใส่ info bar ใน thead เพื่อให้ซ้ำทุกหน้า
+    // เริ่มตาราง
     $html .= '
         <table>
             <thead>
-                ' . $info_bar . '
-                <tr>
-                    <th width="5%">ลำดับ</th>
-                    <th width="12%">เลขที่สมัคร</th>
-                    <th width="23%">ชื่อ-สกุล</th>
-                    <th width="10%">ระดับ</th>
-                    <th width="25%">สาขาวิชา</th>
-                    <th width="10%">เกรด</th>
-                    <th width="15%">สถานะ</th>
-                </tr>
+                ' . $info_bar . 
+                $table_header . '
             </thead>
             <tbody>';
     
     $no = 1;
     foreach ($students as $student) {
         $fullname = ($student['prefix'] ?? '') . ' ' . ($student['firstname_th'] ?? '') . ' ' . ($student['lastname_th'] ?? '');
+        
+        // ประเภท
+        $type_class = 'type-' . ($student['student_type'] ?? 'quota');
+        $type_text_display = [
+            'quota' => 'โควตา',
+            'regular' => 'ปกติ'
+        ];
+        $current_type = $student['student_type'] ?? 'quota';
+        
+        // สถานะ
         $status_class = 'status-' . ($student['status'] ?? 'pending');
-        $status_text = [
+        $status_text_arr = [
             'pending' => 'รอตรวจสอบ',
             'approved' => 'อนุมัติ',
             'rejected' => 'ไม่อนุมัติ',
             'cancelled' => 'ยกเลิก'
         ];
-        
         $current_status = $student['status'] ?? 'pending';
         
         $html .= '
                 <tr>
-                    <td class="text-center">' . $no++ . '</td>
+                    <td class="text-center">' . $no++ . '</td>';
+        
+        // แสดงคอลัมน์ประเภทเมื่อเลือก "ทั้งหมด"
+        if ($show_type_column) {
+            $html .= '
+                    <td class="text-center">
+                        <span class="type-badge ' . $type_class . '">
+                            ' . ($type_text_display[$current_type] ?? 'ไม่ระบุ') . '
+                        </span>
+                    </td>';
+        }
+        
+        $html .= '
                     <td class="text-center">' . htmlspecialchars($student['application_no'] ?? '') . '</td>
                     <td>' . htmlspecialchars($fullname) . '</td>
-                    <td class="text-center">' . htmlspecialchars($student['apply_level'] ?? '') . '</td>
+                    <td class="text-center">' . htmlspecialchars($student['dept_level'] ?? '') . '</td>
                     <td>' . htmlspecialchars(($student['dept_code'] ?? '') . ' - ' . ($student['dept_name'] ?? '')) . '</td>
                     <td class="text-center">' . number_format($student['gpa'] ?? 0, 2) . '</td>
                     <td class="text-center">
                         <span class="status-badge ' . $status_class . '">
-                            ' . ($status_text[$current_status] ?? 'ไม่ระบุ') . '
+                            ' . ($status_text_arr[$current_status] ?? 'ไม่ระบุ') . '
                         </span>
                     </td>
                 </tr>';
@@ -340,3 +492,4 @@ function generateListFormat($mpdf, $students, $type, $academic_year) {
     
     return $html;
 }
+?>

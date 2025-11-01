@@ -312,6 +312,14 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
     </div>
 </div>
 
+<!-- 
+==============================================================================
+ไฟล์: export_pdf.php (Frontend)
+คำแนะนำ: วางแทนที่ส่วน <style> และ <script> เดิมในไฟล์ export_pdf.php
+==============================================================================
+-->
+
+<!-- เพิ่ม CSS สำหรับ info text -->
 <style>
 .pdf-format-option {
     cursor: pointer;
@@ -338,6 +346,13 @@ $total_rejected = $stats['quota_rejected'] + $stats['regular_rejected'];
 .icon-circle {
     padding: 12px;
 }
+
+#department-level-info {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
 </style>
 
 <script>
@@ -347,18 +362,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==================== Format Selection ====================
     document.querySelectorAll('.pdf-format-option').forEach(card => {
         card.addEventListener('click', function() {
-            // ถ้าเป็น disabled card ไม่ทำอะไร
             if (this.classList.contains('opacity-50')) {
                 return;
             }
             
-            // Remove active class from all
             document.querySelectorAll('.pdf-format-option').forEach(c => c.classList.remove('active'));
-            
-            // Add active to clicked
             this.classList.add('active');
             
-            // Set hidden input value
             const format = this.dataset.format;
             document.getElementById('format').value = format;
             
@@ -366,51 +376,109 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Set default active
     document.querySelector('.pdf-format-option[data-format="list"]').classList.add('active');
     
-    // ==================== Level & Department Filter ====================
+    // ==================== Level & Department Filter - แก้ไขใหม่ ====================
     const levelSelect = document.getElementById('level');
     const departmentSelect = document.getElementById('department');
+    const allDepartmentOptions = Array.from(departmentSelect.querySelectorAll('option[data-level]'));
     
-    // เมื่อเลือกระดับชั้น ให้กรองสาขาวิชา
-    levelSelect.addEventListener('change', function() {
-        const selectedLevel = this.value;
-        const departmentOptions = departmentSelect.querySelectorAll('option[data-level]');
+    /**
+     * ฟังก์ชันกรองสาขาวิชาตามระดับชั้นที่เลือก
+     * - ถ้าเลือก "ทุกระดับ" จะแสดงทุกสาขา
+     * - ถ้าเลือกระดับชั้นเฉพาะ จะแสดงเฉพาะสาขาในระดับนั้น
+     */
+    function filterDepartmentsByLevel() {
+        const selectedLevel = levelSelect.value;
+        
+        console.log('กรองสาขาตามระดับ:', selectedLevel || 'ทุกระดับ');
         
         if (selectedLevel === '') {
-            // แสดงทุกสาขา
-            departmentOptions.forEach(opt => opt.style.display = '');
+            // กรณีเลือก "ทุกระดับ" - แสดงทุกสาขา
+            allDepartmentOptions.forEach(opt => {
+                opt.style.display = '';
+                opt.disabled = false;
+            });
         } else {
-            // แสดงเฉพาะสาขาในระดับที่เลือก
-            departmentOptions.forEach(opt => {
+            // กรณีเลือกระดับเฉพาะ - แสดงเฉพาะสาขาในระดับนั้น
+            allDepartmentOptions.forEach(opt => {
                 if (opt.dataset.level === selectedLevel) {
                     opt.style.display = '';
+                    opt.disabled = false;
                 } else {
                     opt.style.display = 'none';
+                    opt.disabled = true;
                 }
             });
+            
+            // ตรวจสอบว่าสาขาที่เลือกอยู่ยังแสดงอยู่หรือไม่
+            const currentDeptOption = departmentSelect.querySelector(`option[value="${departmentSelect.value}"]`);
+            if (currentDeptOption && currentDeptOption.style.display === 'none') {
+                // ถ้าสาขาที่เลือกอยู่ถูกซ่อน ให้รีเซ็ตเป็น "ทุกสาขา"
+                departmentSelect.value = '';
+                console.log('รีเซ็ตการเลือกสาขาเพราะไม่ตรงกับระดับที่เลือก');
+            }
         }
         
-        // Reset การเลือกสาขา
-        departmentSelect.value = '';
+        updateDepartmentInfo();
+    }
+    
+    /**
+     * ฟังก์ชันอัปเดตข้อมูลระดับชั้นตามสาขาที่เลือก
+     * - ถ้าเลือก "ทุกสาขา" ไม่มีผลกับระดับชั้น
+     * - ถ้าเลือกสาขาเฉพาะ จะแสดงข้อมูลระดับของสาขานั้น
+     */
+    function updateDepartmentInfo() {
+        const selectedDeptOption = departmentSelect.querySelector(`option[value="${departmentSelect.value}"]`);
+        const infoElement = document.getElementById('department-level-info');
+        
+        if (selectedDeptOption && selectedDeptOption.value !== '') {
+            const deptLevel = selectedDeptOption.dataset.level;
+            console.log('เลือกสาขา:', selectedDeptOption.text, '| ระดับ:', deptLevel);
+            
+            if (infoElement) {
+                infoElement.innerHTML = `<i class="bi bi-info-circle me-1"></i> สาขานี้อยู่ในระดับ: <strong>${deptLevel}</strong>`;
+                infoElement.className = 'text-primary mt-2';
+            }
+        } else {
+            if (infoElement) {
+                infoElement.innerHTML = `<i class="bi bi-info-circle me-1"></i> ถ้าเลือกระดับชั้น จะแสดงเฉพาะสาขาในระดับนั้น`;
+                infoElement.className = 'text-muted';
+            }
+        }
+    }
+    
+    // Event: เมื่อเปลี่ยนระดับชั้น
+    levelSelect.addEventListener('change', function() {
+        console.log('=== เปลี่ยนระดับชั้น ===');
+        filterDepartmentsByLevel();
     });
+    
+    // Event: เมื่อเปลี่ยนสาขาวิชา
+    departmentSelect.addEventListener('change', function() {
+        console.log('=== เปลี่ยนสาขาวิชา ===');
+        updateDepartmentInfo();
+    });
+    
+    // เพิ่ม info element ใต้ dropdown สาขาวิชา
+    const deptFormGroup = departmentSelect.closest('.col-md-6');
+    const existingSmall = deptFormGroup.querySelector('small');
+    if (existingSmall) {
+        existingSmall.id = 'department-level-info';
+    }
     
     // ==================== Preview Button ====================
     document.getElementById('btnPreview').addEventListener('click', function() {
         const form = document.getElementById('exportPdfForm');
         const formData = new FormData(form);
         
-        // Validate
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
         }
         
-        // เปลี่ยน action เป็น preview mode
         formData.append('preview', '1');
         
-        // Open preview in new window
         const queryString = new URLSearchParams(formData).toString();
         window.open('api/export_pdf_action.php?' + queryString, '_blank');
     });
@@ -418,6 +486,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==================== Form Submit ====================
     document.getElementById('exportPdfForm').addEventListener('submit', function(e) {
         console.log('Exporting PDF...');
+        console.log('ระดับชั้น:', levelSelect.value || 'ทุกระดับ');
+        console.log('สาขาวิชา:', departmentSelect.value || 'ทุกสาขา');
         
         Swal.fire({
             title: 'กำลังสร้าง PDF...',
@@ -428,7 +498,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // ปิด Loading หลัง 2 วินาที
         setTimeout(() => {
             Swal.close();
         }, 2000);
